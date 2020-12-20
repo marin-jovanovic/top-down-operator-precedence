@@ -1,4 +1,4 @@
-INPUT_LISTS = list(list())
+INPUT_LISTS = ""
 STATES = list()
 INPUT_SYMBOLS = list()
 FINAL_STATES = list()

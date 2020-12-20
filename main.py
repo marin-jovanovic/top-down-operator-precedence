@@ -1,10 +1,8 @@
 import re
-
-def log(*data):
-    print(data)
-
+import sys
 
 SOURCE = "minusLang.lan"
+SOURCE_CODE_PATH = "minusLang.in"
 
 REGEX_LIST = list()
 STATES = list()
@@ -16,7 +14,10 @@ NEW_ROW = "NOVI_REDAK"
 ENTER_NEW_STATE = "UDJI_U_STANJE"
 GO_BACK = "VRATI_SE"
 
-SOURCE_CODE_PATH = "minusLang.in"
+ROW_COUNTER = 1
+
+def log(*data):
+    print(data)
 
 
 def process_rules():
@@ -43,27 +44,35 @@ def init_rules_list(RULES, i, line, lines):
     temp = list()
     state = "left"
     right_temp = list()
+
     while True:
+        # end of file
         if line == "":
             break
 
         log(line)
 
+        # actions starts after this token
         if lines[i] == "{":
             state = "right"
 
+        # actions end with this token
         elif lines[i] == "}":
+
+
             temp.append([i for i in right_temp])
             log(temp)
+
             log()
             state = "left"
             RULES.append([i for i in temp])
-            # temp.clear()
             right_temp.clear()
             temp.clear()
 
+        # current state + input
         elif state == "left":
 
+            # s = current state
             try:
                 s = re.search('<(.+?)>', line).group(1)
             except AttributeError:
@@ -73,22 +82,99 @@ def init_rules_list(RULES, i, line, lines):
 
             temp.append(s)
 
+            # pointer = input
             pointer = line[line.find(">") + 1:]
 
+            print(pointer)
+            log(pointer)
             for j, r in enumerate(REGEX_LIST):
                 if pointer.__contains__(str(r[0])):
-                    log(r[0])
+                    # log(r[0])
                     pointer = pointer.replace(r[0], "(" + str(r[1]) + ")")
-                    log(pointer)
+                    # log(pointer)
+
+            # regex correction
+            # if not escaped, regex errors occur
+            new_pointer = ""
+            for token in pointer:
+                if token in ("/", "+", "?", ".", "\"", "[", "]", "^"):
+                    token = "\\" + token
+                    # print(token)
+
+
+
+                new_pointer += token
+
+            new_pointer = new_pointer.replace("\_", " ")
+
+            novi = ""
+            #
+            # for nptr in list(new_pointer):
+            #     nptr = str(nptr)
+            #     print(nptr)
+            #     if nptr.isalnum():
+            #         print("da")
+            #         novi += "[" + nptr + "]"
+            #     else:
+            #         novi += nptr
+
+            novi = ""
+
+            for num, target in enumerate(list(new_pointer)):
+                target = str(target)
+                print(target)
+
+                if num == 0 and target.isalnum():
+                    print("\t", 1)
+                    novi += "[" + target + "]"
+
+                elif target.isalnum() and new_pointer[num - 1] != "\\":
+                    print("\t", 2)
+                    novi += "[" + target + "]"
+
+                else:
+                    print("\t", 3)
+                    novi += target
+
+            print(novi)
+
+            print(novi)
+
+            new_pointer = novi
+
+            # s1 = new_pointer
+            # pattern = "[a-zA-Z0-9]{2,}"
+            # for match in re.finditer(pattern, s1):
+            #     s = match.start()
+            #     e = match.end()
+            #     print('String match "%s" at %d:%d' % (s1[s:e], s, e))
+            #
+            #     s1 = s1[:s] + "[" + s1[s:e] + "]" + s1[e:]
+            #
+            # print(s1)
+            #
+            # new_pointer = s1
+
+            print(new_pointer)
+            log(new_pointer)
+
+            # import tkinter as tk
+            # from tkinter import filedialog
+            #
+            # root = tk.Tk()
+            # root.withdraw()
+            #
+            # file_path = filedialog.askopenfilename()
+
+            pointer = new_pointer
 
             temp.append(pointer)
 
-
-
+        # actions
         elif state == "right":
             right_temp.append(line)
-            # temp.append(line)
 
+        # error handling
         else:
             print("error while parsing input")
             import sys
@@ -99,8 +185,7 @@ def init_rules_list(RULES, i, line, lines):
     # ovo ne zelimo jer se valjda izvrsavaju po redu pravila
     # RULES.sort(key=lambda x: x[0])
 
-
-
+    [print(r[1]) for r in RULES]
 
     return temp
 
@@ -190,104 +275,152 @@ def print_rules():
     print(INITIAL_STATE)
 
 
-import sys
+def print_source_code():
+    print("\n+++source code+++")
+    [print(token) for token in open(SOURCE_CODE_PATH).readlines()]
+    print("\n+++source code end+++")
+
+
 if __name__ == '__main__':
     process_rules()
 
     print_rules()
 
-    print("\n+++source code+++")
-    [print(token) for token in open(SOURCE_CODE_PATH).readlines()]
-    print("\n+++source code end+++")
+    print_source_code()
 
     current_state = INITIAL_STATE
 
-    for line_number, line in enumerate(open(SOURCE_CODE_PATH).readlines()):
-        log(line_number, line)
-
-        for token_number, token in enumerate(line):
-            log(token_number, token)
-
-    print()
-
-    print_rules()
-
-    for line_number, line in enumerate(open(SOURCE_CODE_PATH).readlines()):
-        log(line_number, line)
-
-        for token_number, token in enumerate(line):
-            log(token_number, token)
-
-    print()
-
-    current_state = INITIAL_STATE
-
-    tokens = list()
-    for line in open(SOURCE_CODE_PATH).readlines():
-        for i in list(line):
-            tokens.append(i)
-
+    tokens = "".join([line for line in open(SOURCE_CODE_PATH).readlines()])
 
     print(tokens)
 
-    [print(i) for i in RULES]
+    [print(i[1]) for i in RULES]
 
-    i = 0
-    token = tokens[i]
-    print()
-    # while True:
-    #
-    #     for rule in RULES:
-    #         if current_state == rule[0]:
-    #             print(rule[1])
-    #
-    #             if token == (rule[1])[0]:
-    #                 print(rule)
-    #
-    #     sys.exit()
+    # print()
+    # [print(i[1]) for i in RULES]
 
+    f = open("demo.txt", "a")
+
+
+    # f.write("t_in.append(\"" + INITIAL_STATE + "\")\n")
+    #
+    # for i in RULES:
+    #     # print(i)
+    #     f.write("t_in.append(" + str(i) + ")\n")
+    # # f.write("Now the file has more content!")
+    # f.close()
+
+    print("*********************************************************************************************************")
+
+    OUTPUT = list()
+
+    TTL = 500000
 
 
     while True:
+        print(tokens)
+
+        TTL -= 1
+
+        action_performed = False
+
+
+        # ovo racuna koje ce pravilo primjenit
+        # primjenjuje se pravilo s najduljim matchem
+        # ako ih je vise iste duljine onda se primjenjuje prvi od njih
+        applyable_rules = list()
 
         for rule in RULES:
             if current_state == rule[0]:
-                print(rule)
 
                 if re.match(rule[1], "".join(tokens)):
-                    print(rule)
+                    print("______________________________")
 
-                    try:
-                        print(re.search(rule[1], "".join(tokens)).end())
-                        print("".join(tokens))
-                        print()
-                        tokens = tokens[re.search(rule[1], "".join(tokens)).end():]
-                        print("".join(tokens))
-                    except AttributeError:
-                        print("error while parsing")
-                        import sys
+                    print(re.search(rule[1], tokens))
 
-                        sys.exit()
-                    sys.exit()
+                    applyable_rules.append([rule, re.search(rule[1], tokens).end()])
 
+        max = applyable_rules[0]
 
+        for rule in applyable_rules:
+            print(rule)
 
+            len = rule[1]
 
-        sys.exit()
-                # if re.match(rule[1], str(tokens)):
-                #     print(rule)
-                #
-                # # if re.match():
-                # #     print(rule)
-                # #
-                # # tweets = ["to thine own self coffee be true",
-                # #                "coffee break python",
-                # #                "coffees are awesome",
-                # #                "coffe is cool"]
-                # #
-                # # for tweet in tweets:
-                # #     if re.match("coff*", tweet):
-                # #         print(tweet)
-                #     print(tokens)
-                #     print("".join(tokens))
-                #     sys.exit()
+            if max[1] < rule[1]:
+                max = rule
+
+        print("max", max)
+
+        rule = max[0]
+
+        # rule je najkraci
+
+        print(rule)
+        action_performed = True
+
+        actions = rule[2]
+        print("actions", actions)
+
+        is_go_back_activated = False
+
+        for i in actions:
+            i = str(i)
+            print("action", i)
+
+            if i == "-":
+                print("odbacivanje")
+            elif i.startswith(ENTER_NEW_STATE):
+                i = i.split(" ")
+                current_state = i[1]
+            elif i.startswith(NEW_ROW):
+                ROW_COUNTER += 1
+                print("novi red")
+            elif i.startswith(GO_BACK):
+                i = i.split(" ")
+                print("go back")
+                print(OUTPUT)
+
+                is_go_back_activated = True
+                tokens = tokens[int(i[1]):]
+
+                # sys.exit()
+            else:
+
+                OUTPUT.append(str(i) + " " + str(ROW_COUNTER) + " " + re.search(rule[1], tokens).group(0))
+                print(i, ROW_COUNTER, re.search(rule[1], tokens).group(0))
+
+        if not is_go_back_activated:
+
+            try:
+                print(re.search(rule[1], tokens))
+
+                tokens = tokens[re.search(rule[1], tokens).end():]
+
+            except AttributeError:
+                print("error while parsing")
+                import sys
+
+                sys.exit()
+
+        print("new state", current_state)
+        # print("tokens")
+        # print(tokens)
+
+        if not action_performed:
+            print("no action")
+
+            print(OUTPUT)
+            sys.exit()
+
+        print("*****************************************************************")
+
+        if tokens == "":
+            print("uspjesan kraj")
+            [print(i) for i in OUTPUT]
+            sys.exit()
+
+        if TTL == 0:
+            print("----------------------------- err TTL")
+            print(tokens)
+            sys.exit()
