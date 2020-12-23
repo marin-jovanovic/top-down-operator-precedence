@@ -35,9 +35,6 @@ def process_rules():
 
     temp = init_rules_list(RULES, i, line, lines)
 
-    log(temp)
-    log()
-
 
 def init_rules_list(RULES, i, line, lines):
     global REGEX_LIST
@@ -50,8 +47,6 @@ def init_rules_list(RULES, i, line, lines):
         if line == "":
             break
 
-        log(line)
-
         # actions starts after this token
         if lines[i] == "{":
             state = "right"
@@ -59,11 +54,8 @@ def init_rules_list(RULES, i, line, lines):
         # actions end with this token
         elif lines[i] == "}":
 
-
             temp.append([i for i in right_temp])
-            log(temp)
 
-            log()
             state = "left"
             RULES.append([i for i in temp])
             right_temp.clear()
@@ -85,11 +77,10 @@ def init_rules_list(RULES, i, line, lines):
             # pointer = input
             pointer = line[line.find(">") + 1:]
 
-            print(pointer)
-            log(pointer)
             for j, r in enumerate(REGEX_LIST):
                 if pointer.__contains__(str(r[0])):
-                    # log(r[0])
+                    #
+                    # (r[0])
                     pointer = pointer.replace(r[0], "(" + str(r[1]) + ")")
                     # log(pointer)
 
@@ -108,63 +99,22 @@ def init_rules_list(RULES, i, line, lines):
             new_pointer = new_pointer.replace("\_", " ")
 
             novi = ""
-            #
-            # for nptr in list(new_pointer):
-            #     nptr = str(nptr)
-            #     print(nptr)
-            #     if nptr.isalnum():
-            #         print("da")
-            #         novi += "[" + nptr + "]"
-            #     else:
-            #         novi += nptr
-
-            novi = ""
 
             for num, target in enumerate(list(new_pointer)):
                 target = str(target)
-                print(target)
 
                 if num == 0 and target.isalnum():
-                    print("\t", 1)
                     novi += "[" + target + "]"
 
                 elif target.isalnum() and new_pointer[num - 1] != "\\":
-                    print("\t", 2)
                     novi += "[" + target + "]"
 
                 else:
-                    print("\t", 3)
                     novi += target
 
-            print(novi)
 
-            print(novi)
 
             new_pointer = novi
-
-            # s1 = new_pointer
-            # pattern = "[a-zA-Z0-9]{2,}"
-            # for match in re.finditer(pattern, s1):
-            #     s = match.start()
-            #     e = match.end()
-            #     print('String match "%s" at %d:%d' % (s1[s:e], s, e))
-            #
-            #     s1 = s1[:s] + "[" + s1[s:e] + "]" + s1[e:]
-            #
-            # print(s1)
-            #
-            # new_pointer = s1
-
-            print(new_pointer)
-            log(new_pointer)
-
-            # import tkinter as tk
-            # from tkinter import filedialog
-            #
-            # root = tk.Tk()
-            # root.withdraw()
-            #
-            # file_path = filedialog.askopenfilename()
 
             pointer = new_pointer
 
@@ -182,10 +132,6 @@ def init_rules_list(RULES, i, line, lines):
 
         i += 1
         line = lines[i]
-    # ovo ne zelimo jer se valjda izvrsavaju po redu pravila
-    # RULES.sort(key=lambda x: x[0])
-
-    [print(r[1]) for r in RULES]
 
     return temp
 
@@ -213,14 +159,14 @@ def init_initial_state(line):
         INITIAL_STATE = (line.split(" "))[1]
     except AttributeError:
         print("error while parsing")
-
+        import sys
+        sys.exit()
 
 def init_regex_list(lines):
     global REGEX_LIST
     i = 0
     line = lines[i]
     while not line.startswith("%X "):
-        log(line)
         try:
             s = re.search('{(.+?)}', line).group(1)
         except AttributeError:
@@ -228,8 +174,6 @@ def init_regex_list(lines):
             import sys
             sys.exit()
 
-        log(s)
-        log(line[line.find("}") + 2:])
         REGEX_LIST.append(["{" + s + "}", line[line.find("}") + 2:]])
 
         i += 1
@@ -239,17 +183,13 @@ def init_regex_list(lines):
     NEW_REGEX.append(REGEX_LIST[0])
 
     for raw in REGEX_LIST[1:]:
-        log(raw)
         left = str(raw[0])
         right = str(raw[1])
 
         for j, r in enumerate(NEW_REGEX):
             if right.__contains__(str(r[0])):
-                log(r[0])
                 right = right.replace(r[0], "(" + str(r[1]) + ")")
-                log(right)
 
-        log([left, right])
         NEW_REGEX.append([left, right])
 
     REGEX_LIST = NEW_REGEX
@@ -258,17 +198,6 @@ def init_regex_list(lines):
 
 
 def print_rules():
-    print()
-    print("regex")
-    [print(line) for line in REGEX_LIST]
-    print()
-    print("lexical analyzer states")
-    [print(line) for line in STATES]
-    print()
-    print("lexical token names")
-    [print(line) for line in NAMES]
-    print()
-    print("lexical analyzer rules")
     [print(line) for line in RULES]
     print()
     print("lexical analyzer initial state")
@@ -276,7 +205,7 @@ def print_rules():
 
 
 def print_source_code():
-    print("\n+++source code+++")
+    print("+++source code+++")
     [print(token) for token in open(SOURCE_CODE_PATH).readlines()]
     print("\n+++source code end+++")
 
@@ -284,7 +213,7 @@ def print_source_code():
 if __name__ == '__main__':
     process_rules()
 
-    print_rules()
+    # print_rules()
 
     print_source_code()
 
@@ -292,9 +221,7 @@ if __name__ == '__main__':
 
     tokens = "".join([line for line in open(SOURCE_CODE_PATH).readlines()])
 
-    print(tokens)
 
-    [print(i[1]) for i in RULES]
 
     # print()
     # [print(i[1]) for i in RULES]
@@ -310,6 +237,10 @@ if __name__ == '__main__':
     # # f.write("Now the file has more content!")
     # f.close()
 
+
+    print_rules()
+
+    sys.exit()
     print("*********************************************************************************************************")
 
     OUTPUT = list()
