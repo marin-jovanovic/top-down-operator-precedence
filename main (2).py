@@ -198,7 +198,7 @@ for iterator in RULES:
         #
         #     elif input_raw[iterator_1] != "\\":
         #         state_of_brackets += 1
-    
+
         #         print("zagrada")
         #         t_0 = ""
         #
