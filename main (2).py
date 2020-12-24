@@ -8,6 +8,7 @@ RULES = list()
 INITIAL_STATE = list()
 
 
+# citanje iz .lan datoteke
 def load_language():
     global REGEX, RULES, INITIAL_STATE
 
@@ -51,6 +52,7 @@ def load_language():
             RULES.append(line)
 
 
+# extractanje da sve bude u rules
 def restruct_rules():
     global RULES
     # put @RULES in list
@@ -133,175 +135,30 @@ def insert_regex():
         new_rules_list.append([rule[0], pointer, rule[2]])
     RULES = new_rules_list
 
+if __name__ == '__main__':
 
-load_language()
+    load_language()
 
-restruct_rules()
+    restruct_rules()
 
-# ['S_komentar', '{sviZnakovi}', ['-']]
-# ->
-# ['S_komentar', '(a|b|c)...', ['-']]
-insert_regex()
+    # ['S_komentar', '{sviZnakovi}', ['-']]
+    # ->
+    # ['S_komentar', '(a|b|c)...', ['-']]
+    insert_regex()
 
-[print(i) for i in RULES]
-print()
-[print(i[1]) for i in RULES]
-print()
-# print(TOKENS)
+    [print(i) for i in RULES]
 
-# print("-----")
-
-
-
-
-for iterator in RULES:
-
-    input_raw = iterator[1]
-    print(input_raw)
-
-    splited_regexes = list()
-    state_of_brackets = 0
-
-    t_0 = ""
-
-    for iterator_1, token in enumerate(input_raw):
-        print(iterator_1, token)
-
-        if token == "|":
-
-            if state_of_brackets == 0:
-                if iterator_1 == 0:
-                    pass
-
-                if input_raw[iterator_1 - 1] == "\\":
-                    print("ovo je znak")
-
-                else:
-
-                    splited_regexes.append(t_0)
-                    t_0 = ""
-                    print("ovdje podijeli")
-
-        else:
-            t_0 += token
-
-    splited_regexes.append(t_0)
-
-    print(splited_regexes)
-
-
-        # elif token == "(":
-        #     if iterator_1 == 0:
-        #         state_of_brackets += 1
-        #         print("zagrada")
-        #         t_0 = ""
-        #
-        #     elif input_raw[iterator_1] != "\\":
-        #         state_of_brackets += 1
-
-        #         print("zagrada")
-        #         t_0 = ""
-        #
-        # elif token == ")":
-        #     if iterator_1 == 0:
-        #         pass
-        #
-        #     elif input_raw[iterator_1] != "\\":
-        #         state_of_brackets -= 1
-        #         print("zagrada")
-
-
-
-        #
-        # if state_of_brackets == 0:
-        #     print("na nuli smo")
-        #     print(t_0)
-
-
-    # new_input = list()
-    #
-    # state_of_brackets = 0
-    #
-    # t_0
-    # t_0 = ""
-    #
-    # for iterator_1, token in enumerate(input):
-    #     print(token)
-    #
-    #     if token == "(":
-    #         if iterator_1 == 0:
-    #             state_of_brackets += 1
-    #             print("zagrada")
-    #             t_0 = ""
-    #
-    #         elif input[iterator_1] != "\\":
-    #             state_of_brackets += 1
-    #             print("zagrada")
-    #             t_0 = ""
-    #
-    #     elif token == ")":
-    #         if iterator_1 == 0:
-    #             pass
-    #
-    #         elif input[iterator_1] != "\\":
-    #             state_of_brackets -= 1
-    #             print("zagrada")
-    #
-    #
-    #
-    #
-    #     if state_of_brackets == 0:
-    #         print("na nuli smo")
-    #         print(t_0)
-
-
-    # print(new_input)
     print()
 
+    for rule in RULES[:3]:
+        init_state = rule[0]
+        # input =
+        inputs = rule[1].split("|")
+        actions = rule[2]
 
+        for i_0 in inputs:
+            line = init_state + ", " + i_0 + " -> " + str(actions)
 
-
-
-
-import sys
-sys.exit()
-
-
-t_0 = ""
-current_state = INITIAL_STATE
-TTL = 10
-
-while True:
-    TTL -= 1
-    if TTL == 0:
-        break
-
-    for rule in RULES:
-
-        state = rule[0]
-
-        if current_state == state:
-            print(state)
-
-
-
-
-    break
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            print(line)
 
 

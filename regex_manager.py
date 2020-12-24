@@ -2,6 +2,9 @@ OUTPUT = list()
 ROW = 1
 
 # \_ je razmak
+# ['S_pocetno', 'a|ab', ['-']]
+
+
 # ['S_pocetno', '\\t|\\_', ['-']]
 # ['S_pocetno', '\\n', ['-', 'NOVI_REDAK']]
 # ['S_pocetno', '#\\|', ['-', 'UDJI_U_STANJE S_komentar']]
@@ -54,13 +57,6 @@ def driver():
             print("novi redak")
 
 
-
-
-# ['S_pocetno', '((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|
-# 0x((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)*)', ['OPERAND']]
-
-# if source.startswith("(")
-
 def split_by_separator(v_regex):
 
     state_of_brackets = 0
@@ -106,7 +102,8 @@ def split_by_separator(v_regex):
     # [print(i) for i in ret]
     return ret
 
-def run_test():
+
+def test_split_by_separator():
 
     split_by_separator("(a|\(|b|c)d|x")
 
@@ -129,75 +126,167 @@ def run_test():
 
     print("test", t)
 
-s = "(ab\((d)c(deed\)))f)dew(ef)d(e)(ede)"
+
+# input: ((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|
+# output: 0|1|2|3|4|5|6|7|8|9
+# provjeri prije jel postoji zagrada
+def extract_deepest_bracket_content(s):
+
+    state_of_brackets = 0
+    deepest_left_bracket_index = 0
+    deepest_left_bracket_depth = 0
+
+    for i_0, token in enumerate(s):
+
+            if token == "(":
+                if i_0 == 0:
+                    state_of_brackets += 1
+
+                    if state_of_brackets > deepest_left_bracket_depth:
+                        deepest_left_bracket_depth = state_of_brackets
+                        deepest_left_bracket_index = i_0
+
+                elif s[i_0 - 1] != "\\":
+                    state_of_brackets += 1
+
+                    if state_of_brackets > deepest_left_bracket_depth:
+                        deepest_left_bracket_depth = state_of_brackets
+                        deepest_left_bracket_index = i_0
 
 
-'''
-(
-    a
-    b
-    \(
-    (
-        d
-    )
-    c
-    (
-        deed\)
-    )
-)
-f
-)
-dew
-(ef)
-d
-(e)
-(ede)
-'''
+                # # znaci da je \(
+                # else:
+                #     print(token)
 
-t_0 = ""
-state_of_brackets = 0
-deepest_left_bracket_index = 0
-deepest_left_bracket_depth = 0
+            elif token == ")":
+                # ovo se nikad nece ostvarit
+                if i_0 == 0:
+                    state_of_brackets -= 1
 
-for i_0, token in enumerate(s):
+                elif s[i_0 - 1] != "\\":
+                    state_of_brackets -= 1
 
-        if token == "(":
-            if i_0 == 0:
-                state_of_brackets += 1
+                # # znaci da je \)
+                # else:
+                #     print(token)
 
-                if state_of_brackets > deepest_left_bracket_depth:
-                    deepest_left_bracket_depth = state_of_brackets
-                    deepest_left_bracket_index = i_0
+            # else:
+            #     print(token)
 
-            elif s[i_0 - 1] != "\\":
-                state_of_brackets += 1
+    # print(deepest_left_bracket_index)
+    # print(deepest_left_bracket_depth)
 
-                if state_of_brackets > deepest_left_bracket_depth:
-                    deepest_left_bracket_depth = state_of_brackets
-                    deepest_left_bracket_index = i_0
+    t_0 = ""
+
+    for i_0, token in enumerate(s[deepest_left_bracket_index:]):
+            t_0 += token
+
+            if token == ")":
+                # ovo se nikad nece ostvarit
+                if i_0 == 0:
+                    state_of_brackets -= 1
+                    t_0 = t_0[1:-1]
+                    break
+                    # print("kraj")
+
+                elif s[i_0 - 1] != "\\":
+                    state_of_brackets -= 1
+                    t_0 = t_0[1:-1]
+                    break
+                    # print("kraj")
+
+                # # znaci da je \)
+                # else:
+                #     print(token)
+
+            # else:
+            #     print(token)
+
+    print("extracted: *" + t_0 + "*")
+
+    return t_0
 
 
-            # znaci da je \(
-            else:
-                print(token)
 
-        elif token == ")":
-            # ovo se nikad nece ostvarit
-            if i_0 == 0:
-                state_of_brackets -= 1
+def test_extract_deepest_bracket_content():
 
-            elif s[i_0 - 1] != "\\":
-                state_of_brackets -= 1
+    t = 0
+    if extract_deepest_bracket_content("(a|\(|b|c)d|x") == "a|\(|b|c":
+        print("test passed")
+        t += 1
 
-            # znaci da je \)
-            else:
-                print(token)
+    if extract_deepest_bracket_content("(a|\(|b|c)d|x|e") == "a|\(|b|c":
+        print("test passed")
 
-        else:
-            print(token)
+        t += 1
 
-print(deepest_left_bracket_index)
-print(deepest_left_bracket_depth)
+    if extract_deepest_bracket_content("(a|\(|b|c)d|x|e|(d|f)") == "a|\(|b|c":
+        print("test passed")
+
+        t += 1
+
+    if extract_deepest_bracket_content("(a|\(|b|c)d|\||x|e|(d|f)") == "a|\(|b|c":
+        print("test passed")
+
+        t += 1
+
+    # 5
+    if extract_deepest_bracket_content("a|\(|b|c") == "a|\(|b|c":
+        print("test passed")
+        t += 1
+
+    # 5
+    if extract_deepest_bracket_content("a|\((|b(D(E|(F)))|c)") == "F":
+        print("test passed")
+        t += 1
+
+    print("test", t)
+
+# extract_deepest_bracket_content("((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|"
+#     "# 0x((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)*)")
+
+
+def check_len_regex(s):
+    pass
+
+
+def test_check_len_regex():
+    t = 0
+    if check_len_regex("0|1|2|3|4|5|6|7|8|9") == ["1", ""]:
+        print("test passed")
+        t += 1
+
+    if check_len_regex("0|1|2|3|4|5|6|7|48|9") == ["2", "48"]:
+        print("test passed")
+
+        t += 1
+
+    if check_len_regex("0|1|2|3|4|5|6[abc]|7|48|9") == "a|\(|b|c":
+        print("test passed")
+
+        t += 1
+
+    if check_len_regex("(a|\(|b|c)d|\||x|e|(d|f)") == "a|\(|b|c":
+        print("test passed")
+
+        t += 1
+
+    # 5
+    if check_len_regex("a|\(|b|c") == "a|\(|b|c":
+        print("test passed")
+        t += 1
+
+    # 5
+    if check_len_regex("a|\((|b(D(E|(F)))|c)") == "F":
+        print("test passed")
+        t += 1
+
+    print("test", t)
+
+
+
+
+# test_extract_deepest_bracket_content()
 
 # r1 = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 # r2 = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
