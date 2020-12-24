@@ -1,19 +1,19 @@
 import re
-LANGUAGE = [line[:-1] for line in open("minusLang.lan").readlines()]
-TOKENS = "".join([line for line in open("minusLang.in").readlines()])
+LANGUAGE = [line[:-1] for line in open("test_cases/minusLang.lan").readlines()]
+TOKENS = "".join([line for line in open("test_cases/minusLang.in").readlines()])
 
 
 REGEX = list()
 RULES = list()
 INITIAL_STATE = list()
-
+STATES = list()
 
 # citanje iz .lan datoteke
 def load_language():
     global REGEX, RULES, INITIAL_STATE
 
     state = 0
-    for line in open("minusLang.lan").readlines():
+    for line in open("test_cases/minusLang.lan").readlines():
         line = str(line[:-1])
 
         if state == 0:
@@ -53,7 +53,7 @@ def load_language():
 
 
 # extractanje da sve bude u rules
-def restruct_rules():
+def restructure_rules():
     global RULES
     # put @RULES in list
     new_rules_list = list()
@@ -139,7 +139,7 @@ if __name__ == '__main__':
 
     load_language()
 
-    restruct_rules()
+    restructure_rules()
 
     # ['S_komentar', '{sviZnakovi}', ['-']]
     # ->
@@ -150,15 +150,32 @@ if __name__ == '__main__':
 
     print()
 
-    for rule in RULES[:3]:
+    [print(i) for i in REGEX]
+
+    from regex_manager import regex_driver
+
+    # print("s = [")
+
+    for rule in RULES:
         init_state = rule[0]
-        # input =
-        inputs = rule[1].split("|")
+        inputs = regex_driver(rule[1])
+        # inputs = rule[1].split("|")
         actions = rule[2]
+
+        # print("\"" + rule[1] + "\",")
+
+        # continue
+
+
 
         for i_0 in inputs:
             line = init_state + ", " + i_0 + " -> " + str(actions)
 
             print(line)
+
+
+
+
+
 
 

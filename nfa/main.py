@@ -1,4 +1,4 @@
-import regex_manager
+import constants
 
 
 # 1. line
@@ -16,13 +16,13 @@ def get_input():
     input_lists = input().split("|")
     for input_stream in input_lists:
         input_tokens = input_stream.split(",")
-        regex_manager.INPUT_LISTS.append(input_tokens)
+        constants.INPUT_LISTS.append(input_tokens)
 
     # constants.STATES.append(input().split(","))
     temp = input()
-    regex_manager.INPUT_SYMBOLS.append(input().split(","))
-    regex_manager.FINAL_STATES.append(input().split(","))
-    regex_manager.INITIAL_STATE = input()
+    constants.INPUT_SYMBOLS.append(input().split(","))
+    constants.FINAL_STATES.append(input().split(","))
+    constants.INITIAL_STATE = input()
 
     while True:
         try:
@@ -31,7 +31,7 @@ def get_input():
             raw_data = transition_function.split("->")
             raw_data2 = raw_data[0].split(",")
 
-            regex_manager.TRANSITIONS.append(regex_manager.Transition_function(raw_data2[0], raw_data2[1], raw_data[1]))
+            constants.TRANSITIONS.append(constants.Transition_function(raw_data2[0], raw_data2[1], raw_data[1]))
 
         except:
             break
@@ -42,7 +42,7 @@ def get_input():
 def get_new_states(current_state, current_input):
     new_states = set()
 
-    for transition in regex_manager.TRANSITIONS:
+    for transition in constants.TRANSITIONS:
         if current_state == transition.curr_state and current_input == transition.input_data:
             for state in transition.new_states:
                 if state != "#":
@@ -70,7 +70,7 @@ def get_new_states_for_all_current_states(current_states, current_input):
 def get_new_e_states(current_state):
     new_states = set()
 
-    for transition in regex_manager.TRANSITIONS:
+    for transition in constants.TRANSITIONS:
         if current_state == transition.curr_state and transition.input_data == "$":
             for state in transition.new_states:
                 if state != "#":
@@ -106,7 +106,7 @@ def path_configure(path, current_states):
 
 def get_paths(input_list):
     current_states = set()
-    current_states.add(regex_manager.INITIAL_STATE)
+    current_states.add(constants.INITIAL_STATE)
 
     current_states = get_all_new_e_states(current_states)
 
@@ -138,18 +138,18 @@ def driver(data):
 
     for input_stream in input_lists:
         input_tokens = input_stream.split(",")
-        regex_manager.INPUT_LISTS.append(input_tokens)
+        constants.INPUT_LISTS.append(input_tokens)
 
     # constants.STATES.append(data[0].split(","))
     data.pop(0)
 
-    regex_manager.INPUT_SYMBOLS.append(data[0].split(","))
+    constants.INPUT_SYMBOLS.append(data[0].split(","))
     data.pop(0)
 
-    regex_manager.FINAL_STATES.append(data[0].split(","))
+    constants.FINAL_STATES.append(data[0].split(","))
     data.pop(0)
 
-    regex_manager.INITIAL_STATE = data[0]
+    constants.INITIAL_STATE = data[0]
     data.pop(0)
 
     while True:
@@ -161,13 +161,13 @@ def driver(data):
             raw_data = transition_function.split("->")
             raw_data2 = raw_data[0].split(",")
 
-            regex_manager.TRANSITIONS.append(regex_manager.Transition_function(raw_data2[0], raw_data2[1], raw_data[1]))
+            constants.TRANSITIONS.append(constants.Transition_function(raw_data2[0], raw_data2[1], raw_data[1]))
 
         except:
             break
 
     paths = list()
-    for input_list in regex_manager.INPUT_LISTS:
+    for input_list in constants.INPUT_LISTS:
         paths.append(get_paths(input_list))
 
         print(get_paths(input_list))
@@ -183,24 +183,27 @@ if __name__ == '__main__':
     #  5. redak: Početno stanje.
     #  6. redak i svi ostali retci: Funkcija prijelaza u formatu
 
-    # t_in = list()
-    # t_in.append("a,pnp,a|pnp,lab2|pnp,a|pnp,lab2,utr,utr")
-    # t_in.append("p5,s3,s4,st6,stanje1,stanje2") sva stanja
-    # t_in.append("a,lab2,pnp,utr") # svi inputi
-    # t_in.append("p5") # prihvatljivo
-    # t_in.append("stanje1") # pocetno
-    # t_in.append("s3,a->stanje2")
-    # t_in.append("s3,lab2->p5,s4")
-    # t_in.append("s4,$->st6")
-    # t_in.append("s4,utr->p5,s3")
-    # t_in.append("stanje1,a->stanje2")
-    # t_in.append("stanje1,pnp->s3")
-    # t_in.append("stanje2,$->st6")
-    # t_in.append("stanje2,a->#")
+    t_in = list()
+    t_in.append("a,pnp,a|pnp,lab2|pnp,a|pnp,lab2,utr,utr")
+    t_in.append("p5,s3,s4,st6,stanje1,stanje2") #sva stanja
+    t_in.append("a,lab2,pnp,utr") # svi inputi
+    t_in.append("p5") # prihvatljivo
+    t_in.append("stanje1") # pocetno
+    t_in.append("s3,a->stanje2")
+    t_in.append("s3,lab2->p5,s4")
+    t_in.append("s4,$->st6")
+    t_in.append("s4,utr->p5,s3")
+    t_in.append("stanje1,a->stanje2")
+    t_in.append("stanje1,pnp->s3")
+    t_in.append("stanje2,$->st6")
+    t_in.append("stanje2,a->#")
+
+    driver(t_in)
+
+
+    # ###################################################
+    # get_input()
     #
-    # driver(t_in)
-
-    get_input()
-
-    for input_list in regex_manager.INPUT_LISTS:
-        print(get_paths(input_list))
+    # for input_list in constants.INPUT_LISTS:
+    #     print(get_paths(input_list))
+#

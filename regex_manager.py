@@ -25,10 +25,10 @@ ROW = 1
 import sys
 def driver():
     state = "S_pocetno"
-    source = "".join([i for i in open("minusLang.in").readlines()])
+    source = "".join([i for i in open("test_cases/minusLang.in").readlines()])
     print(source)
 
-    [print(list(i)) for i in open("minusLang.in").readlines()]
+    [print(list(i)) for i in open("test_cases/minusLang.in").readlines()]
 
     # sys.exit()
 
@@ -57,6 +57,9 @@ def driver():
             print("novi redak")
 
 
+
+# input: a|\|b|c
+# output: [a, \|b, c]
 def split_by_separator(v_regex):
 
     state_of_brackets = 0
@@ -207,7 +210,6 @@ def extract_deepest_bracket_content(s):
     return t_0
 
 
-
 def test_extract_deepest_bracket_content():
 
     t = 0
@@ -285,6 +287,225 @@ def test_check_len_regex():
 
 
 
+def bracket_handler(s):
+    print(s)
+
+    state_of_brackets = 0
+
+    index_start = -1
+    index_end = -1
+    content = ""
+    state = 0
+
+    for i_0, token in enumerate(s):
+
+        if token == "(":
+            if i_0 == 0:
+                state_of_brackets += 1
+
+                if state != 1:
+                    index_start = i_0
+                    state = 1
+
+            elif s[i_0 - 1] != "\\":
+                state_of_brackets += 1
+
+                if state != 1:
+                    index_start = i_0
+                    state = 1
+
+            # # znaci da je \(
+            # else:
+            #     print(token)
+
+        elif token == ")":
+            # ovo se nikad nece ostvarit
+            if i_0 == 0:
+                state_of_brackets -= 1
+
+            elif s[i_0 - 1] != "\\":
+                state_of_brackets -= 1
+
+            if state_of_brackets == 0:
+                index_end = i_0
+                break
+
+            # # znaci da je \)
+            # else:
+            #     print(token)
+
+        # else:
+        #     print(token)
+
+        if state == 1:
+            content += token
+
+    ret = [index_start, index_end, content[1:]]
+
+    print(ret)
+    return ret
+
+
+def test_bracket_handler():
+    t = 0
+    if bracket_handler("(((((a)))))") == [0, 10, "((((a))))"]:
+        print("test passed")
+        t += 1
+
+    if bracket_handler("((abc))") == [0, 6, "(abc)"]:
+        print("test passed")
+
+        t += 1
+
+    if bracket_handler("a(bc)d") == [1, 4, "bc"]:
+        print("test passed")
+
+        t += 1
+
+    print("test", t)
+
+
+
+
+def regex_driver(s):
+    s = [
+        "\\t|\\_",
+        "\\n",
+        "#\|",
+        "\|#",
+        "\\n",
+        "(\\(|\\)|\\{|\\}|\\||\\*|\\\\|\\$|\\t|\\n|\\_|!|\"|#|%|&|\'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|<|=|>|?|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|~)",
+        "((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|0x((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)*)",
+        "\(",
+        "\)",
+        "-",
+        "-(\\t|\\n|\_)*-",
+        "\((\\t|\\n|\_)*-",
+        "\\t|\_",
+        "\\n",
+        "-",
+        "-(\\t|\\n|\_)*-"
+    ]
+
+    for i_0 in s:
+        print(i_0)
+
+        ret = list()
+        t_0 = ""
+        for i_1, token_1 in enumerate(i_0):
+            # token_1 = i_0[i_1]
+            t_0 += token_1
+
+            if token_1 == "|":
+                if i_1 == 0:
+                    t_0 = t_0[:-1]
+                    ret.append(t_0)
+                    t_0 = ""
+
+                elif i_0[i_1 - 1] != "\\":
+                    t_0 = t_0[:-1]
+                    ret.append(t_0)
+                    t_0 = ""
+
+                else:
+                    pass
+
+            elif token_1 == "(":
+                if i_1 == 0:
+                    print("driver")
+
+                elif i_0[i_1 - 1] != "\\":
+                    print("driver")
+
+                else:
+                    pass
+
+        ret.append(t_0)
+
+        print("ret", ret)
+
+
+    return ["todo", "todo"]
+
+
+
+if __name__ == '__main__':
+    # test_bracket_handler()
+    regex_driver("c")
+
+    # for i in "0|1|2|3|4|5|6|7|8|9|a|b|c|d|e|f|A|B|C|D|E|F".split("|"):
+    #     print("S_4, " + str(i) + " -> S_4")
+
+# S_0, 0 -> S_1
+# S_0, 1 -> S_1
+# S_0, 2 -> S_1
+# S_0, 3 -> S_1
+# S_0, 4 -> S_1
+# S_0, 5 -> S_1
+# S_0, 6 -> S_1
+# S_0, 7 -> S_1
+# S_0, 8 -> S_1
+# S_0, 9 -> S_1
+
+# S_1, 0 -> S_1
+# S_1, 1 -> S_1
+# S_1, 2 -> S_1
+# S_1, 3 -> S_1
+# S_1, 4 -> S_1
+# S_1, 5 -> S_1
+# S_1, 6 -> S_1
+# S_1, 7 -> S_1
+# S_1, 8 -> S_1
+# S_1, 9 -> S_1
+
+# S_1, S_4 prihvatljivo
+
+# S_0, 0 -> S_2
+# S_2, x -> S_3
+# S_3, 0 -> S_4
+# S_3, 1 -> S_4
+# S_3, 2 -> S_4
+# S_3, 3 -> S_4
+# S_3, 4 -> S_4
+# S_3, 5 -> S_4
+# S_3, 6 -> S_4
+# S_3, 7 -> S_4
+# S_3, 8 -> S_4
+# S_3, 9 -> S_4
+# S_3, a -> S_4
+# S_3, b -> S_4
+# S_3, c -> S_4
+# S_3, d -> S_4
+# S_3, e -> S_4
+# S_3, f -> S_4
+# S_3, A -> S_4
+# S_3, B -> S_4
+# S_3, C -> S_4
+# S_3, D -> S_4
+# S_3, E -> S_4
+# S_3, F -> S_4
+# S_4, 0 -> S_4
+# S_4, 1 -> S_4
+# S_4, 2 -> S_4
+# S_4, 3 -> S_4
+# S_4, 4 -> S_4
+# S_4, 5 -> S_4
+# S_4, 6 -> S_4
+# S_4, 7 -> S_4
+# S_4, 8 -> S_4
+# S_4, 9 -> S_4
+# S_4, a -> S_4
+# S_4, b -> S_4
+# S_4, c -> S_4
+# S_4, d -> S_4
+# S_4, e -> S_4
+# S_4, f -> S_4
+# S_4, A -> S_4
+# S_4, B -> S_4
+# S_4, C -> S_4
+# S_4, D -> S_4
+# S_4, E -> S_4
+# S_4, F -> S_4
 
 # test_extract_deepest_bracket_content()
 
