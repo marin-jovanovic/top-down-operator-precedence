@@ -66,20 +66,20 @@ def split_by_separator(v_regex):
 
     t_0 = ""
 
-    print(v_regex)
+    # print(v_regex)
     ret = list()
 
     for iterator_1, token in enumerate(v_regex):
-        print(token)
+        # print(token)
         t_0 += token
         if token == "(":
             if iterator_1 == 0:
                 state_of_brackets += 1
-                print("zagrada")
+                # print("zagrada")
 
             elif v_regex[iterator_1 - 1] != "\\":
                 state_of_brackets += 1
-                print("zagrada")
+                # print("zagrada")
 
         elif token == ")":
             if iterator_1 == 0:
@@ -87,21 +87,21 @@ def split_by_separator(v_regex):
 
             elif v_regex[iterator_1 - 1] != "\\":
                 state_of_brackets -= 1
-                print("zagrada")
+                # print("zagrada")
 
         elif token == "|":
 
             if state_of_brackets == 0 and v_regex[iterator_1 - 1] != "\\":
 
                 ret.append("".join([i for i in t_0[:-1]]))
-                print("dodajem", "".join([i for i in t_0[:-1]]))
-                print("split")
+                # print("dodajem", "".join([i for i in t_0[:-1]]))
+                # print("split")
                 t_0 = ""
         else:
             pass
 
     ret.append("".join([i for i in t_0]))
-    print("ret", ret)
+    # print("ret", ret)
     # [print(i) for i in ret]
     return ret
 
@@ -286,9 +286,9 @@ def test_check_len_regex():
     print("test", t)
 
 
-
+#     if bracket_handler("a(bc)d") == [1, 4, "bc"]:
 def bracket_handler(s):
-    print(s)
+    # print(s)
 
     state_of_brackets = 0
 
@@ -342,7 +342,7 @@ def bracket_handler(s):
 
     ret = [index_start, index_end, content[1:]]
 
-    print(ret)
+    print("bracket_handler", ret)
     return ret
 
 
@@ -365,9 +365,98 @@ def test_bracket_handler():
     print("test", t)
 
 
+def is_separator_present(s):
+    for i_0, token_0 in enumerate(s):
+
+        if token_0 == "|":
+
+            if i_0 == 0:
+                return True
+
+            elif s[i_0 - 1] != "\\":
+                return True
+
+    return False
 
 
+# dynamic prog
+# ret = list()
 def regex_driver(s):
+    # ret = list()
+    print(["input", s])
+
+    # sr: micanje zagrade s pocetka i kraja
+
+    t_0 = bracket_handler(s)
+    if t_0[0] == 0 and t_0[1] == len(s) - 1:
+        t_1 = s[t_0[0] + 1: t_0[1]]
+        print(["rekurzija", t_1])
+        regex_driver(t_1)
+
+
+    ret = split_by_separator(s)
+
+    new_ret = list()
+    for i_1, token_1 in enumerate(ret):
+
+        if is_separator_present(token_1):
+            print(["handle this", token_1])
+            new_ret.append(token_1)
+
+        else:
+            new_ret.append(token_1)
+
+    # t_0 = ""
+    # for i_1, token_1 in enumerate(s):
+    #     t_0 += token_1
+    #
+    #     if token_1 == "|":
+    #         if i_1 == 0:
+    #             t_0 = t_0[:-1]
+    #             ret.append(t_0)
+    #             t_0 = ""
+    #
+    #         elif s[i_1 - 1] != "\\":
+    #             t_0 = t_0[:-1]
+    #             ret.append(t_0)
+    #             t_0 = ""
+    #
+    #         else:
+    #             pass
+    #
+    #     elif token_1 == "(":
+    #         if i_1 == 0:
+    #             print("driver")
+    #             t_1 = bracket_handler(s[i_1:])
+    #             t_2 = s[i_1 + t_1[0] + 1: i_1 + t_1[1]]
+    #             print(t_2)
+    #             # return regex_driver(t_2, ret)
+    #
+    #
+    #
+    #         elif s[i_1 - 1] != "\\":
+    #             print("driver")
+    #             t_1 = bracket_handler(s[i_1:])
+    #             t_2 = s[i_1 + t_1[0] + 1: i_1 + t_1[1]]
+    #             print(t_2)
+    #             # return regex_driver(t_2, ret)
+    #
+    #
+    #         else:
+    #             pass
+    #
+    # ret.append(t_0)
+
+    # print("ret", ret)
+    print("ret")
+    [print([i]) for i in new_ret]
+
+    return new_ret
+
+
+
+if __name__ == '__main__':
+
     s = [
         "\\t|\\_",
         "\\n",
@@ -388,53 +477,14 @@ def regex_driver(s):
     ]
 
     for i_0 in s:
-        print(i_0)
+        c = regex_driver(i_0)
+        print()
 
-        ret = list()
-        t_0 = ""
-        for i_1, token_1 in enumerate(i_0):
-            # token_1 = i_0[i_1]
-            t_0 += token_1
+# test_bracket_handler()
+# regex_driver("c")
 
-            if token_1 == "|":
-                if i_1 == 0:
-                    t_0 = t_0[:-1]
-                    ret.append(t_0)
-                    t_0 = ""
-
-                elif i_0[i_1 - 1] != "\\":
-                    t_0 = t_0[:-1]
-                    ret.append(t_0)
-                    t_0 = ""
-
-                else:
-                    pass
-
-            elif token_1 == "(":
-                if i_1 == 0:
-                    print("driver")
-
-                elif i_0[i_1 - 1] != "\\":
-                    print("driver")
-
-                else:
-                    pass
-
-        ret.append(t_0)
-
-        print("ret", ret)
-
-
-    return ["todo", "todo"]
-
-
-
-if __name__ == '__main__':
-    # test_bracket_handler()
-    regex_driver("c")
-
-    # for i in "0|1|2|3|4|5|6|7|8|9|a|b|c|d|e|f|A|B|C|D|E|F".split("|"):
-    #     print("S_4, " + str(i) + " -> S_4")
+# for i in "0|1|2|3|4|5|6|7|8|9|a|b|c|d|e|f|A|B|C|D|E|F".split("|"):
+#     print("S_4, " + str(i) + " -> S_4")
 
 # S_0, 0 -> S_1
 # S_0, 1 -> S_1
