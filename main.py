@@ -154,28 +154,18 @@ if __name__ == '__main__':
 
     from regex_manager import regex_driver
 
-    # print("s = [")
+    print()
+
 
     for rule in RULES:
         init_state = rule[0]
-        inputs = regex_driver(rule[1])
-        # inputs = rule[1].split("|")
+        # inputs = regex_driver(rule[1])
         actions = rule[2]
 
-        # print("\"" + rule[1] + "\",")
+        print([rule[1]])
 
-        # continue
-
-
-
-        for i_0 in inputs:
-            line = init_state + ", " + i_0 + " -> " + str(actions)
-
-            print(line)
-
-
-
-
-
-
-
+        # todo
+        # for i_0 in inputs:
+        #     line = init_state + ", " + i_0 + " -> " + str(actions)
+        #
+        #     print(line)

@@ -1,67 +1,29 @@
 OUTPUT = list()
 ROW = 1
 
-# \_ je razmak
-# ['S_pocetno', 'a|ab', ['-']]
 
+# vraca true ako je ovo |
+# vraca false ako je ovo znak \|
+def is_escaped_at_index(s, index):
 
-# ['S_pocetno', '\\t|\\_', ['-']]
-# ['S_pocetno', '\\n', ['-', 'NOVI_REDAK']]
-# ['S_pocetno', '#\\|', ['-', 'UDJI_U_STANJE S_komentar']]
-# ['S_komentar', '\\|#', ['-', 'UDJI_U_STANJE S_pocetno']]
-# ['S_komentar', '\\n', ['-', 'NOVI_REDAK']]
-# ['S_komentar', '(\\(|\\)|\\{|\\}|\\||\\*|\\\\|\\$|\\t|\\n|\\_|!|"|#|%|&|\'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|<|=|>|?|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|~)', ['-']]
-# ['S_pocetno', '((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|0x((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)*)', ['OPERAND']]
-# ['S_pocetno', '\\(', ['LIJEVA_ZAGRADA']]
-# ['S_pocetno', '\\)', ['DESNA_ZAGRADA']]
-# ['S_pocetno', '-', ['OP_MINUS']]
-# ['S_pocetno', '-(\\t|\\n|\\_)*-', ['OP_MINUS', 'UDJI_U_STANJE S_unarni', 'VRATI_SE 1']]
-# ['S_pocetno', '\\((\\t|\\n|\\_)*-', ['LIJEVA_ZAGRADA', 'UDJI_U_STANJE S_unarni', 'VRATI_SE 1']]
-# ['S_unarni', '\\t|\\_', ['-']]
-# ['S_unarni', '\\n', ['-', 'NOVI_REDAK']]
-# ['S_unarni', '-', ['UMINUS', 'UDJI_U_STANJE S_pocetno']]
-# ['S_unarni', '-(\\t|\\n|\\_)*-', ['UMINUS', 'VRATI_SE 1']]
+    # sve ispred indexa
+    s = s[:index]
 
-import sys
-def driver():
-    state = "S_pocetno"
-    source = "".join([i for i in open("test_cases/minusLang.in").readlines()])
-    print(source)
+    count = 0
+    for i_0 in reversed(s):
+        if i_0 != "\\":
+            break
+        else:
+            count += 1
 
-    [print(list(i)) for i in open("test_cases/minusLang.in").readlines()]
-
-    # sys.exit()
-
-    if state == "S_pocetno":
-        if source.startswith(("\t", " ")):
-            print(1)
-            pass
-
-        if source.startswith("\n"):
-            print(2)
-            print("novi redak")
-
-        if source.startswith("#|"):
-            print(3)
-            state = "S_komentar"
-            source = source[2:]
-
-    if state == "S_komentar":
-        if source.startswith("|#"):
-            print(4)
-            state = "S_pocetno"
-            source = source[2:]
-
-        if source.startswith("\n"):
-            print(5)
-            print("novi redak")
-
+    return not (count + 1) % 2 == 0
 
 
 # input: a|\|b|c
 # output: [a, \|b, c]
 def split_by_separator(v_regex):
-
+    # print(["input", v_regex])
+    # print(v_regex)
     state_of_brackets = 0
 
     t_0 = ""
@@ -74,65 +36,71 @@ def split_by_separator(v_regex):
             if iterator_1 == 0:
                 state_of_brackets += 1
 
-            elif v_regex[iterator_1 - 1] != "\\":
+            elif is_escaped_at_index(v_regex, iterator_1):
                 state_of_brackets += 1
 
         elif token == ")":
             if iterator_1 == 0:
                 pass
 
-            elif v_regex[iterator_1 - 1] != "\\":
+            elif is_escaped_at_index(v_regex, iterator_1):
                 state_of_brackets -= 1
 
         elif token == "|":
 
-            if state_of_brackets == 0 and v_regex[iterator_1 - 1] != "\\":
+            if state_of_brackets == 0 and is_escaped_at_index(v_regex, iterator_1):
 
                 ret.append("".join([i for i in t_0[:-1]]))
                 t_0 = ""
         else:
             pass
 
-    print([t_0])
     ret.append("".join([i for i in t_0]))
+    # print(ret)
+    # [print(i) for i in ret]
     return ret
 
 
 def test_split_by_separator():
 
-    split_by_separator("(a|\(|b|c)d|x")
+    # a'|'b
+    if split_by_separator("a\\|b") == ["a\\|b"]:
+        print("test pass")
+    print()
 
-    t = 0
-    if split_by_separator("a\|b") == ["a\|b"]:
-        t += 1
+    # a\\ | b
+    if split_by_separator("a\\\\|b") == ["a\\\\", "b"]:
+        print("test pass")
+    print()
 
-    if split_by_separator("a\\|b") == ["a\|b"]:
-        t += 1
-
-    if split_by_separator("a\\\|b") == ["a\|b"]:
-        t += 1
+    # a\\\|b
+    if split_by_separator("a\\\\\\|b") == ["a\\\\\\|b"]:
+        print("test pass")
+    print()
 
     if split_by_separator("a\\\\|b") == ["a\|b"]:
-        t += 1
+        print("test pass")
+    print()
 
-    #
-    # if split_by_separator("(a|\(|b|c)d|x") == ["(a|\(|b|c)d", "x"]:
-    #     t += 1
-    #
-    # if split_by_separator("(a|\(|b|c)d|x|e") == ["(a|\(|b|c)d", "x", "e"]:
-    #     t += 1
-    #
-    # if split_by_separator("(a|\(|b|c)d|x|e|(d|f)") == ["(a|\(|b|c)d", "x", "e", "(d|f)"]:
-    #     t += 1
-    #
-    # if split_by_separator("(a|\(|b|c)d|\||x|e|(d|f)") == ["(a|\(|b|c)d", "\|","x", "e", "(d|f)"]:
-    #     t += 1
-    #
-    # # 5
-    # if split_by_separator("a|\(|b|c") == ["a", "\(", "b", "c"]:
-    #     t += 1
+    if split_by_separator("(a|\(|b|c)d|x") == ["(a|\(|b|c)d", "x"]:
+        print("test pass")
+    print()
 
-    print("test", t)
+    if split_by_separator("(a|\(|b|c)d|x|e") == ["(a|\(|b|c)d", "x", "e"]:
+        print("test pass")
+    print()
+
+    if split_by_separator("(a|\(|b|c)d|x|e|(d|f)") == ["(a|\(|b|c)d", "x", "e", "(d|f)"]:
+        print("test pass")
+    print()
+
+    if split_by_separator("(a|\(|b|c)d|\||x|e|(d|f)") == ["(a|\(|b|c)d", "\|","x", "e", "(d|f)"]:
+        print("test pass")
+    print()
+
+    if split_by_separator("a|\(|b|c") == ["a", "\(", "b", "c"]:
+        print("test pass")
+    print()
 
 
 # input: ((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|
@@ -249,10 +217,8 @@ def test_extract_deepest_bracket_content():
 
     print("test", t)
 
-# extract_deepest_bracket_content("((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|"
-#     "# 0x((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)*)")
 
-
+# todo
 def check_len_regex(s):
     pass
 
@@ -291,7 +257,7 @@ def test_check_len_regex():
     print("test", t)
 
 
-#     if bracket_handler("a(bc)d") == [1, 4, "bc"]:
+# bracket_handler("a(bc)d") == [1, 4, "bc"]:
 def bracket_handler(s):
     # print(s)
 
@@ -370,6 +336,8 @@ def test_bracket_handler():
     print("test", t)
 
 
+# input "avnej|dw|"
+# output True
 def is_separator_present(s):
     for i_0, token_0 in enumerate(s):
 
@@ -410,46 +378,6 @@ def regex_driver(s):
         else:
             new_ret.append(token_1)
 
-    # t_0 = ""
-    # for i_1, token_1 in enumerate(s):
-    #     t_0 += token_1
-    #
-    #     if token_1 == "|":
-    #         if i_1 == 0:
-    #             t_0 = t_0[:-1]
-    #             ret.append(t_0)
-    #             t_0 = ""
-    #
-    #         elif s[i_1 - 1] != "\\":
-    #             t_0 = t_0[:-1]
-    #             ret.append(t_0)
-    #             t_0 = ""
-    #
-    #         else:
-    #             pass
-    #
-    #     elif token_1 == "(":
-    #         if i_1 == 0:
-    #             print("driver")
-    #             t_1 = bracket_handler(s[i_1:])
-    #             t_2 = s[i_1 + t_1[0] + 1: i_1 + t_1[1]]
-    #             print(t_2)
-    #             # return regex_driver(t_2, ret)
-    #
-    #
-    #
-    #         elif s[i_1 - 1] != "\\":
-    #             print("driver")
-    #             t_1 = bracket_handler(s[i_1:])
-    #             t_2 = s[i_1 + t_1[0] + 1: i_1 + t_1[1]]
-    #             print(t_2)
-    #             # return regex_driver(t_2, ret)
-    #
-    #
-    #         else:
-    #             pass
-    #
-    # ret.append(t_0)
 
     # print("ret", ret)
     print("ret")
@@ -458,50 +386,30 @@ def regex_driver(s):
     return new_ret
 
 
-def test_elem(s, elem, index):
-
-    print(list(s))
-
-    # sve ispred indexa
-    s = s[:index]
-
-    print(list(s))
-
-    count = 0
-    for i_0 in reversed(s):
-        if i_0 != "\\":
-            break
-        else:
-            count += 1
-
-    print(count)
-
-    # print([s])
-    # print(s)
-
-    return False
-
-
-def test_test_elem():
-    if test_elem("a\(dasda", "(", 2) == True:
-        print("da")
-    if test_elem("a\\(dasda", "(", 3) == False:
-        print("da")
-    if test_elem("a\\\(dasda", "(", 4) == True:
-        print("da")
-    if test_elem("a\\\\(dasda", "(", 5) == True:
-        print("da")
-    if test_elem("a\\\\\(dasda", "(", 6) == True:
-        print("da")
-
-
 if __name__ == '__main__':
-    test_test_elem()
+    # test_refractor()
 
-
+    #
     # test_split_by_separator()
-    import sys
-    sys.exit()
+    # import sys
+    # sys.exit()
+
+    # ['\\t|\\_']
+    # ['\\n']
+    # ['#\\|']
+    # ['\\|#']
+    # ['\\n']
+    # ['(\\(|\\)|\\{|\\}|\\||\\*|\\\\|\\$|\\t|\\n|\\_|!|"|#|%|&|\'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|<|=|>|?|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|~)']
+    # ['((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|0x((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)*)']
+    # ['\\(']
+    # ['\\)']
+    # ['-']
+    # ['-(\\t|\\n|\\_)*-']
+    # ['\\((\\t|\\n|\\_)*-']
+    # ['\\t|\\_']
+    # ['\\n']
+    # ['-']
+    # ['-(\\t|\\n|\\_)*-']
 
     s = [
         "\\t|\\_",
