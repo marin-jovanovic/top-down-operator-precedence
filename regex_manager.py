@@ -66,20 +66,16 @@ def split_by_separator(v_regex):
 
     t_0 = ""
 
-    # print(v_regex)
     ret = list()
 
     for iterator_1, token in enumerate(v_regex):
-        # print(token)
         t_0 += token
         if token == "(":
             if iterator_1 == 0:
                 state_of_brackets += 1
-                # print("zagrada")
 
             elif v_regex[iterator_1 - 1] != "\\":
                 state_of_brackets += 1
-                # print("zagrada")
 
         elif token == ")":
             if iterator_1 == 0:
@@ -87,22 +83,18 @@ def split_by_separator(v_regex):
 
             elif v_regex[iterator_1 - 1] != "\\":
                 state_of_brackets -= 1
-                # print("zagrada")
 
         elif token == "|":
 
             if state_of_brackets == 0 and v_regex[iterator_1 - 1] != "\\":
 
                 ret.append("".join([i for i in t_0[:-1]]))
-                # print("dodajem", "".join([i for i in t_0[:-1]]))
-                # print("split")
                 t_0 = ""
         else:
             pass
 
+    print([t_0])
     ret.append("".join([i for i in t_0]))
-    # print("ret", ret)
-    # [print(i) for i in ret]
     return ret
 
 
@@ -111,21 +103,34 @@ def test_split_by_separator():
     split_by_separator("(a|\(|b|c)d|x")
 
     t = 0
-    if split_by_separator("(a|\(|b|c)d|x") == ["(a|\(|b|c)d", "x"]:
+    if split_by_separator("a\|b") == ["a\|b"]:
         t += 1
 
-    if split_by_separator("(a|\(|b|c)d|x|e") == ["(a|\(|b|c)d", "x", "e"]:
+    if split_by_separator("a\\|b") == ["a\|b"]:
         t += 1
 
-    if split_by_separator("(a|\(|b|c)d|x|e|(d|f)") == ["(a|\(|b|c)d", "x", "e", "(d|f)"]:
+    if split_by_separator("a\\\|b") == ["a\|b"]:
         t += 1
 
-    if split_by_separator("(a|\(|b|c)d|\||x|e|(d|f)") == ["(a|\(|b|c)d", "\|","x", "e", "(d|f)"]:
+    if split_by_separator("a\\\\|b") == ["a\|b"]:
         t += 1
 
-    # 5
-    if split_by_separator("a|\(|b|c") == ["a", "\(", "b", "c"]:
-        t += 1
+    #
+    # if split_by_separator("(a|\(|b|c)d|x") == ["(a|\(|b|c)d", "x"]:
+    #     t += 1
+    #
+    # if split_by_separator("(a|\(|b|c)d|x|e") == ["(a|\(|b|c)d", "x", "e"]:
+    #     t += 1
+    #
+    # if split_by_separator("(a|\(|b|c)d|x|e|(d|f)") == ["(a|\(|b|c)d", "x", "e", "(d|f)"]:
+    #     t += 1
+    #
+    # if split_by_separator("(a|\(|b|c)d|\||x|e|(d|f)") == ["(a|\(|b|c)d", "\|","x", "e", "(d|f)"]:
+    #     t += 1
+    #
+    # # 5
+    # if split_by_separator("a|\(|b|c") == ["a", "\(", "b", "c"]:
+    #     t += 1
 
     print("test", t)
 
@@ -391,8 +396,7 @@ def regex_driver(s):
     if t_0[0] == 0 and t_0[1] == len(s) - 1:
         t_1 = s[t_0[0] + 1: t_0[1]]
         print(["rekurzija", t_1])
-        regex_driver(t_1)
-
+        return regex_driver(t_1)
 
     ret = split_by_separator(s)
 
@@ -454,8 +458,50 @@ def regex_driver(s):
     return new_ret
 
 
+def test_elem(s, elem, index):
+
+    print(list(s))
+
+    # sve ispred indexa
+    s = s[:index]
+
+    print(list(s))
+
+    count = 0
+    for i_0 in reversed(s):
+        if i_0 != "\\":
+            break
+        else:
+            count += 1
+
+    print(count)
+
+    # print([s])
+    # print(s)
+
+    return False
+
+
+def test_test_elem():
+    if test_elem("a\(dasda", "(", 2) == True:
+        print("da")
+    if test_elem("a\\(dasda", "(", 3) == False:
+        print("da")
+    if test_elem("a\\\(dasda", "(", 4) == True:
+        print("da")
+    if test_elem("a\\\\(dasda", "(", 5) == True:
+        print("da")
+    if test_elem("a\\\\\(dasda", "(", 6) == True:
+        print("da")
+
 
 if __name__ == '__main__':
+    test_test_elem()
+
+
+    # test_split_by_separator()
+    import sys
+    sys.exit()
 
     s = [
         "\\t|\\_",
