@@ -61,46 +61,46 @@ def split_by_separator(v_regex):
     return ret
 
 
-def test_split_by_separator():
-
-    # a'|'b
-    if split_by_separator("a\\|b") == ["a\\|b"]:
-        print("test pass")
-    print()
-
-    # a\\ | b
-    if split_by_separator("a\\\\|b") == ["a\\\\", "b"]:
-        print("test pass")
-    print()
-
-    # a\\\|b
-    if split_by_separator("a\\\\\\|b") == ["a\\\\\\|b"]:
-        print("test pass")
-    print()
-
-    if split_by_separator("a\\\\|b") == ["a\|b"]:
-        print("test pass")
-    print()
-
-    if split_by_separator("(a|\(|b|c)d|x") == ["(a|\(|b|c)d", "x"]:
-        print("test pass")
-    print()
-
-    if split_by_separator("(a|\(|b|c)d|x|e") == ["(a|\(|b|c)d", "x", "e"]:
-        print("test pass")
-    print()
-
-    if split_by_separator("(a|\(|b|c)d|x|e|(d|f)") == ["(a|\(|b|c)d", "x", "e", "(d|f)"]:
-        print("test pass")
-    print()
-
-    if split_by_separator("(a|\(|b|c)d|\||x|e|(d|f)") == ["(a|\(|b|c)d", "\|","x", "e", "(d|f)"]:
-        print("test pass")
-    print()
-
-    if split_by_separator("a|\(|b|c") == ["a", "\(", "b", "c"]:
-        print("test pass")
-    print()
+# def test_split_by_separator():
+#
+#     # a'|'b
+#     if split_by_separator("a\\|b") == ["a\\|b"]:
+#         print("test pass")
+#     print()
+#
+#     # a\\ | b
+#     if split_by_separator("a\\\\|b") == ["a\\\\", "b"]:
+#         print("test pass")
+#     print()
+#
+#     # a\\\|b
+#     if split_by_separator("a\\\\\\|b") == ["a\\\\\\|b"]:
+#         print("test pass")
+#     print()
+#
+#     if split_by_separator("a\\\\|b") == ["a\|b"]:
+#         print("test pass")
+#     print()
+#
+#     if split_by_separator("(a|\(|b|c)d|x") == ["(a|\(|b|c)d", "x"]:
+#         print("test pass")
+#     print()
+#
+#     if split_by_separator("(a|\(|b|c)d|x|e") == ["(a|\(|b|c)d", "x", "e"]:
+#         print("test pass")
+#     print()
+#
+#     if split_by_separator("(a|\(|b|c)d|x|e|(d|f)") == ["(a|\(|b|c)d", "x", "e", "(d|f)"]:
+#         print("test pass")
+#     print()
+#
+#     if split_by_separator("(a|\(|b|c)d|\||x|e|(d|f)") == ["(a|\(|b|c)d", "\|","x", "e", "(d|f)"]:
+#         print("test pass")
+#     print()
+#
+#     if split_by_separator("a|\(|b|c") == ["a", "\(", "b", "c"]:
+#         print("test pass")
+#     print()
 
 
 # input: ((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|
@@ -114,21 +114,20 @@ def extract_deepest_bracket_content(s):
 
     for i_0, token in enumerate(s):
 
-            if token == "(":
-                if i_0 == 0:
-                    state_of_brackets += 1
+        if token == "(":
+            if i_0 == 0:
+                state_of_brackets += 1
 
-                    if state_of_brackets > deepest_left_bracket_depth:
-                        deepest_left_bracket_depth = state_of_brackets
-                        deepest_left_bracket_index = i_0
+                if state_of_brackets > deepest_left_bracket_depth:
+                    deepest_left_bracket_depth = state_of_brackets
+                    deepest_left_bracket_index = i_0
 
-                elif s[i_0 - 1] != "\\":
-                    state_of_brackets += 1
+            elif s[i_0 - 1] != "\\":
+                state_of_brackets += 1
 
-                    if state_of_brackets > deepest_left_bracket_depth:
-                        deepest_left_bracket_depth = state_of_brackets
-                        deepest_left_bracket_index = i_0
-
+                if state_of_brackets > deepest_left_bracket_depth:
+                    deepest_left_bracket_depth = state_of_brackets
+                    deepest_left_bracket_index = i_0
 
                 # # znaci da je \(
                 # else:
@@ -155,27 +154,27 @@ def extract_deepest_bracket_content(s):
     t_0 = ""
 
     for i_0, token in enumerate(s[deepest_left_bracket_index:]):
-            t_0 += token
+        t_0 += token
 
-            if token == ")":
-                # ovo se nikad nece ostvarit
-                if i_0 == 0:
-                    state_of_brackets -= 1
-                    t_0 = t_0[1:-1]
-                    break
-                    # print("kraj")
+        if token == ")":
+            # ovo se nikad nece ostvarit
+            if i_0 == 0:
+                state_of_brackets -= 1
+                t_0 = t_0[1:-1]
+                break
+                # print("kraj")
 
-                elif s[i_0 - 1] != "\\":
-                    state_of_brackets -= 1
-                    t_0 = t_0[1:-1]
-                    break
-                    # print("kraj")
+            elif s[i_0 - 1] != "\\":
+                state_of_brackets -= 1
+                t_0 = t_0[1:-1]
+                break
+                # print("kraj")
 
-                # # znaci da je \)
-                # else:
-                #     print(token)
-
+            # # znaci da je \)
             # else:
+            #     print(token)
+
+        # else:
             #     print(token)
 
     print("extracted: *" + t_0 + "*")
@@ -183,78 +182,78 @@ def extract_deepest_bracket_content(s):
     return t_0
 
 
-def test_extract_deepest_bracket_content():
-
-    t = 0
-    if extract_deepest_bracket_content("(a|\(|b|c)d|x") == "a|\(|b|c":
-        print("test passed")
-        t += 1
-
-    if extract_deepest_bracket_content("(a|\(|b|c)d|x|e") == "a|\(|b|c":
-        print("test passed")
-
-        t += 1
-
-    if extract_deepest_bracket_content("(a|\(|b|c)d|x|e|(d|f)") == "a|\(|b|c":
-        print("test passed")
-
-        t += 1
-
-    if extract_deepest_bracket_content("(a|\(|b|c)d|\||x|e|(d|f)") == "a|\(|b|c":
-        print("test passed")
-
-        t += 1
-
-    # 5
-    if extract_deepest_bracket_content("a|\(|b|c") == "a|\(|b|c":
-        print("test passed")
-        t += 1
-
-    # 5
-    if extract_deepest_bracket_content("a|\((|b(D(E|(F)))|c)") == "F":
-        print("test passed")
-        t += 1
-
-    print("test", t)
-
-
-# todo
-def check_len_regex(s):
-    pass
+# def test_extract_deepest_bracket_content():
+#
+#     t = 0
+#     if extract_deepest_bracket_content("(a|\(|b|c)d|x") == "a|\(|b|c":
+#         print("test passed")
+#         t += 1
+#
+#     if extract_deepest_bracket_content("(a|\(|b|c)d|x|e") == "a|\(|b|c":
+#         print("test passed")
+#
+#         t += 1
+#
+#     if extract_deepest_bracket_content("(a|\(|b|c)d|x|e|(d|f)") == "a|\(|b|c":
+#         print("test passed")
+#
+#         t += 1
+#
+#     if extract_deepest_bracket_content("(a|\(|b|c)d|\||x|e|(d|f)") == "a|\(|b|c":
+#         print("test passed")
+#
+#         t += 1
+#
+#     # 5
+#     if extract_deepest_bracket_content("a|\(|b|c") == "a|\(|b|c":
+#         print("test passed")
+#         t += 1
+#
+#     # 5
+#     if extract_deepest_bracket_content("a|\((|b(D(E|(F)))|c)") == "F":
+#         print("test passed")
+#         t += 1
+#
+#     print("test", t)
 
 
-def test_check_len_regex():
-    t = 0
-    if check_len_regex("0|1|2|3|4|5|6|7|8|9") == ["1", ""]:
-        print("test passed")
-        t += 1
+# # todo
+# def check_len_regex(s):
+#     pass
 
-    if check_len_regex("0|1|2|3|4|5|6|7|48|9") == ["2", "48"]:
-        print("test passed")
 
-        t += 1
-
-    if check_len_regex("0|1|2|3|4|5|6[abc]|7|48|9") == "a|\(|b|c":
-        print("test passed")
-
-        t += 1
-
-    if check_len_regex("(a|\(|b|c)d|\||x|e|(d|f)") == "a|\(|b|c":
-        print("test passed")
-
-        t += 1
-
-    # 5
-    if check_len_regex("a|\(|b|c") == "a|\(|b|c":
-        print("test passed")
-        t += 1
-
-    # 5
-    if check_len_regex("a|\((|b(D(E|(F)))|c)") == "F":
-        print("test passed")
-        t += 1
-
-    print("test", t)
+# def test_check_len_regex():
+#     t = 0
+#     if check_len_regex("0|1|2|3|4|5|6|7|8|9") == ["1", ""]:
+#         print("test passed")
+#         t += 1
+#
+#     if check_len_regex("0|1|2|3|4|5|6|7|48|9") == ["2", "48"]:
+#         print("test passed")
+#
+#         t += 1
+#
+#     if check_len_regex("0|1|2|3|4|5|6[abc]|7|48|9") == "a|\(|b|c":
+#         print("test passed")
+#
+#         t += 1
+#
+#     if check_len_regex("(a|\(|b|c)d|\||x|e|(d|f)") == "a|\(|b|c":
+#         print("test passed")
+#
+#         t += 1
+#
+#     # 5
+#     if check_len_regex("a|\(|b|c") == "a|\(|b|c":
+#         print("test passed")
+#         t += 1
+#
+#     # 5
+#     if check_len_regex("a|\((|b(D(E|(F)))|c)") == "F":
+#         print("test passed")
+#         t += 1
+#
+#     print("test", t)
 
 
 # bracket_handler("a(bc)d") == [1, 4, "bc"]:
@@ -355,19 +354,21 @@ def is_separator_present(s):
 # dynamic prog
 # ret = list()
 def regex_driver(s):
-    # ret = list()
     print(["input", s])
 
     # sr: micanje zagrade s pocetka i kraja
-
     t_0 = bracket_handler(s)
     if t_0[0] == 0 and t_0[1] == len(s) - 1:
         t_1 = s[t_0[0] + 1: t_0[1]]
         print(["rekurzija", t_1])
         return regex_driver(t_1)
 
+    # podijeli po |, ne gleda jel postoje zagrade
+    # todo zagrade
     ret = split_by_separator(s)
 
+    # ako ima zagrade u nekom elementu onda ih ispisuje i treba splitat
+    #
     new_ret = list()
     for i_1, token_1 in enumerate(ret):
 
@@ -378,14 +379,16 @@ def regex_driver(s):
         else:
             new_ret.append(token_1)
 
-
-    # print("ret", ret)
+# print("ret", ret)
     print("ret")
     [print([i]) for i in new_ret]
 
     return new_ret
 
 
+# todo
+#     specijalni znakovi
+#     +, *, (, ), [, ], .,
 if __name__ == '__main__':
     # test_refractor()
 
@@ -411,28 +414,139 @@ if __name__ == '__main__':
     # ['-']
     # ['-(\\t|\\n|\\_)*-']
 
-    s = [
-        "\\t|\\_",
-        "\\n",
-        "#\|",
-        "\|#",
-        "\\n",
-        "(\\(|\\)|\\{|\\}|\\||\\*|\\\\|\\$|\\t|\\n|\\_|!|\"|#|%|&|\'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|<|=|>|?|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|~)",
-        "((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|0x((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)*)",
-        "\(",
-        "\)",
-        "-",
-        "-(\\t|\\n|\_)*-",
-        "\((\\t|\\n|\_)*-",
-        "\\t|\_",
-        "\\n",
-        "-",
-        "-(\\t|\\n|\_)*-"
-    ]
+    # ['S_pocetno', '\\t|\\_', ['-']]
+    # ['S_pocetno', '\\n', ['-', 'NOVI_REDAK']]
+    # ['S_pocetno', '#\\|', ['-', 'UDJI_U_STANJE S_komentar']]
 
-    for i_0 in s:
-        c = regex_driver(i_0)
-        print()
+    # ['S_komentar', '\\|#', ['-', 'UDJI_U_STANJE S_pocetno']]
+
+    # ['S_komentar', '\\n', ['-', 'NOVI_REDAK']]
+
+    # ['S_komentar', '(\\(|\\)|\\{|\\}|\\||\\*|\\\\|\\$|\\t|\\n|\\_|!|"|#|%|&|\'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|
+    # <|=|>|?|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s
+    # |t|u|v|w|x|y|z|~)', ['-']]
+
+    # ['S_pocetno', '((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|0x((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)
+    # ((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)*)', ['OPERAND']]
+    # ['S_pocetno', '\\(', ['LIJEVA_ZAGRADA']]
+    # ['S_pocetno', '\\)', ['DESNA_ZAGRADA']]
+    # ['S_pocetno', '-', ['OP_MINUS']]
+    # ['S_pocetno', '-(\\t|\\n|\\_)*-', ['OP_MINUS', 'UDJI_U_STANJE S_unarni', 'VRATI_SE 1']]
+    # ['S_pocetno', '\\((\\t|\\n|\\_)*-', ['LIJEVA_ZAGRADA', 'UDJI_U_STANJE S_unarni', 'VRATI_SE 1']]
+    # ['S_unarni', '\\t|\\_', ['-']]
+    # ['S_unarni', '\\n', ['-', 'NOVI_REDAK']]
+    # ['S_unarni', '-', ['UMINUS', 'UDJI_U_STANJE S_pocetno']]
+    # ['S_unarni', '-(\\t|\\n|\\_)*-', ['UMINUS', 'VRATI_SE 1']]
+    # ['S_pocetno', '\\t|\\_', ['-']]
+    # ['input', '\\t|\\_']
+
+    if regex_driver("\\t|\\_") == ["\\t", "\\_"]:
+        print("test passed")
+    print()
+
+    if regex_driver("\\n") == ["\\n"]:
+        print("test passed")
+    print()
+
+    if regex_driver("#\\|") == ["#\\|"]:
+        print("test passed")
+    print()
+
+    if regex_driver("\\|#") == ["\\|#"]:
+        print("test passed")
+    print()
+
+    if regex_driver("\\n") == ["\\n"]:
+        print("test passed")
+    print()
+
+    # todo " nije imao \
+    if regex_driver("(\\(|\\)|\\{|\\}|\\||\\*|\\\\|\\$|\\t|\\n|\\_|!|\"|#|%|&|\'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|"
+                    "<|=|>|?|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|"
+                    "l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|~)") == ["\\(", "\\)", "\\{", "\\}", "\\|", "\\*", "\\\\", "\\$",
+                                                            "\\t", "\\n", "\\_", "!", "\"", "#", "%", "&", "'", "+",
+                                                            ",", "-", ".", "/", "0", "1", "2", "3", "4", "5", "6",
+                                                            "7", "8", "9", ":", ";", "<", "=", ">", "?", "@", "A",
+                                                            "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
+                                                            "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W",
+                                                            "X", "Y", "Z", "[", "]", "^", "_", "`", "a", "b", "c",
+                                                            "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
+                                                            "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y",
+                                                            "z", "~", ]:
+        print("test passed")
+    print()
+
+    if regex_driver("((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|0x((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D"
+                    "|E|F)((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)*)") == [
+        ["(0|1|2|3|4|5|6|7|8|9)",
+         "* (0|1|2|3|4|5|6|7|8|9)"
+
+         ],
+        ["0",
+         "x",
+         "(0|1|2|3|4|5|6|7|8|9|a|b|c|d|e|f|A|B|C|D|E|F)",
+         "* (0|1|2|3|4|5|6|7|8|9|a|b|c|d|e|f|A|B|C|D|E|F)"
+         ]
+
+    ]:
+        print("test passed")
+    print()
+
+    if regex_driver("\\(") == ["\\("]:
+        print("test passed")
+    print()
+
+    if regex_driver("\\)") == ["\\)"]:
+        print("test passed")
+    print()
+
+    if regex_driver("-") == ["-"]:
+        print("test passed")
+    print()
+
+    if regex_driver("-(\\t|\\n|\\_)*-") == [
+        ["-",
+         "* (\\t|\\n|\\_)",
+         "-"
+         ]
+    ]:
+        print("test passed")
+    print()
+
+    if regex_driver("\\((\\t|\\n|\\_)*-") == [
+        ["\\(",
+         "* (\\t|\\n|\\_)",
+         "-"
+         ]
+    ]:
+        print("test passed")
+    print()
+
+    if regex_driver("\\t|\\_") == ["\\t", "\\_"]:
+        print("test passed")
+    print()
+
+    if regex_driver("\\n") == ["\\n"]:
+        print("test passed")
+    print()
+
+    if regex_driver("-") == ["-"]:
+        print("test passed")
+    print()
+
+    if regex_driver("-(\\t|\\n|\\_)*-") == [["-", "* (\\t|\\n|\\_)", "-"]]:
+        print("test passed")
+    print()
+
+    if regex_driver("\\t|\\_") == ["\\t", "\\_"]:
+        print("test passed")
+    print()
+
+    #\\n \\t|\\_'
+    #\\((\\t|\\n|\\_)*-
+    # for i_0 in s:
+    #     c = regex_driver(i_0)
+    #     print()
 
 # test_bracket_handler()
 # regex_driver("c")

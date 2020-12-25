@@ -135,7 +135,53 @@ def insert_regex():
         new_rules_list.append([rule[0], pointer, rule[2]])
     RULES = new_rules_list
 
+
+def source():
+    start_state = "S_pocetno"
+
+    source_code = "".join([i for i in open("test_cases/minusLang.in").readlines()])
+    print([source_code])
+    print(list(source_code))
+
+    current_state = start_state
+
+
+
+    if current_state == "S_pocetno":
+
+        if source_code.startswith("\t"):
+            print("S_pocetno, \\t -> [\"-\"]")
+
+            # source_code = source_code[len("\t"):]
+            # print(source_code)
+            #
+            # source_code = source_code[2:]
+            # print(source_code)
+
+        # todo \_ -> " "
+        if source_code.startswith(" "):
+            print("S_pocetno, \_ -> [\"-\"]")
+
+    if current_state == "S_pocetno":
+
+        if source_code.startswith("\n"):
+            print("S_pocetno, \n -> [\'-\', \'NOVI_REDAK\']")
+
+    if current_state == "S_pocetno":
+
+        # todo \| -> |
+        if source_code.startswith("#|"):
+            print("S_pocetno, #\| -> [\'-\', \'UDJI_U_STANJE S_komentar\']")
+
+
+
 if __name__ == '__main__':
+
+    # source()
+    #
+    # import sys
+    # sys.exit()
+
 
     load_language()
 
@@ -146,26 +192,60 @@ if __name__ == '__main__':
     # ['S_komentar', '(a|b|c)...', ['-']]
     insert_regex()
 
+    # [print(i) for i in RULES]
+    #
+    # print()
+    #
+    # [print(i) for i in REGEX]
+    #
+    from regex_manager import regex_driver
+    #
+    # print()
+
     [print(i) for i in RULES]
 
-    print()
 
-    [print(i) for i in REGEX]
-
-    from regex_manager import regex_driver
-
-    print()
 
 
     for rule in RULES:
-        init_state = rule[0]
+
+        print(rule)
+
+
+        print(regex_driver(rule[1]))
+        # init_state = rule[0]
         # inputs = regex_driver(rule[1])
-        actions = rule[2]
-
-        print([rule[1]])
-
-        # todo
-        # for i_0 in inputs:
-        #     line = init_state + ", " + i_0 + " -> " + str(actions)
+        # actions = rule[2]
         #
-        #     print(line)
+        # # print([rule[1]])
+        # write_content = ""
+        #
+        # write_content += "if current_state == \"" + init_state + "\":\n"
+        # write_content += "\n"
+        # write_content += "\tif source_code.startswith(\""
+        #
+        #
+        # print(inputs)
+        #
+        # print(write_content)
+
+
+
+
+'''
+    specijalni regex znakovi
+    (, ), {, }, |, *, $, \
+    
+    $
+        prazan niz
+    
+    \n 
+        novi red
+    \t
+        tab
+        
+    \_
+        razmak
+    
+    
+'''
