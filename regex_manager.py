@@ -452,47 +452,14 @@ def regex_driver(s):
         # netom nakon zagrade
         elif automata_state == 2:
 
-            # i_0 -= 1
-            # automata_state = 0
-
             if is_escaped_at_index(s, i_0):
 
                 if token_0 in ["*", "+"]:
                     automata_state = 3
 
-
-                    # print(t_0)
-                    # rules.append([prefix + str(max_index), t_0 + token_0, prefix + str(max_index + 1)])
-                    #
-                    # automata_state = 0
-                    # t_0 = ""
-                    # max_index += 1
-
-                # else:
-                #     i_0 -= 1
-                #     automata_state = 0
-                #
-                # elif token_0 == "(":
-                #     t_1 = bracket_handler(s[i_0:])
-                #     bracket_ttl = t_1[1] + i_0
-                #     automata_state = 1
-                #     rules.append([prefix + str(max_index), t_0, prefix + str(max_index + 1)])
-                #     t_0 = token_0
-
                 else:
                     i_0 -= 1
                     automata_state = 0
-                #
-                # elif token_0 == "|":
-                #     print("SPLIT nakon zagrade")
-                #     rules.append([prefix + str(max_index), "$", prefix + str(end_index)])
-                #     is_separator_present = True
-                #
-                #
-                # else:
-                #     rules.append([prefix + str(max_index), t_0, prefix + str(max_index + 1)])
-                #     automata_state = 0
-                #     t_0 = ""
 
         # ()* ili ()+
         elif automata_state == 3:
@@ -511,126 +478,6 @@ def regex_driver(s):
                 t_0 = ""
                 max_index += 1
 
-                # # znaci da je iza zagrada + ili *
-    # elif t_0 == 0 and t_0[1] == len(s) - 1 - 1:
-    #     print("operator mnozenja ili zbrajanja je na kraju")
-    #
-    #     if s[t_0[1]] == "+":
-    #         print("OP_+")
-    #         print(indent * "\t" + str([["OP_+"], [s[t_0[0] + 1: t_0[1] - 1]]]))
-    #
-    #     elif s[t_0[1]] == "*":
-    #         print("OP_*")
-    #         print(indent * "\t" + str([["OP_*"], [s[t_0[0] + 1: t_0[1] - 1]]]))
-    #
-    # else:
-    #     print("nema zagrada")
-    #
-    # ret = [[i] for i in split_by_separator(s)]
-    #
-    # print(["ret", ret])
-
-    # rules.append(s)
-
-    # global TTL, indent
-    # indent += 1
-    #
-    #
-    # TTL -= 1
-    # if TTL < 0:
-    #     return "c"
-    #
-    # print(indent * "\t" + "input " + str(s))
-    # print(indent * "\t" + str(len(s)))
-    #
-    # if s in OP_CODES:
-    #     indent -= 1
-    #     return s
-    #
-    # # if s in OP_CODES:
-    # #     print(indent * "\t" + "vracam op code")
-    # #     print()
-    # #     indent -= 1
-    # #     return s
-    # #
-    # # else:
-    # #     # zagrade na pocetku i kraju
-    # #     # mice zagrade s pocetka i kraja dok postoje
-    # #     # hendla svu logiku da mice samo ako ima smisla micat
-    # #     t_0 = bracket_handler(s)
-    # #     if t_0[0] == 0 and t_0[1] == len(s) - 1:
-    # #         t_1 = s[t_0[0] + 1: t_0[1]]
-    # #         print(["rekurzija, mako sam zagrade", t_1])
-    # #         return regex_driver(t_1)
-    # #
-    # #     # znaci da je iza zagrada + ili *
-    # #     elif t_0 == 0 and t_0[1] == len(s) - 1 - 1:
-    # #         print("operator mnozenja ili zbrajanja je na kraju")
-    # #
-    # #         if s[t_0[1]] == "+":
-    # #             print("OP_+")
-    # #             print(indent * "\t" + str([["OP_+"], [s[t_0[0] + 1: t_0[1] - 1]]]))
-    # #
-    # #         elif s[t_0[1]] == "*":
-    # #             print("OP_*")
-    # #             print(indent * "\t" + str([["OP_*"], [s[t_0[0] + 1: t_0[1] - 1]]]))
-    # #
-    # #     else:
-    # #         print("nema zagrada")
-    # #
-    # #     return "c"
-    # new_ret = []
-    # for stream in s:
-    #     print(indent * "\t" + "stream " + str(stream))
-    #
-    #     print()
-    #     new_ret.append(regex_driver(stream))
-    #     print(indent * "\t" + "new st " + str(new_ret))
-    #
-    #
-    #
-    # indent -= 1
-    # return new_ret
-    #
-    #
-    #
-    #
-    # # podijeli po |, ne gleda jel postoje zagrade
-    # # todo zagrade
-    # # ret = [split_by_separator(s)]
-    #
-    # ret = [[i] for i in split_by_separator(s)]
-    #
-    # # ako ima zagrade u nekom elementu onda ih ispisuje i treba splitat
-    # new_ret = list()
-    # for i_1, token_1 in enumerate(ret):
-    #
-    #     if is_separator_present(token_1):
-    #         print(["handle this", token_1])
-    #         new_ret.append(token_1)
-    #
-    #     else:
-    #         new_ret.append(token_1)
-    #
-    # t_1 = list()
-    #
-    # for i_0 in new_ret:
-    #     t_0 = list()
-    #     print("stream", i_0)
-    #
-    #     for i_1 in i_0:
-    #         print(len(i_1))
-    #         t_1.append(split_by_state(i_1))
-    #
-    #     print("dodajem", t_1)
-    #     t_0.append([i for i in t_1])
-    #
-    # print("tocni", t_0[0])
-    #
-    # # return t_0[0]
-    #
-    # print(new_ret)
-    # print(rules)
 
             i_0 -= 1
             automata_state = 0
@@ -655,27 +502,6 @@ if __name__ == '__main__':
     #   a|b -> [a], [b]
     #   \t, \n -> \t, \n
     #
-
-    # print(["rj", regex_driver([["OP_+"], [["a"], ["b"]], [["OP_AND"], ["OP_*"]]])])
-    # # print(["rj", regex_driver(["-(t|n|(2|3)+|k)-"])])
-    #
-    # # print(regex_driver(["-(\\t|\\n(2|3|e)+|\\_)*-"]))
-    #
-    # import sys
-    # sys.exit()
-    TTL = 5
-    # s = ["a", "b", "c", "d", "e", "f", "g"]
-    #
-    # i = -1
-    #
-    # while i != len(s) - 1:
-    #     i += 1
-    #     print(i, s[i])
-    #     # i += 1
-    #
-    #
-    # import sys
-    # sys.exit()
 
     if regex_driver("\\n") == [["\\n"]]:
         print("test passed")
