@@ -356,16 +356,20 @@ def is_separator_present(s):
 def regex_driver(s):
     print(["input", s])
 
-    # sr: micanje zagrade s pocetka i kraja
+
+    # mice zagrade s pocetka i kraja dok postoje
+    # hendla svu logiku da mice samo ako ima smisla micat
     t_0 = bracket_handler(s)
     if t_0[0] == 0 and t_0[1] == len(s) - 1:
         t_1 = s[t_0[0] + 1: t_0[1]]
-        print(["rekurzija", t_1])
+        print(["rekurzija, mako sam zagrade", t_1])
         return regex_driver(t_1)
 
     # podijeli po |, ne gleda jel postoje zagrade
     # todo zagrade
-    ret = split_by_separator(s)
+    # ret = [split_by_separator(s)]
+
+    ret = [[i] for i in split_by_separator(s)]
 
     # ako ima zagrade u nekom elementu onda ih ispisuje i treba splitat
     #
@@ -381,7 +385,16 @@ def regex_driver(s):
 
 # print("ret", ret)
     print("ret")
-    [print([i]) for i in new_ret]
+    for i in new_ret:
+        [print(len(j)) for j in i]
+        print(i)
+        # [print(j) for j in i]
+
+    print(new_ret)
+
+    # [print(len(i), ",") for i in new_ret]
+    #
+    # [print([i]) for i in new_ret]
 
     return new_ret
 
@@ -390,169 +403,124 @@ def regex_driver(s):
 #     specijalni znakovi
 #     +, *, (, ), [, ], .,
 if __name__ == '__main__':
-    # test_refractor()
-
+    # todo
+    #   \_ -> ' '
+    #   a|b -> [a], [b]
+    #   \t, \n -> \t, \n
     #
-    # test_split_by_separator()
+    #
+    # print(["\t", "\n"])
     # import sys
-    # sys.exit()
+    # sys.exit(
+    # )
 
-    # ['\\t|\\_']
-    # ['\\n']
-    # ['#\\|']
-    # ['\\|#']
-    # ['\\n']
-    # ['(\\(|\\)|\\{|\\}|\\||\\*|\\\\|\\$|\\t|\\n|\\_|!|"|#|%|&|\'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|<|=|>|?|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|~)']
-    # ['((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|0x((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)*)']
-    # ['\\(']
-    # ['\\)']
-    # ['-']
-    # ['-(\\t|\\n|\\_)*-']
-    # ['\\((\\t|\\n|\\_)*-']
-    # ['\\t|\\_']
-    # ['\\n']
-    # ['-']
-    # ['-(\\t|\\n|\\_)*-']
-
-    # ['S_pocetno', '\\t|\\_', ['-']]
-    # ['S_pocetno', '\\n', ['-', 'NOVI_REDAK']]
-    # ['S_pocetno', '#\\|', ['-', 'UDJI_U_STANJE S_komentar']]
-
-    # ['S_komentar', '\\|#', ['-', 'UDJI_U_STANJE S_pocetno']]
-
-    # ['S_komentar', '\\n', ['-', 'NOVI_REDAK']]
-
-    # ['S_komentar', '(\\(|\\)|\\{|\\}|\\||\\*|\\\\|\\$|\\t|\\n|\\_|!|"|#|%|&|\'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|
-    # <|=|>|?|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s
-    # |t|u|v|w|x|y|z|~)', ['-']]
-
-    # ['S_pocetno', '((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|0x((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)
-    # ((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)*)', ['OPERAND']]
-    # ['S_pocetno', '\\(', ['LIJEVA_ZAGRADA']]
-    # ['S_pocetno', '\\)', ['DESNA_ZAGRADA']]
-    # ['S_pocetno', '-', ['OP_MINUS']]
-    # ['S_pocetno', '-(\\t|\\n|\\_)*-', ['OP_MINUS', 'UDJI_U_STANJE S_unarni', 'VRATI_SE 1']]
-    # ['S_pocetno', '\\((\\t|\\n|\\_)*-', ['LIJEVA_ZAGRADA', 'UDJI_U_STANJE S_unarni', 'VRATI_SE 1']]
-    # ['S_unarni', '\\t|\\_', ['-']]
-    # ['S_unarni', '\\n', ['-', 'NOVI_REDAK']]
-    # ['S_unarni', '-', ['UMINUS', 'UDJI_U_STANJE S_pocetno']]
-    # ['S_unarni', '-(\\t|\\n|\\_)*-', ['UMINUS', 'VRATI_SE 1']]
-    # ['S_pocetno', '\\t|\\_', ['-']]
-    # ['input', '\\t|\\_']
-
-    if regex_driver("\\t|\\_") == ["\\t", "\\_"]:
+    if regex_driver("\\n") == [["\\n"]]:
         print("test passed")
+    else:
+        print("test failed")
     print()
 
-    if regex_driver("\\n") == ["\\n"]:
+    if regex_driver("\\(") == [["\\("]]:
         print("test passed")
+    else:
+        print("test failed")
     print()
 
-    if regex_driver("#\\|") == ["#\\|"]:
+    if regex_driver("\\)") == [["\\)"]]:
         print("test passed")
+    else:
+        print("test failed")
     print()
 
-    if regex_driver("\\|#") == ["\\|#"]:
+    if regex_driver("-") == [["-"]]:
         print("test passed")
+    else:
+        print("test failed")
     print()
 
-    if regex_driver("\\n") == ["\\n"]:
+    if regex_driver("\\t|\\_") == [["\\t"], ["\\_"]]:
         print("test passed")
+    else:
+        print("test failed")
     print()
 
-    # todo " nije imao \
+    if regex_driver("#\\|") == [["#"], ["\\|"]]:
+        print("test passed")
+    else:
+        print("test failed")
+    print()
+
+    if regex_driver("\\|#") == [["\\|"], ["#"]]:
+        print("test passed")
+    else:
+        print("test failed")
+    print()
+
+    # todo " nije imao \, hendlaj sve te escapeove
     if regex_driver("(\\(|\\)|\\{|\\}|\\||\\*|\\\\|\\$|\\t|\\n|\\_|!|\"|#|%|&|\'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|"
                     "<|=|>|?|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|"
-                    "l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|~)") == ["\\(", "\\)", "\\{", "\\}", "\\|", "\\*", "\\\\", "\\$",
-                                                            "\\t", "\\n", "\\_", "!", "\"", "#", "%", "&", "'", "+",
-                                                            ",", "-", ".", "/", "0", "1", "2", "3", "4", "5", "6",
-                                                            "7", "8", "9", ":", ";", "<", "=", ">", "?", "@", "A",
-                                                            "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
-                                                            "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W",
-                                                            "X", "Y", "Z", "[", "]", "^", "_", "`", "a", "b", "c",
-                                                            "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
-                                                            "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y",
-                                                            "z", "~", ]:
+                    "l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|~)") == [["\\("], ["\\)"], ["\\{"], ["\\}"], ["\\|"], ["\\*"], ["\\\\"],
+                                                            ["\\$"], ["\\t"], ["\\n"], ["\\_"], ["!"], ["\""], ["#"],
+                                                            ["%"], ["&"], ["'"], ["+"], [","], ["-"], ["."], ["/"],
+                                                            ["0"], ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"],
+                                                            ["8"], ["9"], [":"], [";"], ["<"], ["="], [">"], ["?"],
+                                                            ["@"], ["A"], ["B"], ["C"], ["D"], ["E"], ["F"], ["G"],
+                                                            ["H"], ["I"], ["J"], ["K"], ["L"], ["M"], ["N"], ["O"],
+                                                            ["P"], ["Q"], ["R"], ["S"], ["T"], ["U"], ["V"], ["W"],
+                                                            ["X"], ["Y"], ["Z"], ["["], ["]"], ["^"], ["_"], ["`"],
+                                                            ["a"], ["b"], ["c"], ["d"], ["e"], ["f"], ["g"], ["h"],
+                                                            ["i"], ["j"], ["k"], ["l"], ["m"], ["n"], ["o"], ["p"],
+                                                            ["q"], ["r"], ["s"], ["t"], ["u"], ["v"], ["w"], ["x"],
+                                                            ["y"], ["z"], ["~"]
+                                                            ]:
         print("test passed")
+    else:
+        print("test failed")
     print()
 
     if regex_driver("((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|0x((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D"
                     "|E|F)((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)*)") == [
         ["(0|1|2|3|4|5|6|7|8|9)",
-         "* (0|1|2|3|4|5|6|7|8|9)"
-
+         "(0|1|2|3|4|5|6|7|8|9)*"
          ],
         ["0",
          "x",
          "(0|1|2|3|4|5|6|7|8|9|a|b|c|d|e|f|A|B|C|D|E|F)",
-         "* (0|1|2|3|4|5|6|7|8|9|a|b|c|d|e|f|A|B|C|D|E|F)"
+         "(0|1|2|3|4|5|6|7|8|9|a|b|c|d|e|f|A|B|C|D|E|F)*"
          ]
-
     ]:
         print("test passed")
-    print()
-
-    if regex_driver("\\(") == ["\\("]:
-        print("test passed")
-    print()
-
-    if regex_driver("\\)") == ["\\)"]:
-        print("test passed")
-    print()
-
-    if regex_driver("-") == ["-"]:
-        print("test passed")
+    else:
+        print("test failed")
     print()
 
     if regex_driver("-(\\t|\\n|\\_)*-") == [
         ["-",
-         "* (\\t|\\n|\\_)",
+         "(\t|\n| )*",
          "-"
          ]
     ]:
         print("test passed")
+    else:
+        print("test failed")
     print()
 
     if regex_driver("\\((\\t|\\n|\\_)*-") == [
-        ["\\(",
-         "* (\\t|\\n|\\_)",
+        ["(",
+         "(\t|\n| )*",
          "-"
          ]
     ]:
         print("test passed")
+    else:
+        print("test failed")
     print()
 
-    if regex_driver("\\t|\\_") == ["\\t", "\\_"]:
+    if regex_driver("-(\\t|\\n|\\_)*-") == [["-", "* (\t|\n| )", "-"]]:
         print("test passed")
+    else:
+        print("test failed")
     print()
-
-    if regex_driver("\\n") == ["\\n"]:
-        print("test passed")
-    print()
-
-    if regex_driver("-") == ["-"]:
-        print("test passed")
-    print()
-
-    if regex_driver("-(\\t|\\n|\\_)*-") == [["-", "* (\\t|\\n|\\_)", "-"]]:
-        print("test passed")
-    print()
-
-    if regex_driver("\\t|\\_") == ["\\t", "\\_"]:
-        print("test passed")
-    print()
-
-    #\\n \\t|\\_'
-    #\\((\\t|\\n|\\_)*-
-    # for i_0 in s:
-    #     c = regex_driver(i_0)
-    #     print()
-
-# test_bracket_handler()
-# regex_driver("c")
-
-# for i in "0|1|2|3|4|5|6|7|8|9|a|b|c|d|e|f|A|B|C|D|E|F".split("|"):
-#     print("S_4, " + str(i) + " -> S_4")
 
 # S_0, 0 -> S_1
 # S_0, 1 -> S_1
