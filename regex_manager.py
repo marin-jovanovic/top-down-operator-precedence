@@ -236,7 +236,7 @@ def is_separator_present(s):
 
 
 def split_by_state(s):
-    ret = list()
+    # ret = list()
 
     t_0 = list()
 
@@ -252,7 +252,7 @@ def split_by_state(s):
             if is_escaped_at_index(s, i):
                 print("lijeva zagrada")
                 # print(s[i:])
-                t_1 = bracket_handler(s[i:])
+                # t_1 = bracket_handler(s[i:])
                 # append_tokens = False
                 # append_tokens_counter = t_1[1]
             else:
@@ -276,9 +276,6 @@ def split_by_state(s):
             else:
                 print("token")
 
-
-
-
         # else:
         #     pass
 
@@ -295,44 +292,11 @@ indent = -1
 SPEC_CHARS = ["+", "*", "(", ")", "n", "t", "_", "|", "$"]
 
 
-def handle_symbol(s, i_0, token_0, rules, max_index, prefix, t_0, end_index, is_separator_present):
-    # token_0 je u +, *, (, )....
-    if token_0 in SPEC_CHARS:
-
-        # token je (
-        if is_escaped_at_index(s, i_0):
-
-            if token_0 == "(":
-                t_1 = bracket_handler(s[i_0:])
-                bracket_ttl = t_1[1] + i_0
-                t_0 += token_0
-                automata_state = 1
-
-            elif token_0 == "|":
-                print("SPLIT")
-                rules.append([prefix + str(max_index), "$", prefix + str(end_index)])
-                is_separator_present = True
-
-        # token je \(
-        else:
-            rules.append([prefix + str(max_index), "\\" + token_0, prefix + str(max_index + 1)])
-            max_index += 1
-
-    else:
-        if token_0 == "\\":
-            # continue
-            return
-
-        rules.append([prefix + str(max_index), token_0, prefix + str(max_index + 1)])
-        max_index += 1
-
-
 def regex_driver(s):
     print(["input", s])
     rules = list()
     max_index = 0
     start_index = 0
-    end_index = "accept"
     prefix = "S_"
     accept_states = []
 
@@ -353,144 +317,105 @@ def regex_driver(s):
     # 2 = read bracket content, check if + or * is curr token
     automata_state = 0
 
-
     i_0 = -1
     while i_0 != len(s) - 1:
         i_0 += 1
         token_0 = s[i_0]
-        # print(i_0, token_0)
-    # for i_0, token_0 in enumerate(s):
 
-        # citanje
+        # handle curr token
         if automata_state == 0:
 
-            if i_0 == 0:
-                pass
-
-            elif s[i_0 - 1] == ")" and is_escaped_at_index(s, i_0 - 1):
-                print("ZATVORENA ZAGRADA")
-
-            # token_0 je u +, *, (, )....
+            # maybe action
+            # token_0 = [(, ), +, *, |]
             if token_0 in SPEC_CHARS:
 
-                # actions
-                # token je (
+                # action
                 if is_escaped_at_index(s, i_0):
 
+                    # start of bracket regex
                     if token_0 == "(":
                         t_1 = bracket_handler(s[i_0:])
                         bracket_ttl = t_1[1] + i_0
                         t_0 += token_0
                         automata_state = 1
-                        print("ZAGRADA")
+                        # print("ZAGRADA")
 
+                    # regex split
                     elif token_0 == "|":
-                        print("SPLIT")
                         accept_states.append(max_index)
 
-                # token je \(
+                # token
                 else:
-                    #     ako je prosli index | onda kreni od S_0
-                    # ovo se nece desit jer prosli mora bit "\\"
-                    if i_0 == 0:
-                        rules.append([prefix + str(max_index), "\\" + token_0, prefix + str(max_index + 1)])
-                        max_index += 1
+                    rules.append([prefix + str(max_index), "\\" + token_0, prefix + str(max_index + 1)])
+                    max_index += 1
 
-                    else:
-
-                        if s[i_0 - 1] == "|":
-
-                            # akcija
-                            if is_escaped_at_index(s, i_0 - 1):
-
-                                rules.append([prefix + str(0), "\\" + token_0, prefix + str(max_index + 1)])
-                                max_index += 1
-
-                            else:
-                                rules.append([prefix + str(max_index), "\\" + token_0, prefix + str(max_index + 1)])
-                                max_index += 1
-
-                        else:
-                            rules.append([prefix + str(max_index), "\\" + token_0, prefix + str(max_index + 1)])
-                            max_index += 1
-
+            # not action
             else:
+                # todo sta ako je \\\\\\\\\\\\\...
+                # skip if next is action
                 if token_0 == "\\":
                     continue
 
-                #     ako je prosli index | onda kreni od S_0
-                # ovo se nece desit jer prosli mora bit "\\"
+                # just append
                 if i_0 == 0:
                     rules.append([prefix + str(max_index), token_0, prefix + str(max_index + 1)])
                     max_index += 1
 
                 else:
 
-                    if s[i_0 - 1] == "|":
+                    # prev token = action |
+                    if s[i_0 - 1] == "|" and is_escaped_at_index(s, i_0 - 1):
 
-                        # akcija
-                        if is_escaped_at_index(s, i_0 - 1):
+                        # S_0, curr token, new state
+                        rules.append([prefix + str(0),  token_0, prefix + str(max_index + 1)])
 
-                            rules.append([prefix + str(0),  token_0, prefix + str(max_index + 1)])
-                            max_index += 1
-
-                        else:
-                            rules.append([prefix + str(max_index), token_0, prefix + str(max_index + 1)])
-                            max_index += 1
-
+                    # serialize to last
                     else:
+                        # S_prev, curr token, new state
                         rules.append([prefix + str(max_index), token_0, prefix + str(max_index + 1)])
-                        max_index += 1
 
-        # unutar zagrade
+                    max_index += 1
+
+        # inside bracket regex
         elif automata_state == 1:
             t_0 += token_0
 
             if i_0 == bracket_ttl:
                 automata_state = 2
 
-        # netom nakon zagrade
+        # after bracket
         elif automata_state == 2:
 
-            if is_escaped_at_index(s, i_0):
+            if token_0 in ["*", "+"]:
+                automata_state = 3
 
-                if token_0 in ["*", "+"]:
-                    automata_state = 3
+            else:
+                i_0 -= 1
+                automata_state = 0
 
-                else:
-                    i_0 -= 1
-                    automata_state = 0
-
-        # ()* ili ()+
+        # after ()* or ()+
         elif automata_state == 3:
 
-            # ne treba provjeravat jer je prosli token + ili *
+            # no need to check if escaped because last token is + or *
             if token_0 == "|":
                 rules.append([prefix + str(start_index), t_0 + s[i_0 - 1], prefix + str(max_index + 1)])
-                automata_state = 0
-                max_index += 1
 
             else:
                 print(t_0)
                 rules.append([prefix + str(max_index), t_0 + s[i_0 - 1], prefix + str(max_index + 1)])
-
-                automata_state = 0
                 t_0 = ""
-                max_index += 1
-
 
             i_0 -= 1
             automata_state = 0
-
-
+            max_index += 1
 
     accept_states.append(max_index)
+
     [print(i) for i in rules]
     print("accept states:")
     [print(prefix + str(i)) for i in accept_states]
     print("****************************************************************************************************")
     return rules
-
 
 
 # todo
@@ -548,7 +473,8 @@ if __name__ == '__main__':
     # todo " nije imao \, hendlaj sve te escapeove
     if regex_driver("(\\(|\\)|\\{|\\}|\\||\\*|\\\\|\\$|\\t|\\n|\\_|!|\"|#|%|&|\'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|"
                     "<|=|>|?|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|"
-                    "l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|~)") == [["\\("], ["\\)"], ["\\{"], ["\\}"], ["\\|"], ["\\*"], ["\\\\"],
+                    "l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|~)") == [["\\("], ["\\)"], ["\\{"], ["\\}"], ["\\|"], ["\\*"],
+                                                            ["\\\\"],
                                                             ["\\$"], ["\\t"], ["\\n"], ["\\_"], ["!"], ["\""], ["#"],
                                                             ["%"], ["&"], ["'"], ["+"], [","], ["-"], ["."], ["/"],
                                                             ["0"], ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"],
