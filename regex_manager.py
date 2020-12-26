@@ -61,48 +61,6 @@ def split_by_separator(v_regex):
     return ret
 
 
-# def test_split_by_separator():
-#
-#     # a'|'b
-#     if split_by_separator("a\\|b") == ["a\\|b"]:
-#         print("test pass")
-#     print()
-#
-#     # a\\ | b
-#     if split_by_separator("a\\\\|b") == ["a\\\\", "b"]:
-#         print("test pass")
-#     print()
-#
-#     # a\\\|b
-#     if split_by_separator("a\\\\\\|b") == ["a\\\\\\|b"]:
-#         print("test pass")
-#     print()
-#
-#     if split_by_separator("a\\\\|b") == ["a\|b"]:
-#         print("test pass")
-#     print()
-#
-#     if split_by_separator("(a|\(|b|c)d|x") == ["(a|\(|b|c)d", "x"]:
-#         print("test pass")
-#     print()
-#
-#     if split_by_separator("(a|\(|b|c)d|x|e") == ["(a|\(|b|c)d", "x", "e"]:
-#         print("test pass")
-#     print()
-#
-#     if split_by_separator("(a|\(|b|c)d|x|e|(d|f)") == ["(a|\(|b|c)d", "x", "e", "(d|f)"]:
-#         print("test pass")
-#     print()
-#
-#     if split_by_separator("(a|\(|b|c)d|\||x|e|(d|f)") == ["(a|\(|b|c)d", "\|","x", "e", "(d|f)"]:
-#         print("test pass")
-#     print()
-#
-#     if split_by_separator("a|\(|b|c") == ["a", "\(", "b", "c"]:
-#         print("test pass")
-#     print()
-
-
 # input: ((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|
 # output: 0|1|2|3|4|5|6|7|8|9
 # provjeri prije jel postoji zagrada
@@ -182,80 +140,7 @@ def extract_deepest_bracket_content(s):
     return t_0
 
 
-# def test_extract_deepest_bracket_content():
-#
-#     t = 0
-#     if extract_deepest_bracket_content("(a|\(|b|c)d|x") == "a|\(|b|c":
-#         print("test passed")
-#         t += 1
-#
-#     if extract_deepest_bracket_content("(a|\(|b|c)d|x|e") == "a|\(|b|c":
-#         print("test passed")
-#
-#         t += 1
-#
-#     if extract_deepest_bracket_content("(a|\(|b|c)d|x|e|(d|f)") == "a|\(|b|c":
-#         print("test passed")
-#
-#         t += 1
-#
-#     if extract_deepest_bracket_content("(a|\(|b|c)d|\||x|e|(d|f)") == "a|\(|b|c":
-#         print("test passed")
-#
-#         t += 1
-#
-#     # 5
-#     if extract_deepest_bracket_content("a|\(|b|c") == "a|\(|b|c":
-#         print("test passed")
-#         t += 1
-#
-#     # 5
-#     if extract_deepest_bracket_content("a|\((|b(D(E|(F)))|c)") == "F":
-#         print("test passed")
-#         t += 1
-#
-#     print("test", t)
-
-
-# # todo
-# def check_len_regex(s):
-#     pass
-
-
-# def test_check_len_regex():
-#     t = 0
-#     if check_len_regex("0|1|2|3|4|5|6|7|8|9") == ["1", ""]:
-#         print("test passed")
-#         t += 1
-#
-#     if check_len_regex("0|1|2|3|4|5|6|7|48|9") == ["2", "48"]:
-#         print("test passed")
-#
-#         t += 1
-#
-#     if check_len_regex("0|1|2|3|4|5|6[abc]|7|48|9") == "a|\(|b|c":
-#         print("test passed")
-#
-#         t += 1
-#
-#     if check_len_regex("(a|\(|b|c)d|\||x|e|(d|f)") == "a|\(|b|c":
-#         print("test passed")
-#
-#         t += 1
-#
-#     # 5
-#     if check_len_regex("a|\(|b|c") == "a|\(|b|c":
-#         print("test passed")
-#         t += 1
-#
-#     # 5
-#     if check_len_regex("a|\((|b(D(E|(F)))|c)") == "F":
-#         print("test passed")
-#         t += 1
-#
-#     print("test", t)
-
-
+# trazi prvu otvorenu zagradu
 # bracket_handler("a(bc)d") == [1, 4, "bc"]:
 def bracket_handler(s):
     # print(s)
@@ -335,8 +220,7 @@ def test_bracket_handler():
     print("test", t)
 
 
-# input "avnej|dw|"
-# output True
+# returns True if @s contains "|", not "\\|"
 def is_separator_present(s):
     for i_0, token_0 in enumerate(s):
 
@@ -351,12 +235,72 @@ def is_separator_present(s):
     return False
 
 
+def split_by_state(s):
+    ret = list()
+
+    t_0 = list()
+
+    # append_tokens = True
+
+    for i, token in enumerate(s):
+        print(i, token)
+
+        # if not append_tokens:
+        #     append_tokens_counter
+
+        if token == "(":
+            if is_escaped_at_index(s, i):
+                print("lijeva zagrada")
+                # print(s[i:])
+                t_1 = bracket_handler(s[i:])
+                # append_tokens = False
+                # append_tokens_counter = t_1[1]
+            else:
+                print("token")
+
+        elif token == ")":
+            if is_escaped_at_index(s, i):
+                print("desna zagrada")
+            else:
+                print("token")
+
+        elif token == "+":
+            if is_escaped_at_index(s, i):
+                print("plusic")
+            else:
+                print("token")
+
+        elif token == "*":
+            if is_escaped_at_index(s, i):
+                print("mnozenje")
+            else:
+                print("token")
+
+
+
+
+        # else:
+        #     pass
+
+    # print(t_0)
+    return t_0
+
+
+OP_CODES = ["OP_AND", "OP_OR", "OP_+", "OP_*"]
 # dynamic prog
 # ret = list()
+TTL = 15
+indent = -1
+
+SPEC_CHARS = ["+", "*", "(", ")", "n", "t", "_"]
+
 def regex_driver(s):
     print(["input", s])
+    rules = list()
+    max_index = 0
+    prefix = "S_"
 
-
+    # zagrade na pocetku i kraju
     # mice zagrade s pocetka i kraja dok postoje
     # hendla svu logiku da mice samo ako ima smisla micat
     t_0 = bracket_handler(s)
@@ -365,38 +309,214 @@ def regex_driver(s):
         print(["rekurzija, mako sam zagrade", t_1])
         return regex_driver(t_1)
 
-    # podijeli po |, ne gleda jel postoje zagrade
-    # todo zagrade
-    # ret = [split_by_separator(s)]
+    t_0 = ""
+    bracket_ttl = -1
 
-    ret = [[i] for i in split_by_separator(s)]
+    # 0 = read and split
+    # 1 = reading in bracket content
+    # 2 = read bracket content, check if + or * is curr token
+    # 3 = prev token is \
+    automata_state = 0
+    for i_0, token_0 in enumerate(s):
 
-    # ako ima zagrade u nekom elementu onda ih ispisuje i treba splitat
+        if automata_state == 0:
+            print()
+            print(i_0, token_0)
+
+            if token_0 not in SPEC_CHARS:
+                # if token_0 == "\\":
+                #     print("as = 3")
+                #     automata_state == 3
+                #     continue
+
+                print("obican token")
+                rules.append(prefix + str(max_index) + ", " + token_0 + " -> " + prefix + str(max_index + 1))
+                max_index += 1
+
+            else:
+
+                if is_escaped_at_index(s, i_0):
+                    print("ovo je spec")
+
+                    if token_0 == "(":
+                        print("zagrada")
+                        print(bracket_handler(s[i_0:]))
+                        t_1 = bracket_handler(s[i_0:])
+                        bracket_ttl = t_1[1] + i_0
+                        print(bracket_ttl)
+                        t_0 += token_0
+                        automata_state = 1
+
+                else:
+                    print("obican token 2")
+                    # if token_0 == "\\":
+                    #     print("as = 3")
+                    #
+                    #     automata_state == 3
+                    #     continue
+
+                    rules.append(prefix + str(max_index) + ", " + token_0 + " -> " + prefix + str(max_index + 1))
+                    max_index += 1
+
+        # elif automata_state == 3:
+        #     print()
+        #     print(i_0, token_0)
+        #
+        #     print("pravi char")
+        #     rules.append(prefix + str(max_index) + ", " + "\\" + token_0 + " -> " + prefix + str(max_index + 1))
+        #     max_index += 1
+        #
+        #     automata_state = 0
+
+        elif automata_state == 1:
+            t_0 += token_0
+            print(["t_0", t_0])
+
+        elif automata_state == 2:
+            print("provjeravam jel neki spec znak iza zagrada")
+            if is_escaped_at_index(s, i_0):
+                if token_0 in ["*", "+"]:
+                    print("daaa")
+                    print(t_0)
+                    rules.append(prefix + str(max_index) + ", " + t_0 + token_0 + " -> " + prefix + str(max_index + 1))
+                else:
+                    rules.append(prefix + str(max_index) + ", " + t_0 + " -> " + prefix + str(max_index + 1))
+
+                max_index += 1
+                t_0 = ""
+
+            automata_state = 0
+
+        if i_0 == bracket_ttl:
+            automata_state = 2
+
+
+
+    # # znaci da je iza zagrada + ili *
+    # elif t_0 == 0 and t_0[1] == len(s) - 1 - 1:
+    #     print("operator mnozenja ili zbrajanja je na kraju")
     #
-    new_ret = list()
-    for i_1, token_1 in enumerate(ret):
-
-        if is_separator_present(token_1):
-            print(["handle this", token_1])
-            new_ret.append(token_1)
-
-        else:
-            new_ret.append(token_1)
-
-# print("ret", ret)
-    print("ret")
-    for i in new_ret:
-        [print(len(j)) for j in i]
-        print(i)
-        # [print(j) for j in i]
-
-    print(new_ret)
-
-    # [print(len(i), ",") for i in new_ret]
+    #     if s[t_0[1]] == "+":
+    #         print("OP_+")
+    #         print(indent * "\t" + str([["OP_+"], [s[t_0[0] + 1: t_0[1] - 1]]]))
     #
-    # [print([i]) for i in new_ret]
+    #     elif s[t_0[1]] == "*":
+    #         print("OP_*")
+    #         print(indent * "\t" + str([["OP_*"], [s[t_0[0] + 1: t_0[1] - 1]]]))
+    #
+    # else:
+    #     print("nema zagrada")
+    #
+    # ret = [[i] for i in split_by_separator(s)]
+    #
+    # print(["ret", ret])
 
-    return new_ret
+    # rules.append(s)
+
+    # global TTL, indent
+    # indent += 1
+    #
+    #
+    # TTL -= 1
+    # if TTL < 0:
+    #     return "c"
+    #
+    # print(indent * "\t" + "input " + str(s))
+    # print(indent * "\t" + str(len(s)))
+    #
+    # if s in OP_CODES:
+    #     indent -= 1
+    #     return s
+    #
+    # # if s in OP_CODES:
+    # #     print(indent * "\t" + "vracam op code")
+    # #     print()
+    # #     indent -= 1
+    # #     return s
+    # #
+    # # else:
+    # #     # zagrade na pocetku i kraju
+    # #     # mice zagrade s pocetka i kraja dok postoje
+    # #     # hendla svu logiku da mice samo ako ima smisla micat
+    # #     t_0 = bracket_handler(s)
+    # #     if t_0[0] == 0 and t_0[1] == len(s) - 1:
+    # #         t_1 = s[t_0[0] + 1: t_0[1]]
+    # #         print(["rekurzija, mako sam zagrade", t_1])
+    # #         return regex_driver(t_1)
+    # #
+    # #     # znaci da je iza zagrada + ili *
+    # #     elif t_0 == 0 and t_0[1] == len(s) - 1 - 1:
+    # #         print("operator mnozenja ili zbrajanja je na kraju")
+    # #
+    # #         if s[t_0[1]] == "+":
+    # #             print("OP_+")
+    # #             print(indent * "\t" + str([["OP_+"], [s[t_0[0] + 1: t_0[1] - 1]]]))
+    # #
+    # #         elif s[t_0[1]] == "*":
+    # #             print("OP_*")
+    # #             print(indent * "\t" + str([["OP_*"], [s[t_0[0] + 1: t_0[1] - 1]]]))
+    # #
+    # #     else:
+    # #         print("nema zagrada")
+    # #
+    # #     return "c"
+    # new_ret = []
+    # for stream in s:
+    #     print(indent * "\t" + "stream " + str(stream))
+    #
+    #     print()
+    #     new_ret.append(regex_driver(stream))
+    #     print(indent * "\t" + "new st " + str(new_ret))
+    #
+    #
+    #
+    # indent -= 1
+    # return new_ret
+    #
+    #
+    #
+    #
+    # # podijeli po |, ne gleda jel postoje zagrade
+    # # todo zagrade
+    # # ret = [split_by_separator(s)]
+    #
+    # ret = [[i] for i in split_by_separator(s)]
+    #
+    # # ako ima zagrade u nekom elementu onda ih ispisuje i treba splitat
+    # new_ret = list()
+    # for i_1, token_1 in enumerate(ret):
+    #
+    #     if is_separator_present(token_1):
+    #         print(["handle this", token_1])
+    #         new_ret.append(token_1)
+    #
+    #     else:
+    #         new_ret.append(token_1)
+    #
+    # t_1 = list()
+    #
+    # for i_0 in new_ret:
+    #     t_0 = list()
+    #     print("stream", i_0)
+    #
+    #     for i_1 in i_0:
+    #         print(len(i_1))
+    #         t_1.append(split_by_state(i_1))
+    #
+    #     print("dodajem", t_1)
+    #     t_0.append([i for i in t_1])
+    #
+    # print("tocni", t_0[0])
+    #
+    # # return t_0[0]
+    #
+    # print(new_ret)
+    # print(rules)
+
+    [print(i) for i in rules]
+    print("****************************************************************************************************")
+    return rules
+
 
 
 # todo
@@ -408,11 +528,14 @@ if __name__ == '__main__':
     #   a|b -> [a], [b]
     #   \t, \n -> \t, \n
     #
+
+    # print(["rj", regex_driver([["OP_+"], [["a"], ["b"]], [["OP_AND"], ["OP_*"]]])])
+    # # print(["rj", regex_driver(["-(t|n|(2|3)+|k)-"])])
     #
-    # print(["\t", "\n"])
+    # # print(regex_driver(["-(\\t|\\n(2|3|e)+|\\_)*-"]))
+    #
     # import sys
-    # sys.exit(
-    # )
+    # sys.exit()
 
     if regex_driver("\\n") == [["\\n"]]:
         print("test passed")
