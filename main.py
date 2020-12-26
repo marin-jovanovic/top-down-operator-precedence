@@ -177,10 +177,13 @@ def source():
 
 if __name__ == '__main__':
 
+    s = "".join([i for i in open("test_cases/minusLang.in").readlines()])
+    print(list(s))
+
     # source()
     #
-    # import sys
-    # sys.exit()
+    import sys
+    sys.exit()
 
 
     load_language()
