@@ -115,7 +115,7 @@ def extract_deepest_bracket_content(s):
         t_0 += token
 
         if token == ")":
-            # ovo se nikad nece ostvarit
+            # never true
             if i_0 == 0:
                 state_of_brackets -= 1
                 t_0 = t_0[1:-1]
@@ -126,9 +126,8 @@ def extract_deepest_bracket_content(s):
                 state_of_brackets -= 1
                 t_0 = t_0[1:-1]
                 break
-                # print("kraj")
 
-            # # znaci da je \)
+            # \)
             # else:
             #     print(token)
 
@@ -140,7 +139,7 @@ def extract_deepest_bracket_content(s):
     return t_0
 
 
-# trazi prvu otvorenu zagradu
+# finds first open bracket
 # bracket_handler("a(bc)d") == [1, 4, "bc"]:
 def bracket_handler(s):
     # print(s)
@@ -158,23 +157,18 @@ def bracket_handler(s):
             if i_0 == 0:
                 state_of_brackets += 1
 
-                if state != 1:
+                if state == 0:
                     index_start = i_0
                     state = 1
 
             elif s[i_0 - 1] != "\\":
                 state_of_brackets += 1
 
-                if state != 1:
+                if state == 0:
                     index_start = i_0
                     state = 1
 
-            # # znaci da je \(
-            # else:
-            #     print(token)
-
         elif token == ")":
-            # ovo se nikad nece ostvarit
             if i_0 == 0:
                 state_of_brackets -= 1
 
@@ -183,21 +177,21 @@ def bracket_handler(s):
 
             if state_of_brackets == 0:
                 index_end = i_0
-                break
 
-            # # znaci da je \)
-            # else:
-            #     print(token)
-
-        # else:
-        #     print(token)
+                state = 2
+                continue
 
         if state == 1:
             content += token
 
+        elif state == 2:
+            if token in ["+", "*"]:
+                index_end += 1
+            break
+
     ret = [index_start, index_end, content[1:]]
 
-    print("bracket_handler", ret)
+    print("bracket_handler", s, ret)
     return ret
 
 
@@ -220,6 +214,7 @@ def test_bracket_handler():
     print("test", t)
 
 
+# todo bracket skip
 # returns True if @s contains "|", not "\\|"
 def is_separator_present(s):
     for i_0, token_0 in enumerate(s):
@@ -283,13 +278,50 @@ def split_by_state(s):
     return t_0
 
 
-OP_CODES = ["OP_AND", "OP_OR", "OP_+", "OP_*"]
-# dynamic prog
-# ret = list()
-TTL = 15
-indent = -1
+# if bracket at start of @s
+# returns @-1
+# input: \*, output: 1
+# input: *, output: 0
+def get_first_token_index(s):
 
-SPEC_CHARS = ["+", "*", "(", ")", "n", "t", "_", "|", "$"]
+    t_0 = bracket_handler(s)
+
+    while t_0[0] != -1:
+        if t_0[0] == 0:
+            return -1
+
+        s = s[: t_0[0]] + s[t_0[1] + 1:]
+        t_0 = bracket_handler(s)
+
+    print(s)
+
+    if s[0] == "\\":
+        return 1
+    else:
+        return 0
+
+    # count = 0
+    # t_0 = ""
+    #
+    # i_1 = -1
+    # is_prev_escaper = False
+    # while i_1 != len(s) - 1:
+    #     i_1 += 1
+    #     token_1 = s[i_1]
+    #
+    #     print(i_1, token_1)
+    #     t_0 += token_1
+    #
+    #     if i_1 == 0:
+    #
+    #         if token_1 == "\\":
+    #             continue
+    #
+    #         elif token_1 not in ["("]:
+    #             count += 1
+    #
+    # print(t_0)
+    # return True
 
 
 def regex_driver(s):
@@ -309,107 +341,95 @@ def regex_driver(s):
         print(["rekurzija, mako sam zagrade", t_1])
         return regex_driver(t_1)
 
-    t_0 = ""
-    bracket_ttl = -1
+    streams = split_by_separator(s)
+    print("streams: " + str(streams))
 
-    # 0 = read and split
-    # 1 = reading in bracket content
-    # 2 = read bracket content, check if + or * is curr token
-    automata_state = 0
+    for s in streams:
 
-    i_0 = -1
-    while i_0 != len(s) - 1:
-        i_0 += 1
-        token_0 = s[i_0]
+        i_0 = -1
+        while i_0 != len(s) - 1:
+            i_0 += 1
+            token_0 = s[i_0]
 
-        # handle curr token
-        if automata_state == 0:
+            # actions
+            # (, ), +, *
 
-            # maybe action
-            # token_0 = [(, ), +, *, |]
-            if token_0 in SPEC_CHARS:
+            # tokens
+            # \(, \), \+, \*
 
+            # start of stream
+            if i_0 == 0:
+                print(1, i_0, token_0)
+                # todo complete action actions
                 # action
-                if is_escaped_at_index(s, i_0):
+                if token_0 == "(":
+                    print("a")
+                    t_1 = bracket_handler(s[i_0:])
+                    t_0 = s[i_0 + t_1[0]: i_0 + t_1[1] + 1]
+                    i_0 = t_1[1] + i_0
 
-                    # start of bracket regex
-                    if token_0 == "(":
-                        t_1 = bracket_handler(s[i_0:])
-                        bracket_ttl = t_1[1] + i_0
-                        t_0 += token_0
-                        automata_state = 1
-                        # print("ZAGRADA")
+                    if s[i_0] in ["+", "*"]:
+                        rules.append([prefix + str(start_index), t_0, prefix + str(max_index + 1)])
+                    else:
+                        rules.append([prefix + str(start_index), t_0, prefix + str(max_index + 1)])
 
-                    # regex split
-                    elif token_0 == "|":
-                        accept_states.append(max_index)
+                # token prefix handler
+                elif token_0 == "\\":
+                    print("b")
+                    continue
+                    # i_0 += 1
+                    # token_0 = s[i_0]
+                    # rules.append([prefix + str(start_index), "\\" + token_0, prefix + str(max_index + 1)])
+                    # max_index += 1
 
                 # token
                 else:
-                    rules.append([prefix + str(max_index), "\\" + token_0, prefix + str(max_index + 1)])
+                    print("c")
+                    rules.append([prefix + str(start_index), token_0, prefix + str(max_index + 1)])
                     max_index += 1
 
-            # not action
+            elif s[i_0 - 1] == "\\":
+                print(2, i_0, token_0)
+
+                # action
+                if is_escaped_at_index(s, i_0):
+                    print("TODO action")
+                    pass
+
+                # token
+                else:
+
+                    if i_0 - 1 == 0:
+                        rules.append([prefix + str(start_index), "\\" + token_0, prefix + str(max_index + 1)])
+
+                    else:
+                        rules.append([prefix + str(max_index), "\\" + token_0, prefix + str(max_index + 1)])
+
+                    max_index += 1
+
             else:
-                # todo sta ako je \\\\\\\\\\\\\...
-                # skip if next is action
-                if token_0 == "\\":
+                print(3, i_0, token_0)
+                # action
+                if token_0 in ["(", ")", "+", "*"]:
+
+                    if token_0 == "(":
+                        t_1 = bracket_handler(s[i_0:])
+                        t_0 = s[i_0 + t_1[0]: i_0 + t_1[1] + 1]
+
+                        i_0 = t_1[1] + i_0
+
+                        rules.append([prefix + str(max_index), t_0, prefix + str(max_index + 1)])
+                        max_index += 1
+
+                elif token_0 == "\\":
                     continue
 
-                # just append
-                if i_0 == 0:
+                # token
+                else:
                     rules.append([prefix + str(max_index), token_0, prefix + str(max_index + 1)])
                     max_index += 1
 
-                else:
-
-                    # prev token = action |
-                    if s[i_0 - 1] == "|" and is_escaped_at_index(s, i_0 - 1):
-
-                        # S_0, curr token, new state
-                        rules.append([prefix + str(0),  token_0, prefix + str(max_index + 1)])
-
-                    # serialize to last
-                    else:
-                        # S_prev, curr token, new state
-                        rules.append([prefix + str(max_index), token_0, prefix + str(max_index + 1)])
-
-                    max_index += 1
-
-        # inside bracket regex
-        elif automata_state == 1:
-            t_0 += token_0
-
-            if i_0 == bracket_ttl:
-                automata_state = 2
-
-        # after bracket
-        elif automata_state == 2:
-
-            if token_0 in ["*", "+"]:
-                automata_state = 3
-
-            else:
-                i_0 -= 1
-                automata_state = 0
-
-        # after ()* or ()+
-        elif automata_state == 3:
-
-            # no need to check if escaped because last token is + or *
-            if token_0 == "|":
-                rules.append([prefix + str(start_index), t_0 + s[i_0 - 1], prefix + str(max_index + 1)])
-
-            else:
-                print(t_0)
-                rules.append([prefix + str(max_index), t_0 + s[i_0 - 1], prefix + str(max_index + 1)])
-                t_0 = ""
-
-            i_0 -= 1
-            automata_state = 0
-            max_index += 1
-
-    accept_states.append(max_index)
+        accept_states.append(max_index)
 
     [print(i) for i in rules]
     print("accept states:")
@@ -422,289 +442,50 @@ def regex_driver(s):
 #     specijalni znakovi
 #     +, *, (, ), [, ], .,
 if __name__ == '__main__':
-    # todo
-    #   \_ -> ' '
-    #   a|b -> [a], [b]
-    #   \t, \n -> \t, \n
+
+    # print(get_first_token_index("0\\123(3(1(2)+4)5)*67(2)89"))
     #
+    # import sys
+    # sys.exit()
 
-    if regex_driver("\\n") == [["\\n"]]:
-        print("test passed")
-    else:
-        print("test failed")
-    print()
+    regex_driver("\\n")
 
-    if regex_driver("\\(") == [["\\("]]:
-        print("test passed")
-    else:
-        print("test failed")
-    print()
+    regex_driver("\\(")
 
-    if regex_driver("\\)") == [["\\)"]]:
-        print("test passed")
-    else:
-        print("test failed")
-    print()
+    regex_driver("\\)")
 
-    if regex_driver("-") == [["-"]]:
-        print("test passed")
-    else:
-        print("test failed")
-    print()
+    regex_driver("-")
 
-    if regex_driver("\\t|\\_") == [["\\t"], ["\\_"]]:
-        print("test passed")
-    else:
-        print("test failed")
-    print()
+    regex_driver("\\t|\\_")
 
-    if regex_driver("#\\|") == [["#"], ["\\|"]]:
-        print("test passed")
-    else:
-        print("test failed")
-    print()
+    regex_driver("#\\|")
 
-    if regex_driver("\\|#") == [["\\|"], ["#"]]:
-        print("test passed")
-    else:
-        print("test failed")
-    print()
+    regex_driver("\\|#")
 
     # todo " nije imao \, hendlaj sve te escapeove
-    if regex_driver("(\\(|\\)|\\{|\\}|\\||\\*|\\\\|\\$|\\t|\\n|\\_|!|\"|#|%|&|\'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|"
-                    "<|=|>|?|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|"
-                    "l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|~)") == [["\\("], ["\\)"], ["\\{"], ["\\}"], ["\\|"], ["\\*"],
-                                                            ["\\\\"],
-                                                            ["\\$"], ["\\t"], ["\\n"], ["\\_"], ["!"], ["\""], ["#"],
-                                                            ["%"], ["&"], ["'"], ["+"], [","], ["-"], ["."], ["/"],
-                                                            ["0"], ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"],
-                                                            ["8"], ["9"], [":"], [";"], ["<"], ["="], [">"], ["?"],
-                                                            ["@"], ["A"], ["B"], ["C"], ["D"], ["E"], ["F"], ["G"],
-                                                            ["H"], ["I"], ["J"], ["K"], ["L"], ["M"], ["N"], ["O"],
-                                                            ["P"], ["Q"], ["R"], ["S"], ["T"], ["U"], ["V"], ["W"],
-                                                            ["X"], ["Y"], ["Z"], ["["], ["]"], ["^"], ["_"], ["`"],
-                                                            ["a"], ["b"], ["c"], ["d"], ["e"], ["f"], ["g"], ["h"],
-                                                            ["i"], ["j"], ["k"], ["l"], ["m"], ["n"], ["o"], ["p"],
-                                                            ["q"], ["r"], ["s"], ["t"], ["u"], ["v"], ["w"], ["x"],
-                                                            ["y"], ["z"], ["~"]
-                                                            ]:
-        print("test passed")
-    else:
-        print("test failed")
-    print()
+    regex_driver("(\\(|\\)|\\{|\\}|\\||\\*|\\\\|\\$|\\t|\\n|\\_|!|\"|#|%|&|\'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|<|=|>|?"
+                 "|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|"
+                 "l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|~)")
 
-    if regex_driver("((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|0x((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D"
-                    "|E|F)((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)*)") == [
-        ["(0|1|2|3|4|5|6|7|8|9)",
-         "(0|1|2|3|4|5|6|7|8|9)*"
-         ],
-        ["0",
-         "x",
-         "(0|1|2|3|4|5|6|7|8|9|a|b|c|d|e|f|A|B|C|D|E|F)",
-         "(0|1|2|3|4|5|6|7|8|9|a|b|c|d|e|f|A|B|C|D|E|F)*"
-         ]
-    ]:
-        print("test passed")
-    else:
-        print("test failed")
-    print()
+    regex_driver("((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|0x((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D"
+                 "|E|F)((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)*)")
 
-    if regex_driver("-(\\t|\\n|\\_)*-") == [
-        ["-",
-         "(\t|\n| )*",
-         "-"
-         ]
-    ]:
-        print("test passed")
-    else:
-        print("test failed")
-    print()
+    regex_driver("-(\\t|\\n|\\_)*-")
 
-    if regex_driver("\\((\\t|\\n|\\_)*-") == [
-        ["(",
-         "(\t|\n| )*",
-         "-"
-         ]
-    ]:
-        print("test passed")
-    else:
-        print("test failed")
-    print()
+    regex_driver("\\((\\t|\\n|\\_)*-")
 
-    if regex_driver("-(\\t|\\n|\\_)*-") == [["-", "* (\t|\n| )", "-"]]:
-        print("test passed")
-    else:
-        print("test failed")
-    print()
+    regex_driver("-(\\t|\\n|\\_)*-")
 
-    if regex_driver("a|b|(c)+|d") == [["S_0", "a", "S_1"],
-                                      ["S_0", "b", "S_2"],
-                                      ["S_0", "(c)+", "S_3"],
-                                      ["S_0", "d", "S_4"],
-                                      ["S_1", "\\$", "S_5"],
-                                      ["S_2", "\\$", "S_5"],
-                                      ["S_3", "\\$", "S_5"],
-                                      ["S_4", "\\$", "S_5"]
-                                      ]:
-        print("test passed")
-    else:
-        print("test failed")
-    print()
+    regex_driver("a|b|(c)+|d")
 
-# S_0, 0 -> S_1
-# S_0, 1 -> S_1
-# S_0, 2 -> S_1
-# S_0, 3 -> S_1
-# S_0, 4 -> S_1
-# S_0, 5 -> S_1
-# S_0, 6 -> S_1
-# S_0, 7 -> S_1
-# S_0, 8 -> S_1
-# S_0, 9 -> S_1
+    # regex_driver("ab|cd")
+    # regex_driver("\\ab|cd")
+    # regex_driver("ab|\\cd")
+    # regex_driver("\\ab|\\cd")
 
-# S_1, 0 -> S_1
-# S_1, 1 -> S_1
-# S_1, 2 -> S_1
-# S_1, 3 -> S_1
-# S_1, 4 -> S_1
-# S_1, 5 -> S_1
-# S_1, 6 -> S_1
-# S_1, 7 -> S_1
-# S_1, 8 -> S_1
-# S_1, 9 -> S_1
+    regex_driver("(ab)+efd|(de)*def")
+    regex_driver("a|test|(dwa)har")
 
-# S_1, S_4 prihvatljivo
-
-# S_0, 0 -> S_2
-# S_2, x -> S_3
-# S_3, 0 -> S_4
-# S_3, 1 -> S_4
-# S_3, 2 -> S_4
-# S_3, 3 -> S_4
-# S_3, 4 -> S_4
-# S_3, 5 -> S_4
-# S_3, 6 -> S_4
-# S_3, 7 -> S_4
-# S_3, 8 -> S_4
-# S_3, 9 -> S_4
-# S_3, a -> S_4
-# S_3, b -> S_4
-# S_3, c -> S_4
-# S_3, d -> S_4
-# S_3, e -> S_4
-# S_3, f -> S_4
-# S_3, A -> S_4
-# S_3, B -> S_4
-# S_3, C -> S_4
-# S_3, D -> S_4
-# S_3, E -> S_4
-# S_3, F -> S_4
-# S_4, 0 -> S_4
-# S_4, 1 -> S_4
-# S_4, 2 -> S_4
-# S_4, 3 -> S_4
-# S_4, 4 -> S_4
-# S_4, 5 -> S_4
-# S_4, 6 -> S_4
-# S_4, 7 -> S_4
-# S_4, 8 -> S_4
-# S_4, 9 -> S_4
-# S_4, a -> S_4
-# S_4, b -> S_4
-# S_4, c -> S_4
-# S_4, d -> S_4
-# S_4, e -> S_4
-# S_4, f -> S_4
-# S_4, A -> S_4
-# S_4, B -> S_4
-# S_4, C -> S_4
-# S_4, D -> S_4
-# S_4, E -> S_4
-# S_4, F -> S_4
-
-# test_extract_deepest_bracket_content()
-
-# r1 = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-# r2 = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-#
-#
-#
-# for tweet in tweets:
-#     ...
-#     if tweet.startswith("coffee", 7):
-#         ...
-#     print(tweet)
-#
-#
-#
-#
-#
-# def analyze_letters(main_buffer):
-#     pointer = 0
-#     try:
-#         while main_buffer[pointer].isalnum():
-#             pointer += 1
-#     except:
-#         pass
-#
-#     buffer = main_buffer[:pointer]
-#     OUTPUT.append("IDN " + str(ROW) + " " + str().join(buffer))
-#
-#     main_buffer = main_buffer[pointer:]
-#     return main_buffer
-#
-#
-# def analyze(input):
-#     global ROW, OUTPUT
-#
-#     main_buffer = list(str(input))
-#     OUTPUT.clear()
-#     try:
-#         while True:
-#             if main_buffer[0] == "/" and main_buffer[1] == "/":
-#                 main_buffer = main_buffer[main_buffer.index("\n") + 1:]
-#                 ROW += 1
-#
-#             elif main_buffer[0] in {"\t", " ", "\n"}:
-#                 ROW += 1 if main_buffer[0] == "\n" else 0
-#                 main_buffer = main_buffer[1:]
-#
-#             elif main_buffer[0] in "zaod" and main_buffer[1] in "zaod" and main_buffer[2] in {" ", "\n", "\t"}:
-#                 id = main_buffer[0] + main_buffer[1]
-#                 if id in {"za", "az", "od", "do"}:
-#                     OUTPUT.append("KR_" + str(id).upper() + " " + str(ROW) + " " + id)
-#                 main_buffer = main_buffer[2:] if id in {"za", "az", "od", "do"} else analyze_letters(main_buffer)
-#             #     main buffer = za, az, od, do ili nesto sta nije idn
-#
-#
-#             elif main_buffer[0].isnumeric():
-#                 pointer = 0
-#                 try:
-#                     while main_buffer[pointer].isnumeric():
-#                         pointer += 1
-#                 except:
-#                     pass
-#                 OUTPUT.append("BROJ " + str(ROW) + " " + str().join(main_buffer[:pointer]))
-#                 main_buffer = main_buffer[pointer:]
-#
-#             elif main_buffer[0] in "()/*-+=":
-#                 if main_buffer[0] == ")":
-#                     OUTPUT.append("D_ZAGRADA " + str(ROW) + " )")
-#                 elif main_buffer[0] == "(":
-#                     OUTPUT.append("L_ZAGRADA " + str(ROW) + " (")
-#                 elif main_buffer[0] == "*":
-#                     OUTPUT.append("OP_PUTA " + str(ROW) + " *")
-#                 elif main_buffer[0] == "/":
-#                     OUTPUT.append("OP_DIJELI " + str(ROW) + " /")
-#                 elif main_buffer[0] == "+":
-#                     OUTPUT.append("OP_PLUS " + str(ROW) + " +")
-#                 elif main_buffer[0] == "=":
-#                     OUTPUT.append("OP_PRIDRUZI " + str(ROW) + " =")
-#                 elif main_buffer[0] == "-":
-#                     OUTPUT.append("OP_MINUS " + str(ROW) + " -")
-#                 main_buffer = main_buffer[1:]
-#
-#             elif main_buffer[0].isalpha():
-#                 main_buffer = analyze_letters(main_buffer)
-#     except:
-#         return
+    # c = "a|test(dwakad)+djnaidjai"
+    # t = bracket_handler(c)
+    # print(c[t[0]:t[1] + 2])
