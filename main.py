@@ -210,7 +210,22 @@ if __name__ == '__main__':
     lexer_code.append("\tsource_code = \"\".join([i for i in open(\"test_cases/minusLang.in\").readlines()])")
     lexer_code.append("\tprint(list(source_code))")
 
-
+    # t_in = list()
+    #     t_in.append("a,pnp,a|pnp,lab2|pnp,a|pnp,lab2,utr,utr")
+    #     t_in.append("p5,s3,s4,st6,stanje1,stanje2") #sva stanja
+    #     t_in.append("a,lab2,pnp,utr") # svi inputi
+    #     t_in.append("p5") # prihvatljivo
+    #     t_in.append("stanje1") # pocetno
+    #     t_in.append("s3,a->stanje2")
+    #     t_in.append("s3,lab2->p5,s4")
+    #     t_in.append("s4,$->st6")
+    #     t_in.append("s4,utr->p5,s3")
+    #     t_in.append("stanje1,a->stanje2")
+    #     t_in.append("stanje1,pnp->s3")
+    #     t_in.append("stanje2,$->st6")
+    #     t_in.append("stanje2,a->#")
+    #
+    #     driver(t_in)
 
     for rule in RULES:
 
@@ -221,7 +236,7 @@ if __name__ == '__main__':
         t = regex_driver(rule[1])
 
         for i in t[0]:
-            lexer_code.append("#" + str(i))
+            lexer_code.append("\t# " + str(i))
 
         # if current_state == "S_pocetno":
 
@@ -251,6 +266,11 @@ if __name__ == '__main__':
 
 
     [print(i) for i in lexer_code]
+
+    f = open("lexer.py", "w")
+    [f.write(str(i) + "\n") for i in lexer_code]
+    # f.write("Now the file has more content!")
+    f.close()
 
 '''
     specijalni regex znakovi
