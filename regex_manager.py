@@ -359,8 +359,11 @@ def regex_driver(s):
 
             # start of stream
             if i_0 == 0:
+
                 print(1, i_0, token_0)
+
                 # todo complete action actions
+
                 # action
                 if token_0 == "(":
                     print("a")
@@ -368,19 +371,18 @@ def regex_driver(s):
                     t_0 = s[i_0 + t_1[0]: i_0 + t_1[1] + 1]
                     i_0 = t_1[1] + i_0
 
-                    if s[i_0] in ["+", "*"]:
-                        rules.append([prefix + str(start_index), t_0, prefix + str(max_index + 1)])
-                    else:
-                        rules.append([prefix + str(start_index), t_0, prefix + str(max_index + 1)])
+                    rules.append([prefix + str(start_index), t_0, prefix + str(max_index + 1)])
+                    max_index += 1
 
                 # token prefix handler
                 elif token_0 == "\\":
-                    print("b")
-                    continue
-                    # i_0 += 1
-                    # token_0 = s[i_0]
-                    # rules.append([prefix + str(start_index), "\\" + token_0, prefix + str(max_index + 1)])
-                    # max_index += 1
+
+                    i_0 += 1
+                    token_0 = s[i_0]
+
+                    # no need to check if token
+                    rules.append([prefix + str(start_index), "\\" + token_0, prefix + str(max_index + 1)])
+                    max_index += 1
 
                 # token
                 else:
@@ -394,17 +396,14 @@ def regex_driver(s):
                 # action
                 if is_escaped_at_index(s, i_0):
                     print("TODO action")
-                    pass
+
+                    if token_0 == "(":
+                        print("TODO left bracket")
 
                 # token
                 else:
 
-                    if i_0 - 1 == 0:
-                        rules.append([prefix + str(start_index), "\\" + token_0, prefix + str(max_index + 1)])
-
-                    else:
-                        rules.append([prefix + str(max_index), "\\" + token_0, prefix + str(max_index + 1)])
-
+                    rules.append([prefix + str(max_index), "\\" + token_0, prefix + str(max_index + 1)])
                     max_index += 1
 
             else:
@@ -415,12 +414,12 @@ def regex_driver(s):
                     if token_0 == "(":
                         t_1 = bracket_handler(s[i_0:])
                         t_0 = s[i_0 + t_1[0]: i_0 + t_1[1] + 1]
-
                         i_0 = t_1[1] + i_0
 
                         rules.append([prefix + str(max_index), t_0, prefix + str(max_index + 1)])
                         max_index += 1
 
+                # fixme
                 elif token_0 == "\\":
                     continue
 
