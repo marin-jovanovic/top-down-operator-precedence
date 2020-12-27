@@ -300,8 +300,12 @@ def get_first_token_index(s):
         return 0
 
 
+def log(*data):
+    return
+    print(data)
+
 def regex_driver(s, start_index = 0, max_index = 0):
-    print(["input", s])
+    log(["input", s])
     rules = list()
     # max_index = 0
     # start_index = 0
@@ -318,7 +322,7 @@ def regex_driver(s, start_index = 0, max_index = 0):
     #     return regex_driver(t_1)
 
     streams = split_by_separator(s)
-    print("streams: " + str(streams))
+    log("streams: " + str(streams))
 
     for s in streams:
 
@@ -347,13 +351,17 @@ def regex_driver(s, start_index = 0, max_index = 0):
                 t_2 = s[i_0 + t_1[0] + 1: i_0 + t_1[1] - 1]
                 i_0 = t_1[1] + i_0
 
+                log(t_1)
+
                 # with brackets and +*
-                print(t_0)
+                log(t_0)
 
                 # without brackets and *+
-                print(t_2)
+                log(t_2)
 
                 new_streams = split_by_separator(t_2)
+
+                start_index_2 = max_index
 
                 for i in new_streams:
                     rules.append([source, "$", prefix + str(max_index)])
@@ -363,7 +371,7 @@ def regex_driver(s, start_index = 0, max_index = 0):
                                                                            max_index - 1,
                                                                            max_index - 1)
 
-                    print("max_index", max_index)
+                    log("max_index", max_index)
 
                     [a_states_buffer.append(i) for i in new_accept_states]
 
@@ -371,20 +379,21 @@ def regex_driver(s, start_index = 0, max_index = 0):
 
                 destination = prefix + str(max_index)
 
+                # from end to new state
                 for i in a_states_buffer:
                     rules.append([i, "$", destination])
 
-                if s[t_1[1]] in ["*", "+"]:
-                    print("dodatni op")
+                if s[i_0] in ["*", "+"]:
+                    log("e ops")
 
-                    if s[t_1[1]] == "*":
-                        print("zvjezdica")
+                    # from end to new state
+                    for i in a_states_buffer:
+                        rules.append([i + "a", "$", prefix + str(start_index_2 - 1)])
 
-                    elif s[t_1[1]] == "+":
-                        print("plusic")
+                    if s[i_0] == "*":
+                        log("star")
 
-                    else:
-                        print("nista pametno")
+                        rules.append([source, "$", destination])
 
             # token prefix handler
             elif token_0 == "\\":
@@ -401,9 +410,9 @@ def regex_driver(s, start_index = 0, max_index = 0):
 
         accept_states.append(max_index)
 
-    [print(i) for i in rules]
-    print("accept states:")
-    [print(prefix + str(i)) for i in accept_states]
+    [log(i) for i in rules]
+    log("accept states:")
+    [log(prefix + str(i)) for i in accept_states]
     print("****************************************************************************************************")
     return rules, max_index + 1, [(prefix + str(i)) for i in accept_states]
     # , [(prefix + str(i)) for i in accept_states], max_index
@@ -519,9 +528,20 @@ if __name__ == '__main__':
 
     inp = "a(mo|np)*d"
     rules, t, a_states = regex_driver(inp, 0, 0)
-    print("inp", inp)
-    [print(i) for i in rules]
+    print(inp)
+    print("#states")
+    for i in range(t):
+        print("s" + str(i))
+    print("#initial")
+    print("s0")
+    print("#accepting")
     [print(i) for i in a_states]
+    print("#alphabet")
+    [print(i) for i in inp]
+    print("transitions")
+
+    [print("s" + (i[0])[2:] + ":" + i[1] + ">" + "s" + (i[2])[2:]) for i in rules]
+    # [print(i) for i in a_states]
 
     # print(regex_driver("a(mo|np)*d", 0, 0))
     # print("\33[31m " + str(regex_driver("a(mo|np)*d", 0, 0)) + " \033[0m")
