@@ -357,76 +357,61 @@ def regex_driver(s):
             # tokens
             # \(, \), \+, \*
 
-            # start of stream
-            if i_0 == 0:
+            # # start of stream
+            # if i_0 == 0:
 
-                print(1, i_0, token_0)
+            print(1, i_0, token_0)
 
-                # todo complete action actions
+            # todo complete action actions
 
-                # action
-                if token_0 == "(":
-                    print("a")
-                    t_1 = bracket_handler(s[i_0:])
-                    t_0 = s[i_0 + t_1[0]: i_0 + t_1[1] + 1]
-                    i_0 = t_1[1] + i_0
 
-                    rules.append([prefix + str(start_index), t_0, prefix + str(max_index + 1)])
-                    max_index += 1
+            source = prefix + str(start_index if i_0 == 0 else max_index)
+            destination = prefix + str(max_index + 1)
+            max_index += 1
 
-                # token prefix handler
-                elif token_0 == "\\":
+            # action
+            if token_0 == "(":
+                print("a")
+                t_1 = bracket_handler(s[i_0:])
+                t_0 = s[i_0 + t_1[0]: i_0 + t_1[1] + 1]
+                i_0 = t_1[1] + i_0
 
-                    i_0 += 1
-                    token_0 = s[i_0]
+                rules.append([source, t_0, destination])
 
-                    # no need to check if token
-                    rules.append([prefix + str(start_index), "\\" + token_0, prefix + str(max_index + 1)])
-                    max_index += 1
+            # token prefix handler
+            elif token_0 == "\\":
 
-                # token
-                else:
-                    print("c")
-                    rules.append([prefix + str(start_index), token_0, prefix + str(max_index + 1)])
-                    max_index += 1
+                i_0 += 1
+                token_0 = s[i_0]
 
-            elif s[i_0 - 1] == "\\":
-                print(2, i_0, token_0)
+                # no need to check if token
+                rules.append([source, "\\" + token_0, destination])
 
-                # action
-                if is_escaped_at_index(s, i_0):
-                    print("TODO action")
-
-                    if token_0 == "(":
-                        print("TODO left bracket")
-
-                # token
-                else:
-
-                    rules.append([prefix + str(max_index), "\\" + token_0, prefix + str(max_index + 1)])
-                    max_index += 1
-
+            # token
             else:
-                print(3, i_0, token_0)
-                # action
-                if token_0 in ["(", ")", "+", "*"]:
+                print("c")
+                rules.append([source, token_0, destination])
 
-                    if token_0 == "(":
-                        t_1 = bracket_handler(s[i_0:])
-                        t_0 = s[i_0 + t_1[0]: i_0 + t_1[1] + 1]
-                        i_0 = t_1[1] + i_0
-
-                        rules.append([prefix + str(max_index), t_0, prefix + str(max_index + 1)])
-                        max_index += 1
-
-                # fixme
-                elif token_0 == "\\":
-                    continue
-
-                # token
-                else:
-                    rules.append([prefix + str(max_index), token_0, prefix + str(max_index + 1)])
-                    max_index += 1
+            # else:
+            #     if token_0 == "(":
+            #         t_1 = bracket_handler(s[i_0:])
+            #         t_0 = s[i_0 + t_1[0]: i_0 + t_1[1] + 1]
+            #         i_0 = t_1[1] + i_0
+            #
+            #         rules.append([prefix + str(max_index), t_0, prefix + str(max_index + 1)])
+            #         max_index += 1
+            #
+            #     elif token_0 == "\\":
+            #         i_0 += 1
+            #         token_0 = s[i_0]
+            #
+            # #         def token
+            #         rules.append([prefix + str(max_index), "\\" + token_0, prefix + str(max_index + 1)])
+            #         max_index += 1
+            #
+            #     else:
+            #         rules.append([prefix + str(max_index), token_0, prefix + str(max_index + 1)])
+            #         max_index += 1
 
         accept_states.append(max_index)
 
