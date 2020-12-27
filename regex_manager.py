@@ -526,21 +526,21 @@ if __name__ == '__main__':
 
     # run_tests()
 
-    inp = "a(mo|np)*d"
-    rules, t, a_states = regex_driver(inp, 0, 0)
-    print(inp)
-    print("#states")
-    for i in range(t):
-        print("s" + str(i))
-    print("#initial")
-    print("s0")
-    print("#accepting")
-    [print(i) for i in a_states]
-    print("#alphabet")
-    [print(i) for i in inp]
-    print("transitions")
-
-    [print("s" + (i[0])[2:] + ":" + i[1] + ">" + "s" + (i[2])[2:]) for i in rules]
+    # inp = "a(mo|np)*d"
+    # rules, t, a_states = regex_driver(inp, 0, 0)
+    # print(inp)
+    # print("#states")
+    # for i in range(t):
+    #     print("s" + str(i))
+    # print("#initial")
+    # print("s0")
+    # print("#accepting")
+    # [print(i) for i in a_states]
+    # print("#alphabet")
+    # [print(i) for i in inp]
+    # print("transitions")
+    #
+    # [print("s" + (i[0])[2:] + ":" + i[1] + ">" + "s" + (i[2])[2:]) for i in rules]
     # [print(i) for i in a_states]
 
     # print(regex_driver("a(mo|np)*d", 0, 0))
