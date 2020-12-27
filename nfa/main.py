@@ -8,13 +8,13 @@ FINAL_STATES = list()
 INITIAL_STATE = list()
 TRANSITIONS = list()
 
-ID = 0
+# ID = 0
 
 class Transition_function:
     def __init__(self, curr_state, input_data, new_states):
-        global ID
-        self.by_id = ID
-        ID += 1
+        # global ID
+        # self.by_id = ID
+        # ID += 1
         self.curr_state = str(curr_state)
         self.input_data = str(input_data)
         self.new_states = list()
@@ -25,43 +25,6 @@ class Transition_function:
 
     def __str__(self):
         return self.curr_state + ": " + self.input_data + " -> " + str(self.new_states)
-
-
-# 1. line
-# inputs separated by comma, input streams separated by "|"
-# 2. line
-# states separated by comma
-# 3. line
-# final states separated by comma
-# 4. line
-# initial state
-# 5+ lines
-# transition functions
-def get_input():
-    global INPUT_LISTS, INPUT_SYMBOLS, FINAL_STATES, INITIAL_STATE, TRANSITIONS, Transition_function
-
-    input_lists = input().split("|")
-    for input_stream in input_lists:
-        input_tokens = input_stream.split(",")
-        INPUT_LISTS.append(input_tokens)
-
-    # constants.STATES.append(input().split(","))
-    temp = input()
-    INPUT_SYMBOLS.append(input().split(","))
-    FINAL_STATES.append(input().split(","))
-    INITIAL_STATE = input()
-
-    while True:
-        try:
-            transition_function = input()
-            # x,y->z,f,d
-            raw_data = transition_function.split("->")
-            raw_data2 = raw_data[0].split(",")
-
-            TRANSITIONS.append(Transition_function(raw_data2[0], raw_data2[1], raw_data[1]))
-
-        except:
-            break
 
 
 # gets new states for current_state and current_input
@@ -164,18 +127,8 @@ def get_paths(input_list):
 
 def driver(data):
     global INPUT_LISTS, INPUT_SYMBOLS, FINAL_STATES, INITIAL_STATE, TRANSITIONS, Transition_function, STATES
-    input_lists = data[0].split("|")
-    data.pop(0)
 
-    for input_stream in input_lists:
-        input_tokens = input_stream.split(",")
-        INPUT_LISTS.append(input_tokens)
-
-    STATES.append(data[0].split(","))
-    data.pop(0)
-
-    INPUT_SYMBOLS.append(data[0].split(","))
-    data.pop(0)
+    INPUT_LISTS.append(list(data.pop(0)))
 
     FINAL_STATES.append(data[0].split(","))
     data.pop(0)
@@ -185,48 +138,37 @@ def driver(data):
 
     while True:
         try:
-            transition_function = data[0]
-            data.pop(0)
+            transition_function = data.pop(0)
 
-            # x,y->z
-            raw_data = transition_function.split("->")
-            raw_data2 = raw_data[0].split(",")
-
-            TRANSITIONS.append(Transition_function(raw_data2[0], raw_data2[1], raw_data[1]))
+            TRANSITIONS.append(Transition_function(transition_function[0],
+                                                   transition_function[1],
+                                                   transition_function[2]))
 
         except:
             break
 
-    paths = list()
-    for input_list in INPUT_LISTS:
-        paths.append(get_paths(input_list))
-
-    [print(i) for i in paths]
+    ret = get_paths(INPUT_LISTS[0])
+    print(ret)
 
 
 if __name__ == '__main__':
-    # global INPUT_LISTS
-    #1 redak: Ulazni nizovi odvojeni znakom |. Simboli svakog pojedinog niza odvojeni su zarezom.
-    #  2. redak: Leksikografski poredan skup stanja odvojenih zarezom.
-    #  3. redak: Leksikografski poredan skup simbola abecede odvojenih zarezom.
-    #  4. redak: Leksikografski poredan skup prihvatljivih stanja odvojenih zarezom.
-    #  5. redak: Početno stanje.
-    #  6. redak i svi ostali retci: Funkcija prijelaza u formatu
 
-    t_in = list()
-    t_in.append("a,pnp,a|pnp,lab2|pnp,a|pnp,lab2,utr,utr")
-    t_in.append("p5,s3,s4,st6,stanje1,stanje2") #sva stanja
-    t_in.append("a,lab2,pnp,utr") # svi inputi
-    t_in.append("p5") # prihvatljivo
-    t_in.append("stanje1") # pocetno
-    t_in.append("s3,a->stanje2")
-    t_in.append("s3,lab2->p5,s4")
-    t_in.append("s4,$->st6")
-    t_in.append("s4,utr->p5,s3")
-    t_in.append("stanje1,a->stanje2")
-    t_in.append("stanje1,pnp->s3")
-    t_in.append("stanje2,$->st6")
-    t_in.append("stanje2,a->#")
+    # #| ovo je primjer |#
+    # 3 -  -0x12 - ( #| ovdje ce doci grupirane
+    # 		operacije |#
+    # 3- -
+    # --076) #| 3 - ---076 = 3 - -076 = 3 + 076 |#
+
+    # accept state
+    # start state
+
+    t_in = [
+        "#|ovo je primjer",
+        "S_2",
+        "S_0",
+        ["S_0", "#", "S_1"],
+        ["S_1", "|", "S_2"]
+    ]
 
     driver(t_in)
 

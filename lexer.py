@@ -2,6 +2,7 @@ if __name__ == '__main__':
     current_state = "S_pocetno"
     source_code = "".join([i for i in open("test_cases/minusLang.in").readlines()])
     print(list(source_code))
+    print(source_code)
 
     from nfa.main import driver
 
