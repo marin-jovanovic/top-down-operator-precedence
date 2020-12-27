@@ -60,84 +60,6 @@ def split_by_separator(v_regex):
     return ret
 
 
-# input: ((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|
-# output: 0|1|2|3|4|5|6|7|8|9
-# provjeri prije jel postoji zagrada
-def extract_deepest_bracket_content(s):
-
-    state_of_brackets = 0
-    deepest_left_bracket_index = 0
-    deepest_left_bracket_depth = 0
-
-    for i_0, token in enumerate(s):
-
-        if token == "(":
-            if i_0 == 0:
-                state_of_brackets += 1
-
-                if state_of_brackets > deepest_left_bracket_depth:
-                    deepest_left_bracket_depth = state_of_brackets
-                    deepest_left_bracket_index = i_0
-
-            elif s[i_0 - 1] != "\\":
-                state_of_brackets += 1
-
-                if state_of_brackets > deepest_left_bracket_depth:
-                    deepest_left_bracket_depth = state_of_brackets
-                    deepest_left_bracket_index = i_0
-
-                # # znaci da je \(
-                # else:
-                #     print(token)
-
-            elif token == ")":
-                # ovo se nikad nece ostvarit
-                if i_0 == 0:
-                    state_of_brackets -= 1
-
-                elif s[i_0 - 1] != "\\":
-                    state_of_brackets -= 1
-
-                # # znaci da je \)
-                # else:
-                #     print(token)
-
-            # else:
-            #     print(token)
-
-    # print(deepest_left_bracket_index)
-    # print(deepest_left_bracket_depth)
-
-    t_0 = ""
-
-    for i_0, token in enumerate(s[deepest_left_bracket_index:]):
-        t_0 += token
-
-        if token == ")":
-            # never true
-            if i_0 == 0:
-                state_of_brackets -= 1
-                t_0 = t_0[1:-1]
-                break
-                # print("kraj")
-
-            elif s[i_0 - 1] != "\\":
-                state_of_brackets -= 1
-                t_0 = t_0[1:-1]
-                break
-
-            # \)
-            # else:
-            #     print(token)
-
-        # else:
-            #     print(token)
-
-    print("extracted: *" + t_0 + "*")
-
-    return t_0
-
-
 # finds first open bracket
 # bracket_handler("a(bc)d") == [1, 4, "bc"]:
 def bracket_handler(s):
@@ -229,54 +151,6 @@ def is_separator_present(s):
     return False
 
 
-def split_by_state(s):
-    # ret = list()
-
-    t_0 = list()
-
-    # append_tokens = True
-
-    for i, token in enumerate(s):
-        print(i, token)
-
-        # if not append_tokens:
-        #     append_tokens_counter
-
-        if token == "(":
-            if is_escaped_at_index(s, i):
-                print("lijeva zagrada")
-                # print(s[i:])
-                # t_1 = bracket_handler(s[i:])
-                # append_tokens = False
-                # append_tokens_counter = t_1[1]
-            else:
-                print("token")
-
-        elif token == ")":
-            if is_escaped_at_index(s, i):
-                print("desna zagrada")
-            else:
-                print("token")
-
-        elif token == "+":
-            if is_escaped_at_index(s, i):
-                print("plusic")
-            else:
-                print("token")
-
-        elif token == "*":
-            if is_escaped_at_index(s, i):
-                print("mnozenje")
-            else:
-                print("token")
-
-        # else:
-        #     pass
-
-    # print(t_0)
-    return t_0
-
-
 # if bracket at start of @s
 # returns @-1
 # input: \*, output: 1
@@ -300,29 +174,20 @@ def get_first_token_index(s):
         return 0
 
 
-def log(*data):
-    return
-    print(data)
-
-def regex_driver(s, start_index = 0, max_index = 0):
-    log(["input", s])
+def regex_driver(s, start_index=0, max_index=0):
     rules = list()
     # max_index = 0
     # start_index = 0
     prefix = "S_"
     accept_states = []
 
-    # # zagrade na pocetku i kraju
-    # # mice zagrade s pocetka i kraja dok postoje
-    # # hendla svu logiku da mice samo ako ima smisla micat
+    # remove brackets if exist
     # t_0 = bracket_handler(s)
     # if t_0[0] == 0 and t_0[1] == len(s) - 1:
     #     t_1 = s[t_0[0] + 1: t_0[1]]
-    #     print(["rekurzija, mako sam zagrade", t_1])
     #     return regex_driver(t_1)
 
     streams = split_by_separator(s)
-    log("streams: " + str(streams))
 
     for s in streams:
 
@@ -346,32 +211,21 @@ def regex_driver(s, start_index = 0, max_index = 0):
             # action
             if token_0 == "(":
                 t_1 = bracket_handler(s[i_0:])
-                t_0 = s[i_0 + t_1[0]: i_0 + t_1[1] + 1]
 
                 t_2 = s[i_0 + t_1[0] + 1: i_0 + t_1[1] - 1]
                 i_0 = t_1[1] + i_0
 
-                log(t_1)
-
-                # with brackets and +*
-                log(t_0)
-
-                # without brackets and *+
-                log(t_2)
-
-                new_streams = split_by_separator(t_2)
+                # new_streams = split_by_separator(t_2)
 
                 start_index_2 = max_index
 
-                for i in new_streams:
+                for i in split_by_separator(t_2):
                     rules.append([source, "$", prefix + str(max_index)])
                     max_index += 1
 
                     new_rules, max_index, new_accept_states = regex_driver(i,
                                                                            max_index - 1,
                                                                            max_index - 1)
-
-                    log("max_index", max_index)
 
                     [a_states_buffer.append(i) for i in new_accept_states]
 
@@ -384,15 +238,12 @@ def regex_driver(s, start_index = 0, max_index = 0):
                     rules.append([i, "$", destination])
 
                 if s[i_0] in ["*", "+"]:
-                    log("e ops")
 
                     # from end to new state
                     for i in a_states_buffer:
-                        rules.append([i + "a", "$", prefix + str(start_index_2 - 1)])
+                        rules.append([i, "$", prefix + str(start_index_2 - 1)])
 
                     if s[i_0] == "*":
-                        log("star")
-
                         rules.append([source, "$", destination])
 
             # token prefix handler
@@ -410,18 +261,17 @@ def regex_driver(s, start_index = 0, max_index = 0):
 
         accept_states.append(max_index)
 
-    [log(i) for i in rules]
-    log("accept states:")
-    [log(prefix + str(i)) for i in accept_states]
-    print("****************************************************************************************************")
+    # print(s)
+    # [print(i) for i in rules]
+    # print("accept states:")
+    # [print(prefix + str(i)) for i in accept_states]
+    # print("****************************************************************************************************")
     return rules, max_index + 1, [(prefix + str(i)) for i in accept_states]
-    # , [(prefix + str(i)) for i in accept_states], max_index
 
 
 def run_tests():
 
-
-    # todo " nije imao \, hendlaj sve te escapeove
+    # todo escape symbols
     regex_driver("(\\(|\\)|\\{|\\}|\\||\\*|\\\\|\\$|\\t|\\n|\\_|!|\"|#|%|&|\'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|<|=|>|?"
                  "|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|"
                  "l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|~)")
@@ -454,97 +304,30 @@ def run_tests():
     # regex_driver("\\ab|\\cd")
 
     inp = "(ab)+efd|(de)*def"
-    rules, t, a_states = regex_driver(inp, 0, 0)
-    print("inp", inp)
-    [print(i) for i in rules]
-    [print(i) for i in a_states]
+    regex_driver(inp, 0, 0)
 
-    # c = "a|test(dwakad)+djnaidjai"
     # t = bracket_handler(c)
     # print(c[t[0]:t[1] + 2])
 
     inp = "a|test|(dwa)har"
-    rules, t, a_states = regex_driver(inp, 0, 0)
-    print("inp", inp)
-    [print(i) for i in rules]
-    [print(i) for i in a_states]
-
+    regex_driver(inp, 0, 0)
 
     inp = "((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|0x((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D"\
           "|E|F)((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)*)"
 
     # inp = "(0|1|2|3|4|5|6|7|8|9)"
-    rules, t, a_states = regex_driver(inp, 0, 0)
-    print("inp", inp)
-    [print(i) for i in rules]
-    [print(i) for i in a_states]
+    regex_driver(inp, 0, 0)
 
     inp = "(0|1|2|3|4|5|6|7|8|9)"
-    rules, t, a_states = regex_driver(inp, 0, 0)
-    print("inp", inp)
-    [print(i) for i in rules]
-    [print(i) for i in a_states]
+    regex_driver(inp, 0, 0)
 
     inp = "(0|1|2|3|4|5|6|7|8|9)*"
-    rules, t, a_states = regex_driver(inp, 0, 0)
-    print("inp", inp)
-
-    [print(i) for i in rules]
-    [print(i) for i in a_states]
+    regex_driver(inp, 0, 0)
 
 
 # todo
-#     specijalni znakovi
+#     special chars
 #     +, *, (, ), [, ], .,
 if __name__ == '__main__':
 
-    # run_tests()
-    #
-    # s = "(0|1|2|3|4|5|6|7|8|9)*"
-    # t_0 = bracket_handler(s)
-    # print(s[t_0[1]])
-    #
-    # if s[t_0[1]] in ["*", "+"]:
-    #     print("dodatni op")
-
-    # rules, a_states, max_index = regex_driver("((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|0x((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|"
-    #                                "e|f|A|B|C|D|E|F)((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)*)")
-    #
-    # print(rules)
-    # print(a_states)
-    # print(max_index)
-
-    # s = "((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|0x((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)" \
-    #     "((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)*)"
-    # s = "(0|1|2|3|4|5|6|7|8|9)*"
-
-    # regex_driver(s, 0, 0)
-
-    #  \x1b[3;34;30m \x1b[0m
-
-    # rules, max_index, accept_states = regex_driver("m|n", 1, 3)
-
-    # run_tests()
-
-    # inp = "a(mo|np)*d"
-    # rules, t, a_states = regex_driver(inp, 0, 0)
-    # print(inp)
-    # print("#states")
-    # for i in range(t):
-    #     print("s" + str(i))
-    # print("#initial")
-    # print("s0")
-    # print("#accepting")
-    # [print(i) for i in a_states]
-    # print("#alphabet")
-    # [print(i) for i in inp]
-    # print("transitions")
-    #
-    # [print("s" + (i[0])[2:] + ":" + i[1] + ">" + "s" + (i[2])[2:]) for i in rules]
-    # [print(i) for i in a_states]
-
-    # print(regex_driver("a(mo|np)*d", 0, 0))
-    # print("\33[31m " + str(regex_driver("a(mo|np)*d", 0, 0)) + " \033[0m")
-
-
-
+    run_tests()

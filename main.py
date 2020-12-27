@@ -8,6 +8,7 @@ RULES = list()
 INITIAL_STATE = list()
 STATES = list()
 
+
 # citanje iz .lan datoteke
 def load_language():
     global REGEX, RULES, INITIAL_STATE
@@ -179,12 +180,12 @@ if __name__ == '__main__':
 
     s = "".join([i for i in open("test_cases/minusLang.in").readlines()])
     print(list(s))
+    print()
 
     # source()
     #
-    import sys
-    sys.exit()
-
+    # import sys
+    # sys.exit()
 
     load_language()
 
@@ -195,25 +196,41 @@ if __name__ == '__main__':
     # ['S_komentar', '(a|b|c)...', ['-']]
     insert_regex()
 
-    # [print(i) for i in RULES]
-    #
-    # print()
-    #
-    # [print(i) for i in REGEX]
-    #
     from regex_manager import regex_driver
-    #
-    # print()
 
-    [print(i) for i in RULES]
+    # [print(i) for i in RULES]
 
+    # import sys
+    # sys.exit()
+
+    lexer_code = []
+
+    lexer_code.append("if __name__ == '__main__':")
+    lexer_code.append("\tcurrent_state = \"S_pocetno\"")
+    lexer_code.append("\tsource_code = \"\".join([i for i in open(\"test_cases/minusLang.in\").readlines()])")
+    lexer_code.append("\tprint(list(source_code))")
 
 
 
     for rule in RULES:
 
-        print(rule)
+        lexer_code.append("\t# " + str(rule))
 
+        lexer_code.append("\tif current_state == \"" + rule[0] + "\":")
+        lexer_code.append("\t\tpass")
+        t = regex_driver(rule[1])
+
+        for i in t[0]:
+            lexer_code.append("#" + str(i))
+
+        # if current_state == "S_pocetno":
+
+            # if source_code.startswith("\t"):
+            #     print(1)
+            #
+            # todo
+            # if source_code.startswith(" "):
+            #     print(2)
 
         print(regex_driver(rule[1]))
         # init_state = rule[0]
@@ -233,7 +250,7 @@ if __name__ == '__main__':
         # print(write_content)
 
 
-
+    [print(i) for i in lexer_code]
 
 '''
     specijalni regex znakovi
