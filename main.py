@@ -198,94 +198,142 @@ if __name__ == '__main__':
 
     from regex_manager import regex_driver
 
-    # [print(i) for i in RULES]
-
-    # import sys
-    # sys.exit()
-
     lexer_code = []
 
-    lexer_code.append("if __name__ == '__main__':")
-    lexer_code.append("\tcurrent_state = \"S_pocetno\"")
-    lexer_code.append("\tsource_code = \"\".join([i for i in open(\"test_cases/minusLang.in\").readlines()])")
-    lexer_code.append("\tprint(list(source_code))")
+    lexer_code.append("from nfa.main import driver")
+    lexer_code.append("")
+    lexer_code.append("MAX_EATER_NUMBER = -1")
+    lexer_code.append("MAX_EATER_POINTER = -1")
+    lexer_code.append("SOURCE_CODE = \"\".join([i for i in open(\"test_cases/minusLang.in\").readlines()])")
+    lexer_code.append("CURRENT_STATE = \"S_pocetno\"")
+    lexer_code.append("OUTPUT = list()")
+    lexer_code.append("LINE_NUMBER = 1")
+    lexer_code.append("OP_NEW_LINE = \"NOVI_REDAK\"")
+    lexer_code.append("OP_ENTER_STATE = \"UDJI_U_STANJE\"")
+    lexer_code.append("OP_RET = \"VRATI_SE\"")
+    lexer_code.append("NO_OP = \"-\"")
 
-    # t_in = list()
-    #     t_in.append("a,pnp,a|pnp,lab2|pnp,a|pnp,lab2,utr,utr")
-    #     t_in.append("p5,s3,s4,st6,stanje1,stanje2") #sva stanja
-    #     t_in.append("a,lab2,pnp,utr") # svi inputi
-    #     t_in.append("p5") # prihvatljivo
-    #     t_in.append("stanje1") # pocetno
-    #     t_in.append("s3,a->stanje2")
-    #     t_in.append("s3,lab2->p5,s4")
-    #     t_in.append("s4,$->st6")
-    #     t_in.append("s4,utr->p5,s3")
-    #     t_in.append("stanje1,a->stanje2")
-    #     t_in.append("stanje1,pnp->s3")
-    #     t_in.append("stanje2,$->st6")
-    #     t_in.append("stanje2,a->#")
-    #
-    #     driver(t_in)
+    lexer_code.append("")
+    lexer_code.append("")
 
-    for rule in RULES:
+    for k, rule in enumerate(RULES):
+        lexer_code.append("def f_" + str(k) + "(may_i_eat=False):")
+        lexer_code.append("    global MAX_EATER_NUMBER, MAX_EATER_POINTER, SOURCE_CODE, CURRENT_STATE, OUTPUT, OP_NEW_")
+        lexer_code.append("    global OP_RET, OP_ENTER_STATE, OP_NEW_LINE, LINE_NUMBER, NO_OP")
 
-        lexer_code.append("\t# " + str(rule))
+        lexer_code.append("")
 
-        lexer_code.append("\tif current_state == \"" + rule[0] + "\":")
-        lexer_code.append("\t\tpass")
         t = regex_driver(rule[1])
 
         for i in t[0]:
-            lexer_code.append("\t# " + str(i))
+            lexer_code.append("    # " + str(i))
+        lexer_code.append("    # " + str(rule))
 
-        # if current_state == "S_pocetno":
+        lexer_code.append("    if CURRENT_STATE == \"" + rule[0] + "\":")
 
-            # if source_code.startswith("\t"):
-            #     print(1)
-            #
-            # todo
-            # if source_code.startswith(" "):
-            #     print(2)
+        lexer_code.append("        " + "t_in = [")
+        lexer_code.append("            " + "str(SOURCE_CODE),")
+        lexer_code.append("            " + str(t[2]) + ",")
+        lexer_code.append("            " + "\"S_0\"" + ",")
+        for i in (t[0])[:-1]:
+            source = i[0]
+            input_symbol = i[1]
+            destination = i[2]
+            print(input_symbol)
+            if input_symbol in ["\\(", "\\)", "\\{", "\\}", "\\$", "\\_", "\\\\", "\\|"]:
+                if input_symbol == "\\_":
+                    input_symbol = " "
+                else:
+                    input_symbol = input_symbol[1:]
 
-        print(regex_driver(rule[1]))
-        # init_state = rule[0]
-        # inputs = regex_driver(rule[1])
-        # actions = rule[2]
-        #
-        # # print([rule[1]])
-        # write_content = ""
-        #
-        # write_content += "if current_state == \"" + init_state + "\":\n"
-        # write_content += "\n"
-        # write_content += "\tif source_code.startswith(\""
-        #
-        #
-        # print(inputs)
-        #
-        # print(write_content)
+            lexer_code.append("            " + str([source, input_symbol, destination]) + ",")
+        t = (t[0])[-1]
+        source = t[0]
+        input_symbol = t[1]
+        destination = t[2]
+        if input_symbol in ["\\(", "\\)", "\\{", "\\}", "\\$", "\\_", "\\\\", "\\|"]:
+            if input_symbol == "\\_":
+                input_symbol = " "
+            else:
+                input_symbol = input_symbol[1:]
+        lexer_code.append("            " + str([source, input_symbol, destination]))
+        lexer_code.append("        " + "]")
+
+        lexer_code.append("        " + "t_0 = driver(t_in)")
+        lexer_code.append("")
+
+        lexer_code.append("        if may_i_eat:")
+        lexer_code.append("            actions = " + str(rule[2]))
+        lexer_code.append("            # " + str(rule[2]))
+
+        lexer_code.append("")
+        lexer_code.append("            is_reduction_made = False")
+        lexer_code.append("")
+        lexer_code.append("            for action in actions:")
+        lexer_code.append("                t = actions.split(" ")")
+        lexer_code.append("                k = t[0]")
+        lexer_code.append("                v = t[1]")
+        lexer_code.append("")
+        lexer_code.append("                if k == OP_NEW_LINE:")
+        lexer_code.append("                    LINE_NUMBER += 1")
+        lexer_code.append("                elif k == OP_ENTER_STATE:")
+        lexer_code.append("                    CURRENT_STATE = v")
+        lexer_code.append("                elif k == NO_OP:")
+        lexer_code.append("                    pass")
+        lexer_code.append("                elif k == OP_ENTER_STATE:")
+        lexer_code.append("                    SOURCE_CODE = SOURCE_CODE[v:]")
+        lexer_code.append("                    is_reduction_made = True")
+        lexer_code.append("                else:")
+        lexer_code.append("                    OUTPUT.append(action)")
+        lexer_code.append("")
+        lexer_code.append("            if not is_reduction_made:")
+        lexer_code.append("                SOURCE_CODE = SOURCE_CODE[MAX_EATER_NUMBER:]")
+        lexer_code.append("")
+        lexer_code.append("        else:")
+        lexer_code.append("")
+        lexer_code.append("            if t_0.count(\"|\") > MAX_EATER_NUMBER:")
+        lexer_code.append("                MAX_EATER_NUMBER = t_0.count(\"|\")")
+        lexer_code.append("                MAX_EATER_POINTER = " + str(k))
+
+        lexer_code.append("")
+        lexer_code.append("        return t_0.count(\"|\")")
+        lexer_code.append("")
+        lexer_code.append("")
+
+    lexer_code.append("if __name__ == '__main__':")
+    lexer_code.append("    TTL = 15")
+    lexer_code.append("")
+    lexer_code.append("    while TTL != 0:")
+    lexer_code.append("        TTL -= 1")
+    lexer_code.append("")
+
+    for k in range(1, len(RULES)):
+        lexer_code.append("        f_" + str(k) + "()")
+
+    lexer_code.append("")
+    lexer_code.append("        print(\"MAX_EATER_NUMBER\", MAX_EATER_NUMBER)")
+
+    lexer_code.append("        if MAX_EATER_POINTER == 0:")
+    lexer_code.append("            f_0(True)")
+
+    for k in range(1, len(RULES)):
+        lexer_code.append("        elif MAX_EATER_POINTER == " + str(k) + ":")
+        lexer_code.append("            f_" + str(k) + "(True)")
+    lexer_code.append("        print(SOURCE_CODE)")
+    lexer_code.append("    # file = [i[:-1] for i in open(\"lexer.py\").readlines()]")
+    lexer_code.append("    # [print(\"lexer_code.append(\\\"\" + str(i) + \"\\\")\") for i in file]")
+    lexer_code.append("    pass")
+
+
+
+
+
 
 
     [print(i) for i in lexer_code]
 
     f = open("lexer.py", "w")
     [f.write(str(i) + "\n") for i in lexer_code]
-    # f.write("Now the file has more content!")
     f.close()
 
-'''
-    specijalni regex znakovi
-    (, ), {, }, |, *, $, \
-    
-    $
-        prazan niz
-    
-    \n 
-        novi red
-    \t
-        tab
-        
-    \_
-        razmak
-    
-    
-'''
+# todo $

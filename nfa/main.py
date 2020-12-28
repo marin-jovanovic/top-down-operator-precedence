@@ -127,10 +127,21 @@ def get_paths(input_list):
 def driver(data):
     global INPUT_LIST, INPUT_SYMBOLS, FINAL_STATES, INITIAL_STATE, TRANSITIONS, Transition_function, STATES
 
+    INPUT_LIST = []
+    STATES = []
+    INPUT_SYMBOLS = []
+    FINAL_STATES = []
+    INITIAL_STATE = []
+    TRANSITIONS = []
+
+
     INPUT_LIST = list(data.pop(0))
 
-    FINAL_STATES.append(data[0].split(","))
-    data.pop(0)
+    t = data.pop(0)
+    for i in t:
+        FINAL_STATES.append(i)
+    # FINAL_STATES.append(data[0].split(","))
+    # data.pop(0)
 
     INITIAL_STATE = data[0]
     data.pop(0)
@@ -149,68 +160,40 @@ def driver(data):
     ret = get_paths(INPUT_LIST)
     print(ret)
     print("i have eaten " + str(ret.count("|")) + " token" + ("s" if ret.count("|") > 1 else ""))
+    return ret
 
 
 if __name__ == '__main__':
 
-    # #| ovo je primjer |#
-    # 3 -  -0x12 - ( #| ovdje ce doci grupirane
-    # 		operacije |#
-    # 3- -
-    # --076) #| 3 - ---076 = 3 - -076 = 3 + 076 |#
+    source_code = "#| ovo je primjer |#\n3 -  -0x12 - ( #| ovdje ce doci grupirane\noperacije |#\n3- -\n--076)" \
+                  " #| 3 - ---076 = 3 - -076 = 3 + 076 |#"
 
-    # accept state
-    # start state
+    current_state = "S_pocetno"
 
-    t_in = [
-        "#|ovo je primjer",
-        "S_2",
-        "S_0",
-        ["S_0", "#", "S_1"],
-        ["S_1", "|", "S_2"]
-    ]
-
-    # # ['S_pocetno', '-(\\t|\\n|\\_)*-', ['OP_MINUS', 'UDJI_U_STANJE S_unarni', 'VRATI_SE 1']]
-    # if current_state == "S_pocetno":
-    #     pass
-    # # ['S_0', '-', 'S_1']
-    # # ['S_1', '$', 'S_2']
-    # # ['S_2', '\\t', 'S_3']
-    # # ['S_1', '$', 'S_4']
-    # # ['S_4', '\\n', 'S_5']
-    # # ['S_1', '$', 'S_6']
-    # # ['S_6', '\\_', 'S_7']
-    # # ['S_3', '$', 'S_8']
-    # # ['S_5', '$', 'S_8']
-    # # ['S_7', '$', 'S_8']
-    # # ['S_3', '$', 'S_1']
-    # # ['S_5', '$', 'S_1']
-    # # ['S_7', '$', 'S_1']
-    # # ['S_1', '$', 'S_8']
-    # # ['S_8', '-', 'S_9']
-
-    t_in = [
-        "-\t\t\t\t- lalalal",
-        "S_9",
-        "S_0",
-        ['S_0', '-', 'S_1'],
-        ['S_1', '$', 'S_2'],
-        ['S_2', '\t', 'S_3'],
-        ['S_1', '$', 'S_4'],
-        ['S_4', '\n', 'S_5'],
-        ['S_1', '$', 'S_6'],
-        ['S_6', ' ', 'S_7'],
-        ['S_3', '$', 'S_8'],
-        ['S_5', '$', 'S_8'],
-        ['S_7', '$', 'S_8'],
-        ['S_3', '$', 'S_1'],
-        ['S_5', '$', 'S_1'],
-        ['S_7', '$', 'S_1'],
-        ['S_1', '$', 'S_8'],
-        ['S_8', '-', 'S_9']
-    ]
-
-    driver(t_in)
+    # ['S_pocetno', '\\((\\t|\\n|\\_)*-', ['LIJEVA_ZAGRADA', 'UDJI_U_STANJE S_unarni', 'VRATI_SE 1']]
+    if current_state == "S_pocetno":
+        print(11)
+        t_in = [
+            str(source_code),
+            ['S_9'],
+            "S_0",
+            ['S_0', '\\(', 'S_1'],
+            ['S_1', '$', 'S_2'],
+            ['S_2', '\\t', 'S_3'],
+            ['S_1', '$', 'S_4'],
+            ['S_4', '\\n', 'S_5'],
+            ['S_1', '$', 'S_6'],
+            ['S_6', '\\_', 'S_7'],
+            ['S_3', '$', 'S_8'],
+            ['S_5', '$', 'S_8'],
+            ['S_7', '$', 'S_8'],
+            ['S_3', '$', 'S_1'],
+            ['S_5', '$', 'S_1'],
+            ['S_7', '$', 'S_1'],
+            ['S_1', '$', 'S_8'],
+            ['S_8', '-', 'S_9']
+        ]
+        driver(t_in)
 
     # #####################################################################
 
@@ -223,3 +206,4 @@ if __name__ == '__main__':
     #         break
     #
     # driver(t_in)
+    pass
