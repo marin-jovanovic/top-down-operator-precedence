@@ -1,7 +1,7 @@
 # import nfa.constants
 # impoa.constants
 
-INPUT_LISTS = list(list())
+INPUT_LIST = list()
 STATES = list()
 INPUT_SYMBOLS = list()
 FINAL_STATES = list()
@@ -107,16 +107,15 @@ def get_paths(input_list):
 
     while len(input_list) != 0:
 
-        current_input = input_list[0]
-        input_list.pop(0)
+        current_input = input_list.pop(0)
 
         current_states = get_new_states_for_all_current_states(current_states, current_input)
 
         current_states = get_all_new_e_states(current_states)
 
         if len(current_states) == 0:
-            for elem in range(len(input_list) + 1):
-                path += "#|"
+            # for elem in range(len(input_list) + 1):
+            #     path += "#|"
             return path[:-1]
 
         else:
@@ -126,9 +125,9 @@ def get_paths(input_list):
 
 
 def driver(data):
-    global INPUT_LISTS, INPUT_SYMBOLS, FINAL_STATES, INITIAL_STATE, TRANSITIONS, Transition_function, STATES
+    global INPUT_LIST, INPUT_SYMBOLS, FINAL_STATES, INITIAL_STATE, TRANSITIONS, Transition_function, STATES
 
-    INPUT_LISTS.append(list(data.pop(0)))
+    INPUT_LIST = list(data.pop(0))
 
     FINAL_STATES.append(data[0].split(","))
     data.pop(0)
@@ -147,8 +146,9 @@ def driver(data):
         except:
             break
 
-    ret = get_paths(INPUT_LISTS[0])
+    ret = get_paths(INPUT_LIST)
     print(ret)
+    print("i have eaten " + str(ret.count("|")) + " token" + ("s" if ret.count("|") > 1 else ""))
 
 
 if __name__ == '__main__':
@@ -168,6 +168,46 @@ if __name__ == '__main__':
         "S_0",
         ["S_0", "#", "S_1"],
         ["S_1", "|", "S_2"]
+    ]
+
+    # # ['S_pocetno', '-(\\t|\\n|\\_)*-', ['OP_MINUS', 'UDJI_U_STANJE S_unarni', 'VRATI_SE 1']]
+    # if current_state == "S_pocetno":
+    #     pass
+    # # ['S_0', '-', 'S_1']
+    # # ['S_1', '$', 'S_2']
+    # # ['S_2', '\\t', 'S_3']
+    # # ['S_1', '$', 'S_4']
+    # # ['S_4', '\\n', 'S_5']
+    # # ['S_1', '$', 'S_6']
+    # # ['S_6', '\\_', 'S_7']
+    # # ['S_3', '$', 'S_8']
+    # # ['S_5', '$', 'S_8']
+    # # ['S_7', '$', 'S_8']
+    # # ['S_3', '$', 'S_1']
+    # # ['S_5', '$', 'S_1']
+    # # ['S_7', '$', 'S_1']
+    # # ['S_1', '$', 'S_8']
+    # # ['S_8', '-', 'S_9']
+
+    t_in = [
+        "-\t\t\t\t- lalalal",
+        "S_9",
+        "S_0",
+        ['S_0', '-', 'S_1'],
+        ['S_1', '$', 'S_2'],
+        ['S_2', '\t', 'S_3'],
+        ['S_1', '$', 'S_4'],
+        ['S_4', '\n', 'S_5'],
+        ['S_1', '$', 'S_6'],
+        ['S_6', ' ', 'S_7'],
+        ['S_3', '$', 'S_8'],
+        ['S_5', '$', 'S_8'],
+        ['S_7', '$', 'S_8'],
+        ['S_3', '$', 'S_1'],
+        ['S_5', '$', 'S_1'],
+        ['S_7', '$', 'S_1'],
+        ['S_1', '$', 'S_8'],
+        ['S_8', '-', 'S_9']
     ]
 
     driver(t_in)
