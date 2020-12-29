@@ -166,7 +166,7 @@ def get_first_token_index(s):
         s = s[: t_0[0]] + s[t_0[1] + 1:]
         t_0 = bracket_handler(s)
 
-    print(s)
+    # print(s)
 
     if s[0] == "\\":
         return 1
