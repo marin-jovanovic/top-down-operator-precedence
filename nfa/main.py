@@ -158,8 +158,25 @@ def driver(data):
 
     ret = get_paths(INPUT_LIST)
     print(ret)
+
+    is_accepted = False
+
+    if ret.__contains__("|"):
+        t = (ret.split("|"))[-1]
+        print(t)
+        t = t.split(",")
+        print(t)
+
+        for t_1 in t:
+            if t_1 in FINAL_STATES:
+                is_accepted = True
+                print(True)
+
+        # if t in FINAL_STATES:
+        #     print(True)
+
     print("i have eaten " + str(ret.count("|")) + " token" + ("s" if ret.count("|") > 1 else ""))
-    return ret
+    return ret, is_accepted
 
 
 if __name__ == '__main__':

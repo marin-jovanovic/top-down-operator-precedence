@@ -255,7 +255,7 @@ if __name__ == '__main__':
         lexer_code.append("            " + str([source, input_symbol, destination]))
         lexer_code.append("        " + "]")
 
-        lexer_code.append("        " + "t_0 = driver(t_in)")
+        lexer_code.append("        " + "t_0, is_accepted = driver(t_in)")
         lexer_code.append("")
 
         lexer_code.append("        if may_i_eat:")
@@ -288,7 +288,6 @@ if __name__ == '__main__':
                     reduction_count = t[1]
                     lexer_code.append("            reduction_value = SOURCE_CODE[:" + t[1] + "]")
 
-                    lexer_code.append("            SOURCE_CODE = SOURCE_CODE[" + t[1] + ":]")
                     is_reduction_made = True
 
                 elif t_1 == "UDJI_U_STANJE":
@@ -305,10 +304,15 @@ if __name__ == '__main__':
                               (str(reduction_count) if is_reduction_made else "MAX_EATER_NUMBER") + "])"
             )
 
-        if not is_reduction_made:
+        if is_reduction_made:
+            lexer_code.append("            SOURCE_CODE = SOURCE_CODE[" + t[1] + ":]")
+
+        else:
             lexer_code.append("            SOURCE_CODE = SOURCE_CODE[MAX_EATER_NUMBER:]")
 
-        lexer_code.append("        else:")
+
+
+        lexer_code.append("        elif is_accepted:")
         lexer_code.append("")
         lexer_code.append("            if t_0.count(\"|\") > MAX_EATER_NUMBER:")
         lexer_code.append("                MAX_EATER_NUMBER = t_0.count(\"|\")")

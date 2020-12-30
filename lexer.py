@@ -22,11 +22,11 @@ def f_0(may_i_eat=False):
             ['S_0', '\t', 'S_1'],
             ['S_0', ' ', 'S_2']
         ]
-        t_0 = driver(t_in)
+        t_0, is_accepted = driver(t_in)
 
         if may_i_eat:
             SOURCE_CODE = SOURCE_CODE[MAX_EATER_NUMBER:]
-        else:
+        elif is_accepted:
 
             if t_0.count("|") > MAX_EATER_NUMBER:
                 MAX_EATER_NUMBER = t_0.count("|")
@@ -48,12 +48,12 @@ def f_1(may_i_eat=False):
             "S_0",
             ['S_0', '\n', 'S_1']
         ]
-        t_0 = driver(t_in)
+        t_0, is_accepted = driver(t_in)
 
         if may_i_eat:
             LINE_NUMBER += 1
             SOURCE_CODE = SOURCE_CODE[MAX_EATER_NUMBER:]
-        else:
+        elif is_accepted:
 
             if t_0.count("|") > MAX_EATER_NUMBER:
                 MAX_EATER_NUMBER = t_0.count("|")
@@ -76,12 +76,12 @@ def f_2(may_i_eat=False):
             ['S_0', '#', 'S_1'],
             ['S_1', '|', 'S_2']
         ]
-        t_0 = driver(t_in)
+        t_0, is_accepted = driver(t_in)
 
         if may_i_eat:
             CURRENT_STATE = "S_komentar"
             SOURCE_CODE = SOURCE_CODE[MAX_EATER_NUMBER:]
-        else:
+        elif is_accepted:
 
             if t_0.count("|") > MAX_EATER_NUMBER:
                 MAX_EATER_NUMBER = t_0.count("|")
@@ -104,12 +104,12 @@ def f_3(may_i_eat=False):
             ['S_0', '|', 'S_1'],
             ['S_1', '#', 'S_2']
         ]
-        t_0 = driver(t_in)
+        t_0, is_accepted = driver(t_in)
 
         if may_i_eat:
             CURRENT_STATE = "S_pocetno"
             SOURCE_CODE = SOURCE_CODE[MAX_EATER_NUMBER:]
-        else:
+        elif is_accepted:
 
             if t_0.count("|") > MAX_EATER_NUMBER:
                 MAX_EATER_NUMBER = t_0.count("|")
@@ -131,12 +131,12 @@ def f_4(may_i_eat=False):
             "S_0",
             ['S_0', '\n', 'S_1']
         ]
-        t_0 = driver(t_in)
+        t_0, is_accepted = driver(t_in)
 
         if may_i_eat:
             LINE_NUMBER += 1
             SOURCE_CODE = SOURCE_CODE[MAX_EATER_NUMBER:]
-        else:
+        elif is_accepted:
 
             if t_0.count("|") > MAX_EATER_NUMBER:
                 MAX_EATER_NUMBER = t_0.count("|")
@@ -447,11 +447,11 @@ def f_5(may_i_eat=False):
             ['S_192', '$', 'S_194'],
             ['S_193', '$', 'S_194']
         ]
-        t_0 = driver(t_in)
+        t_0, is_accepted = driver(t_in)
 
         if may_i_eat:
             SOURCE_CODE = SOURCE_CODE[MAX_EATER_NUMBER:]
-        else:
+        elif is_accepted:
 
             if t_0.count("|") > MAX_EATER_NUMBER:
                 MAX_EATER_NUMBER = t_0.count("|")
@@ -680,12 +680,12 @@ def f_6(may_i_eat=False):
             ['S_42', '$', 'S_136'],
             ['S_135', '$', 'S_136']
         ]
-        t_0 = driver(t_in)
+        t_0, is_accepted = driver(t_in)
 
         if may_i_eat:
             OUTPUT.append("OPERAND " + str(LINE_NUMBER) + " " + SOURCE_CODE[:MAX_EATER_NUMBER])
             SOURCE_CODE = SOURCE_CODE[MAX_EATER_NUMBER:]
-        else:
+        elif is_accepted:
 
             if t_0.count("|") > MAX_EATER_NUMBER:
                 MAX_EATER_NUMBER = t_0.count("|")
@@ -707,12 +707,12 @@ def f_7(may_i_eat=False):
             "S_0",
             ['S_0', '(', 'S_1']
         ]
-        t_0 = driver(t_in)
+        t_0, is_accepted = driver(t_in)
 
         if may_i_eat:
             OUTPUT.append("LIJEVA_ZAGRADA " + str(LINE_NUMBER) + " " + SOURCE_CODE[:MAX_EATER_NUMBER])
             SOURCE_CODE = SOURCE_CODE[MAX_EATER_NUMBER:]
-        else:
+        elif is_accepted:
 
             if t_0.count("|") > MAX_EATER_NUMBER:
                 MAX_EATER_NUMBER = t_0.count("|")
@@ -734,12 +734,12 @@ def f_8(may_i_eat=False):
             "S_0",
             ['S_0', ')', 'S_1']
         ]
-        t_0 = driver(t_in)
+        t_0, is_accepted = driver(t_in)
 
         if may_i_eat:
             OUTPUT.append("DESNA_ZAGRADA " + str(LINE_NUMBER) + " " + SOURCE_CODE[:MAX_EATER_NUMBER])
             SOURCE_CODE = SOURCE_CODE[MAX_EATER_NUMBER:]
-        else:
+        elif is_accepted:
 
             if t_0.count("|") > MAX_EATER_NUMBER:
                 MAX_EATER_NUMBER = t_0.count("|")
@@ -761,12 +761,12 @@ def f_9(may_i_eat=False):
             "S_0",
             ['S_0', '-', 'S_1']
         ]
-        t_0 = driver(t_in)
+        t_0, is_accepted = driver(t_in)
 
         if may_i_eat:
             OUTPUT.append("OP_MINUS " + str(LINE_NUMBER) + " " + SOURCE_CODE[:MAX_EATER_NUMBER])
             SOURCE_CODE = SOURCE_CODE[MAX_EATER_NUMBER:]
-        else:
+        elif is_accepted:
 
             if t_0.count("|") > MAX_EATER_NUMBER:
                 MAX_EATER_NUMBER = t_0.count("|")
@@ -802,14 +802,14 @@ def f_10(may_i_eat=False):
             ['S_1', '$', 'S_8'],
             ['S_8', '-', 'S_9']
         ]
-        t_0 = driver(t_in)
+        t_0, is_accepted = driver(t_in)
 
         if may_i_eat:
             CURRENT_STATE = "S_unarni"
             reduction_value = SOURCE_CODE[:1]
-            SOURCE_CODE = SOURCE_CODE[1:]
             OUTPUT.append("OP_MINUS " + str(LINE_NUMBER) + " " + SOURCE_CODE[:1])
-        else:
+            SOURCE_CODE = SOURCE_CODE[1:]
+        elif is_accepted:
 
             if t_0.count("|") > MAX_EATER_NUMBER:
                 MAX_EATER_NUMBER = t_0.count("|")
@@ -845,14 +845,14 @@ def f_11(may_i_eat=False):
             ['S_1', '$', 'S_8'],
             ['S_8', '-', 'S_9']
         ]
-        t_0 = driver(t_in)
+        t_0, is_accepted = driver(t_in)
 
         if may_i_eat:
             CURRENT_STATE = "S_unarni"
             reduction_value = SOURCE_CODE[:1]
-            SOURCE_CODE = SOURCE_CODE[1:]
             OUTPUT.append("LIJEVA_ZAGRADA " + str(LINE_NUMBER) + " " + SOURCE_CODE[:1])
-        else:
+            SOURCE_CODE = SOURCE_CODE[1:]
+        elif is_accepted:
 
             if t_0.count("|") > MAX_EATER_NUMBER:
                 MAX_EATER_NUMBER = t_0.count("|")
@@ -875,11 +875,11 @@ def f_12(may_i_eat=False):
             ['S_0', '\t', 'S_1'],
             ['S_0', ' ', 'S_2']
         ]
-        t_0 = driver(t_in)
+        t_0, is_accepted = driver(t_in)
 
         if may_i_eat:
             SOURCE_CODE = SOURCE_CODE[MAX_EATER_NUMBER:]
-        else:
+        elif is_accepted:
 
             if t_0.count("|") > MAX_EATER_NUMBER:
                 MAX_EATER_NUMBER = t_0.count("|")
@@ -901,12 +901,12 @@ def f_13(may_i_eat=False):
             "S_0",
             ['S_0', '\n', 'S_1']
         ]
-        t_0 = driver(t_in)
+        t_0, is_accepted = driver(t_in)
 
         if may_i_eat:
             LINE_NUMBER += 1
             SOURCE_CODE = SOURCE_CODE[MAX_EATER_NUMBER:]
-        else:
+        elif is_accepted:
 
             if t_0.count("|") > MAX_EATER_NUMBER:
                 MAX_EATER_NUMBER = t_0.count("|")
@@ -928,13 +928,13 @@ def f_14(may_i_eat=False):
             "S_0",
             ['S_0', '-', 'S_1']
         ]
-        t_0 = driver(t_in)
+        t_0, is_accepted = driver(t_in)
 
         if may_i_eat:
             CURRENT_STATE = "S_pocetno"
             OUTPUT.append("UMINUS " + str(LINE_NUMBER) + " " + SOURCE_CODE[:MAX_EATER_NUMBER])
             SOURCE_CODE = SOURCE_CODE[MAX_EATER_NUMBER:]
-        else:
+        elif is_accepted:
 
             if t_0.count("|") > MAX_EATER_NUMBER:
                 MAX_EATER_NUMBER = t_0.count("|")
@@ -970,13 +970,13 @@ def f_15(may_i_eat=False):
             ['S_1', '$', 'S_8'],
             ['S_8', '-', 'S_9']
         ]
-        t_0 = driver(t_in)
+        t_0, is_accepted = driver(t_in)
 
         if may_i_eat:
             reduction_value = SOURCE_CODE[:1]
-            SOURCE_CODE = SOURCE_CODE[1:]
             OUTPUT.append("UMINUS " + str(LINE_NUMBER) + " " + SOURCE_CODE[:1])
-        else:
+            SOURCE_CODE = SOURCE_CODE[1:]
+        elif is_accepted:
 
             if t_0.count("|") > MAX_EATER_NUMBER:
                 MAX_EATER_NUMBER = t_0.count("|")
@@ -986,7 +986,10 @@ def f_15(may_i_eat=False):
 
 
 if __name__ == '__main__':
-    TTL = 500
+    # print(len(SOURCE_CODE))
+    # import sys
+    # sys.exit()
+    TTL = 200
 
     while TTL != 0:
         TTL -= 1
