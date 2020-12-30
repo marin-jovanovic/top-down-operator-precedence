@@ -2,7 +2,7 @@ from nfa.main import driver
 
 MAX_EATER_NUMBER = -1
 MAX_EATER_POINTER = -1
-SOURCE_CODE = "".join([i for i in open("test_cases/1/nadji_a1.in").readlines()])
+SOURCE_CODE = "".join([i for i in open("test_cases/2/nadji_a2.in").readlines()])
 CURRENT_STATE = "S_poc"
 OUTPUT = list()
 LINE_NUMBER = 1
@@ -65,18 +65,7 @@ def f_1(may_i_eat=False):
 if __name__ == '__main__':
     TTL = 15
 
-    start_state = CURRENT_STATE
-    end_state = ""
-    start_source = SOURCE_CODE
-    end_source = SOURCE_CODE
-
     while TTL != 0:
-        start_state = CURRENT_STATE
-        start_source = SOURCE_CODE
-        end_state = CURRENT_STATE
-        end_source = SOURCE_CODE
-
-
         TTL -= 1
         MAX_EATER_NUMBER -= 1
         MAX_EATER_POINTER = -1
@@ -94,10 +83,8 @@ if __name__ == '__main__':
         print(SOURCE_CODE)
         [print(i) for i in OUTPUT]
         print(CURRENT_STATE)
-
-        if start_source == end_source and start_state == end_state:
+        if MAX_EATER_NUMBER < 0:
             SOURCE_CODE = SOURCE_CODE[1:]
-
-    file = [i[:-1] for i in open("lexer.py").readlines()]
-    [print("lexer_code.append(\"" + str(i) + "\")") for i in file]
+    # file = [i[:-1] for i in open("lexer.py").readlines()]
+    # [print("lexer_code.append(\"" + str(i) + "\")") for i in file]
     pass

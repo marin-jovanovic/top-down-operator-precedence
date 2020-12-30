@@ -6,6 +6,12 @@ IN_PATH = "test_cases/0/minusLang.in"
 LAN_PATH = "test_cases/1/nadji_a1.lan"
 IN_PATH = "test_cases/1/nadji_a1.in"
 
+LAN_PATH = "test_cases/2/nadji_a2.lan"
+IN_PATH = "test_cases/2/nadji_a2.in"
+
+# LAN_PATH = "test_cases/3/simplePpjLang.lan"
+# IN_PATH = "test_cases/3/simplePpjLang.in"
+
 LANGUAGE = [line[:-1] for line in open(LAN_PATH).readlines()]
 TOKENS = "".join([line for line in open(IN_PATH).readlines()])
 
@@ -131,6 +137,7 @@ def restructure_rules():
     RULES = new_rules_list
 
 
+
 def insert_regex():
     global RULES
     new_rules_list = list()
@@ -144,42 +151,6 @@ def insert_regex():
 
         new_rules_list.append([rule[0], pointer, rule[2]])
     RULES = new_rules_list
-
-
-def source():
-    start_state = "S_pocetno"
-
-    source_code = "".join([i for i in open(IN_PATH).readlines()])
-    print([source_code])
-    print(list(source_code))
-
-    current_state = start_state
-
-    if current_state == "S_pocetno":
-
-        if source_code.startswith("\t"):
-            print("S_pocetno, \\t -> [\"-\"]")
-
-            # source_code = source_code[len("\t"):]
-            # print(source_code)
-            #
-            # source_code = source_code[2:]
-            # print(source_code)
-
-        # todo \_ -> " "
-        if source_code.startswith(" "):
-            print("S_pocetno, \\_ -> [\"-\"]")
-
-    if current_state == "S_pocetno":
-
-        if source_code.startswith("\n"):
-            print("S_pocetno, \n -> [\'-\', \'NOVI_REDAK\']")
-
-    if current_state == "S_pocetno":
-
-        # todo \| -> |
-        if source_code.startswith("#|"):
-            print("S_pocetno, #\\| -> [\'-\', \'UDJI_U_STANJE S_komentar\']")
 
 
 if __name__ == '__main__':
@@ -334,6 +305,8 @@ if __name__ == '__main__':
     lexer_code.append("")
     lexer_code.append("    while TTL != 0:")
     lexer_code.append("        TTL -= 1")
+
+
     lexer_code.append("        MAX_EATER_NUMBER -= 1")
     lexer_code.append("        MAX_EATER_POINTER = -1")
 
@@ -358,6 +331,9 @@ if __name__ == '__main__':
     lexer_code.append("        print(SOURCE_CODE)")
     lexer_code.append("        [print(i) for i in OUTPUT]")
     lexer_code.append("        print(CURRENT_STATE)")
+
+    lexer_code.append("        if MAX_EATER_NUMBER < 0:")
+    lexer_code.append("            SOURCE_CODE = SOURCE_CODE[1:]")
 
     lexer_code.append("    # file = [i[:-1] for i in open(\"lexer.py\").readlines()]")
     lexer_code.append("    # [print(\"lexer_code.append(\\\"\" + str(i) + \"\\\")\") for i in file]")
