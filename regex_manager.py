@@ -220,7 +220,7 @@ def regex_driver(s, start_index=0, max_index=0):
                 start_index_2 = max_index
 
                 for i in split_by_separator(t_2):
-                    rules.append([source, "$", prefix + str(max_index)])
+                    rules.append([source, "__$__", prefix + str(max_index)])
                     max_index += 1
 
                     new_rules, max_index, new_accept_states = regex_driver(i,
@@ -235,16 +235,16 @@ def regex_driver(s, start_index=0, max_index=0):
 
                 # from end to new state
                 for i in a_states_buffer:
-                    rules.append([i, "$", destination])
+                    rules.append([i, "__$__", destination])
 
                 if s[i_0] in ["*", "+"]:
 
                     # from end to new state
                     for i in a_states_buffer:
-                        rules.append([i, "$", prefix + str(start_index_2 - 1)])
+                        rules.append([i, "__$__", prefix + str(start_index_2 - 1)])
 
                     if s[i_0] == "*":
-                        rules.append([source, "$", destination])
+                        rules.append([source, "__$__", destination])
 
             # token prefix handler
             elif token_0 == "\\":

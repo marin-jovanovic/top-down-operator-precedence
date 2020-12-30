@@ -1,7 +1,13 @@
 import re
-LANGUAGE = [line[:-1] for line in open("test_cases/minusLang.lan").readlines()]
-TOKENS = "".join([line for line in open("test_cases/minusLang.in").readlines()])
 
+LAN_PATH = "test_cases/0/minusLang.lan"
+IN_PATH = "test_cases/0/minusLang.in"
+
+LAN_PATH = "test_cases/1/nadji_a1.lan"
+IN_PATH = "test_cases/1/nadji_a1.in"
+
+LANGUAGE = [line[:-1] for line in open(LAN_PATH).readlines()]
+TOKENS = "".join([line for line in open(IN_PATH).readlines()])
 
 REGEX = list()
 RULES = list()
@@ -14,7 +20,7 @@ def load_language():
     global REGEX, RULES, INITIAL_STATE
 
     state = 0
-    for line in open("test_cases/minusLang.lan").readlines():
+    for line in open(LAN_PATH).readlines():
         line = str(line[:-1])
 
         if state == 0:
@@ -34,7 +40,10 @@ def load_language():
                 REGEX.append(["{" + s + "}", line[line.find("}") + 2:]])
 
         elif state == 1:
-            new_regex = [REGEX[0]]
+            try:
+                new_regex = [REGEX[0]]
+            except IndexError:
+                new_regex = []
 
             for raw in REGEX[1:]:
                 right = str(raw[1])
@@ -140,7 +149,7 @@ def insert_regex():
 def source():
     start_state = "S_pocetno"
 
-    source_code = "".join([i for i in open("test_cases/minusLang.in").readlines()])
+    source_code = "".join([i for i in open(IN_PATH).readlines()])
     print([source_code])
     print(list(source_code))
 
@@ -175,7 +184,7 @@ def source():
 
 if __name__ == '__main__':
 
-    s = "".join([i for i in open("test_cases/minusLang.in").readlines()])
+    s = "".join([i for i in open(IN_PATH).readlines()])
 
     load_language()
 
@@ -192,8 +201,8 @@ if __name__ == '__main__':
                   "",
                   "MAX_EATER_NUMBER = -1",
                   "MAX_EATER_POINTER = -1",
-                  "SOURCE_CODE = \"\".join([i for i in open(\"test_cases/minusLang.in\").readlines()])",
-                  "CURRENT_STATE = \"S_pocetno\"",
+                  "SOURCE_CODE = \"\".join([i for i in open(\"" + IN_PATH + "\").readlines()])",
+                  "CURRENT_STATE = \"" + INITIAL_STATE + "\"",
                   "OUTPUT = list()",
                   "LINE_NUMBER = 1",
                   "",
@@ -267,7 +276,6 @@ if __name__ == '__main__':
         print(actions)
         is_line_count_increased = False
         reduction_count = -1
-        # lexer_code.append("            reduction_value = -1")
         output_action = ""
         is_output_action_present = False
         is_reduction_made = False
@@ -309,8 +317,6 @@ if __name__ == '__main__':
 
         else:
             lexer_code.append("            SOURCE_CODE = SOURCE_CODE[MAX_EATER_NUMBER:]")
-
-
 
         lexer_code.append("        elif is_accepted:")
         lexer_code.append("")
@@ -357,10 +363,6 @@ if __name__ == '__main__':
     lexer_code.append("    # [print(\"lexer_code.append(\\\"\" + str(i) + \"\\\")\") for i in file]")
     lexer_code.append("    pass")
 
-    # [print(i) for i in lexer_code]
-
     f = open("lexer.py", "w")
     [f.write(str(i) + "\n") for i in lexer_code]
     f.close()
-
-# todo $

@@ -63,7 +63,7 @@ def get_new_e_states(current_state):
     new_states = set()
 
     for transition in TRANSITIONS:
-        if current_state == transition.curr_state and transition.input_data == "$":
+        if current_state == transition.curr_state and transition.input_data == "__$__":
             for state in transition.new_states:
                 if state != "#":
                     new_states.add(state)
@@ -186,7 +186,7 @@ if __name__ == '__main__':
     SOURCE_CODE = "     -  -0x12 - ( #| ovdje ce doci grupirane\noperacije |#\n3- -\n--076)" \
                   " #| 3 - ---076 = 3 - -076 = 3 + 076 |#"
 
-    SOURCE_CODE = [' ', '-', ' ', ' ', '-', '0', 'x', '1', '2', ' ', '-', ' ', '(', ' ', '#', '|', ' ', 'o', 'v', 'd', 'j', 'e', ' ', 'c', 'e', ' ', 'd', 'o', 'c', 'i', ' ', 'g', 'r', 'u', 'p', 'i', 'r', 'a', 'n', 'e', '\n', '\t', '\t', 'o', 'p', 'e', 'r', 'a', 'c', 'i', 'j', 'e', ' ', '|', '#', '\n', '3', '-', ' ', '-', '\n', '-', '-', '0', '7', '6', ')', ' ', '#', '|', ' ', '3', ' ', '-', ' ', '-', '-', '-', '0', '7', '6', ' ', '=', ' ', '3', ' ', '-', ' ', '-', '0', '7', '6', ' ', '=', ' ', '3', ' ', '+', ' ', '0', '7', '6', ' ', '|', '#', '\n']
+    SOURCE_CODE = ['a', 'b', 'a', 'b', 'a', 'b', 'a', '\n']
     SOURCE_CODE = "".join(SOURCE_CODE)
 
     current_state = "S_pocetno"
@@ -195,13 +195,11 @@ if __name__ == '__main__':
     if current_state == "S_pocetno":
         print(11)
 
-
         t_in = [
             str(SOURCE_CODE),
-            ['S_1', 'S_2'],
+            ['S_1'],
             "S_0",
-            ['S_0', '\t', 'S_1'],
-            ['S_0', ' ', 'S_2']
+            ['S_0', 'a', 'S_1']
         ]
         t_0 = driver(t_in)
 
