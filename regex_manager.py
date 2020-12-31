@@ -116,64 +116,6 @@ def bracket_handler(s):
     return ret
 
 
-def test_bracket_handler():
-    t = 0
-    if bracket_handler("(((((a)))))") == [0, 10, "((((a))))"]:
-        print("test passed")
-        t += 1
-
-    if bracket_handler("((abc))") == [0, 6, "(abc)"]:
-        print("test passed")
-
-        t += 1
-
-    if bracket_handler("a(bc)d") == [1, 4, "bc"]:
-        print("test passed")
-
-        t += 1
-
-    print("test", t)
-
-
-# todo bracket skip
-# returns True if @s contains "|", not "\\|"
-def is_separator_present(s):
-    for i_0, token_0 in enumerate(s):
-
-        if token_0 == "|":
-
-            if i_0 == 0:
-                return True
-
-            elif s[i_0 - 1] != "\\":
-                return True
-
-    return False
-
-
-# if bracket at start of @s
-# returns @-1
-# input: \*, output: 1
-# input: *, output: 0
-def get_first_token_index(s):
-
-    t_0 = bracket_handler(s)
-
-    while t_0[0] != -1:
-        if t_0[0] == 0:
-            return -1
-
-        s = s[: t_0[0]] + s[t_0[1] + 1:]
-        t_0 = bracket_handler(s)
-
-    # print(s)
-
-    if s[0] == "\\":
-        return 1
-    else:
-        return 0
-
-
 def regex_driver(s, start_index=0, max_index=0):
     rules = list()
     # max_index = 0
@@ -211,8 +153,8 @@ def regex_driver(s, start_index=0, max_index=0):
             # action
             if token_0 == "(":
                 t_1 = bracket_handler(s[i_0:])
-
-                t_2 = s[i_0 + t_1[0] + 1: i_0 + t_1[1] - 1]
+                # t_2 = s[i_0 + t_1[0] + 1: i_0 + t_1[1] - 1]
+                t_2 = s[i_0 + t_1[0] + 1: i_0 + t_1[1] - (1 if s[i_0 + t_1[1]] != ")" else 0)]
                 i_0 = t_1[1] + i_0
 
                 # new_streams = split_by_separator(t_2)
@@ -330,4 +272,51 @@ def run_tests():
 #     +, *, (, ), [, ], .,
 if __name__ == '__main__':
 
-    run_tests()
+    # run_tests()
+
+    t = regex_driver("(ad)bc", 0, 0)
+    for i in t:
+        try:
+            for j in i:
+                print(j)
+
+        except:
+            print(i)
+
+    print()
+
+    t = regex_driver("(ad)+bc", 0, 0)
+    for i in t:
+        try:
+            for j in i:
+                print(j)
+
+        except:
+            print(i)
+    print()
+
+    t = regex_driver("(ad)(2)+bc", 0, 0)
+    for i in t:
+        try:
+            for j in i:
+                print(j)
+
+        except:
+            print(i)
+
+    # [print(i) for i in regex_driver("abc", 0, 0)]
+
+    # print(regex_driver("abc", 0, 0))
+
+    regex_driver("("
+                 "_"
+                 "|"
+                 "(a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z)"
+                 ")"
+                 "("
+                 "_"
+                 "|"
+                 "(a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z)"
+                 "|"
+                 "(0|1|2|3|4|5|6|7|8|9)"
+                 ")*", 0, 0)
