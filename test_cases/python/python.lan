@@ -1,0 +1,47 @@
+{znamenka} 0|1|2|3|4|5|6|7|8|9
+{hexZnamenka} {znamenka}|a|b|c|d|e|f|A|B|C|D|E|F
+{broj} {znamenka}{znamenka}*|0x{hexZnamenka}{hexZnamenka}*
+{bjelina} \t|\n|\_
+{sviZnakovi} \(|\)|\{|\}|\||\*|\\|\$|\t|\n|\_|!|"|#|%|&|'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|<|=|>|?|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|~
+%X S_pocetno S_komentar S_unarni S_komentar_jednolinijski
+%L OPERAND OP_MINUS UMINUS LIJEVA_ZAGRADA DESNA_ZAGRADA
+<S_pocetno>\t|\_
+{
+-
+}
+<S_pocetno>\n
+{
+-
+NOVI_REDAK
+}
+<S_pocetno>#
+{
+UDJI_U_STANJE S_komentar_jednolinijski
+}
+<S_pocetno>"""|'''
+{
+UDJI_U_STANJE S_komentar_viselinijski
+}
+
+<S_komentar_jednolinijski>\n
+{
+UDJI_U_STANJE S_pocetno
+}
+<S_komentar_jednolinijski>{sviZnakovi}
+{
+-
+}
+
+<S_komentar_viselinijski>"""|'''
+{
+UDJI_U_STANJE S_pocetno
+}
+<S_komentar_viselinijski>\n
+{
+-
+NOVI_REDAK
+}
+<S_komentar_viselinijski>{sviZnakovi}
+{
+-
+}

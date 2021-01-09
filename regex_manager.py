@@ -55,8 +55,6 @@ def split_by_separator(v_regex):
             pass
 
     ret.append("".join([i for i in t_0]))
-    # print(ret)
-    # [print(i) for i in ret]
     return ret
 
 
@@ -211,65 +209,6 @@ def regex_driver(s, start_index=0, max_index=0):
     return rules, max_index + 1, [(prefix + str(i)) for i in accept_states]
 
 
-def run_tests():
-
-    # todo escape symbols
-    regex_driver("(\\(|\\)|\\{|\\}|\\||\\*|\\\\|\\$|\\t|\\n|\\_|!|\"|#|%|&|\'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|<|=|>|?"
-                 "|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|"
-                 "l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|~)")
-
-    regex_driver("\\n")
-
-    regex_driver("\\(")
-
-    regex_driver("\\)")
-
-    regex_driver("-")
-
-    regex_driver("\\t|\\_")
-
-    regex_driver("#\\|")
-
-    regex_driver("\\|#")
-
-    regex_driver("-(\\t|\\n|\\_)*-")
-
-    regex_driver("\\((\\t|\\n|\\_)*-")
-
-    regex_driver("-(\\t|\\n|\\_)*-")
-
-    regex_driver("a|b|(c)+|d")
-
-    # regex_driver("ab|cd")
-    # regex_driver("\\ab|cd")
-    # regex_driver("ab|\\cd")
-    # regex_driver("\\ab|\\cd")
-
-    inp = "(ab)+efd|(de)*def"
-    regex_driver(inp, 0, 0)
-
-    # t = bracket_handler(c)
-    # print(c[t[0]:t[1] + 2])
-
-    inp = "a|test|(dwa)har"
-    regex_driver(inp, 0, 0)
-
-    inp = "((0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*|0x((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D"\
-          "|E|F)((0|1|2|3|4|5|6|7|8|9)|a|b|c|d|e|f|A|B|C|D|E|F)*)"
-
-    # inp = "(0|1|2|3|4|5|6|7|8|9)"
-    regex_driver(inp, 0, 0)
-
-    inp = "(0|1|2|3|4|5|6|7|8|9)"
-    regex_driver(inp, 0, 0)
-
-    inp = "(0|1|2|3|4|5|6|7|8|9)*"
-    regex_driver(inp, 0, 0)
-
-
-# todo
-#     special chars
-#     +, *, (, ), [, ], .,
 if __name__ == '__main__':
 
     # run_tests()
