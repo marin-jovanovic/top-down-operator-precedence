@@ -2,7 +2,7 @@ import re
 import sys
 
 SOURCE = "minusLang.lan"
-SOURCE_CODE_PATH = "../test_cases/minusLang.in"
+SOURCE_CODE_PATH = "../lexer_generator/test_cases/minusLang.in"
 
 REGEX_LIST = list()
 STATES = list()

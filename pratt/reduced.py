@@ -16,6 +16,8 @@ def tokenize(program):
             yield operator_lparen_token()
         elif operator == ')':
             yield operator_rparen_token()
+        elif operator[0].isalpha():
+            yield variable_token(operator)
         else:
             raise SyntaxError('unknown operator: %s', operator)
     yield end_token()
@@ -53,14 +55,29 @@ class variable_token(object):
     def __init__(self, value):
         self.value = str(value)
 
+    def nud(self):
+        return self.value
+
+
+# number
+class literal_token(object):
+    def __init__(self, value):
+        self.value = int(value)
+
+    def nud(self):
+        return str(self.value)
+
+
+class operator_add_token(object):
     lbp = 10
 
     def nud(self):
-        return "( " + str(expression(100)) + " )"
+        return expression(100)
 
     def led(self, left):
         right = expression(10)
-        return "( " + str(left) + " + " + str(right) + " )"
+        return "( {0} + {1} )".format(str(left), str(right))
+        # return left + right
 
 
 class operator_sub_token(object):
@@ -116,6 +133,10 @@ class end_token(object):
 if __name__ == '__main__':
     print(parse('3 * ( 2 + - 4 ) ^ 4'))
     # print(parse("1-1+1"))
+
+    print(parse("var + 3"))
+    print(parse("var + 3 + 3"))
+    print(parse('3 * ( 2 + - 4 ) ^ var'))
 
     # print(parse("variable = value ;"))
 

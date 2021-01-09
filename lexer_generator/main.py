@@ -180,7 +180,7 @@ if __name__ == '__main__':
 
     [print(i) for i in RULES]
 
-    from regex_manager import regex_driver
+    from lexer_generator.regex_manager import regex_driver
 
     lexer_code = ["from nfa.main import driver",
                   "",
