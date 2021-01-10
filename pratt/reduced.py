@@ -1,6 +1,8 @@
 SPACE_COUNT = 0
+MAX_OFFSET = 0
 
 LBP = {
+    "variable_type": -1,
     "variable": None,
     "literal": None,
     "lparen": 0,
@@ -15,11 +17,13 @@ LBP = {
     "pow": 30
 
 }
-
+AST = []
 
 def format_print(data):
-    print(SPACE_COUNT * " " + str(data))
+    print((MAX_OFFSET + SPACE_COUNT) * " " + str(data))
 
+def add_to_AST(data):
+    AST.append((MAX_OFFSET + SPACE_COUNT) * " " + str(data))
 
 def tokenize(program):
     for operator in program.split(" "):
@@ -45,6 +49,8 @@ def tokenize(program):
             yield operator_association_token()
         elif operator == ";":
             yield operator_end_of_line_token()
+        elif operator == "int":
+            yield
         else:
             raise SyntaxError('unknown operator: %s', operator)
     yield end_token()
@@ -69,6 +75,9 @@ def parse(program):
 
     ret = expression()
     print("output:", ret)
+    # print("AST:")
+    # for i in AST:
+    #     print(i)
     return ret
 
 
@@ -83,6 +92,12 @@ def expression(rbp=0):
         left = t.led(left)
     return str(left)
 
+
+class operator_int_type_token(object):
+    lbp = LBP.get("variable_type")
+
+    def nud(self):
+        return
 
 class operator_end_of_line_token(object):
     lbp = LBP.get("end_of_line")
@@ -111,6 +126,9 @@ class variable_token(object):
         ret = "(" + self.value + ")"
         return ret
 
+    def lbp(self):
+        return "(" + self.value + ")"
+
 
 # number
 class literal_token(object):
@@ -129,6 +147,7 @@ class operator_add_token(object):
         return expression(100)
 
     def led(self, left):
+
         right = expression(self.lbp)
         return "( {0} (+) {1} )".format(str(left), str(right))
         # return left + right
@@ -138,7 +157,7 @@ class operator_sub_token(object):
     lbp = LBP.get("sub")
 
     def nud(self):
-        return "( - " + str(expression(100)) + " )"
+        return "( (-) " + str(expression(100)) + " )"
 
     def led(self, left):
         # alt enter
@@ -163,7 +182,8 @@ class operator_pow_token(object):
     lbp = LBP.get("pow")
 
     def led(self, left):
-        return "( " + str(left) + " ^ " + str(expression(self.lbp - 1)) + " )"
+        return [left, "^",expression(self.lbp - 1)]
+        return "( " + str(left) + " (^) " + str(expression(self.lbp - 1)) + " )"
 
 
 class operator_lparen_token(object):
@@ -184,13 +204,17 @@ class end_token(object):
 
 
 if __name__ == '__main__':
-    print(parse('3 * ( 2 + - 4 ) ^ 4'))
+    t = parse('3 * ( 2 + - 4 ) ^ 4')
+
     print(parse("1 - 1 + 1"))
 
     print(parse("var + 3"))
     print(parse("var + 3 + 3"))
     print(parse('3 * ( 2 + - 4 ) ^ var'))
     print(parse("cijena = 1000 ;"))
+    parse("int cijena = 1000 ;")
+    parse("int cijena = 1000 + 20 ;")
+    parse("cijena = 1000 ;")
     # print(parse("variable = value ;"))
 
     """
