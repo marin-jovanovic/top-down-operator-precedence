@@ -70,3 +70,47 @@ if __name__ == '__main__':
 
     print("\ntree print")
     tree.print_tree(tree.head)
+
+    """
+           izracunajCijenu() {
+               ako ( kolicina > 20 )
+                   cijena = 1000 ;
+               inace
+                   cijena = 1200 ;
+               novaCijena = cijena ;
+           }
+
+           program 
+               izracunajCijenu
+               (
+               )
+               blokNaredbi
+                   {
+                   slijedNaredbi
+                       naredba
+                           ako
+                           (
+                           izraz
+                               kolicina 
+                               > 
+                               20
+                           )
+                           naredba
+                               cijena
+                               = 
+                               1000
+                               ;
+                           inace
+                           naredba
+                               cijena
+                               =
+                               1200
+                               ;
+                       naredba
+                           novacijena
+                           =
+                           cijena
+                           ;
+                   }
+
+       """

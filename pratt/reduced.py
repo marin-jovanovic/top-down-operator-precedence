@@ -18,6 +18,10 @@ def tokenize(program):
             yield operator_rparen_token()
         elif operator[0].isalpha():
             yield variable_token(operator)
+        elif operator == "=":
+            yield operator_association_token()
+        elif operator == ";":
+            yield operator_end_of_line_token()
         else:
             raise SyntaxError('unknown operator: %s', operator)
     yield end_token()
@@ -36,6 +40,8 @@ def parse(program):
     next = tokenize(program)
 
     token = next.__next__()
+
+    print("source")
     return expression()
 
 
@@ -50,6 +56,28 @@ def expression(rbp=0):
         left = t.led(left)
     return str(left)
 
+
+class operator_end_of_line_token(object):
+    lbp = 100
+
+    def led(self, left):
+        return "(" + str(left) + ") (;)"
+
+
+
+class operator_association_token(object):
+    lbp = 10
+
+    def nud(self):
+        return expression(100)
+
+    def led(self, left):
+        right = expression(0)
+        print(left)
+        print("=")
+        print(right)
+        return "( ({0}) (=) {1} )".format(str(left), str(right))
+        # return left + right
 
 class variable_token(object):
     def __init__(self, value):
@@ -137,7 +165,7 @@ if __name__ == '__main__':
     print(parse("var + 3"))
     print(parse("var + 3 + 3"))
     print(parse('3 * ( 2 + - 4 ) ^ var'))
-
+    print(parse("cijena = 1000 ;"))
     # print(parse("variable = value ;"))
 
     """
