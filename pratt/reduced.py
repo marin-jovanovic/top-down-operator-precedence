@@ -8,7 +8,7 @@ LBP = {
     "lparen": 0,
     "rparen": 0,    # not important
     "EOF": 0,
-    "end_of_line": 0,
+    "end_of_line": -1,
     "association": 2,
     "add": 3,
     "sub": 3,
@@ -17,7 +17,7 @@ LBP = {
     "pow": 5,
     "equal": 2,
     "function name": 1,
-    "left curly bracket": 1,
+    "left curly bracket": 0,
     "right curly bracket": 0
 
 }
@@ -40,9 +40,9 @@ def tokenize(program):
         elif operator == "^":
             yield operator_pow_token()
         elif operator == '(':
-            yield operator_lparen_token()
+            yield LeftRoundBracketToken()
         elif operator == ')':
-            yield operator_rparen_token()
+            yield RightRoundBracketToken()
         elif operator == "{":
             yield LeftCurlyBracketToken()
         elif operator == "}":
@@ -57,9 +57,9 @@ def tokenize(program):
             yield operator_int_type_token()
         elif operator in ["==", "<", ">", ">=", "<=", "!="]:
             yield EqualOperatorToken(operator)
-
         else:
             raise SyntaxError('unknown operator: %s', operator)
+
     yield end_token()
 
 
@@ -99,11 +99,29 @@ def expression(rbp=0):
     return left
 
 
-class LeftCurlyBracketToken():
+class LeftRoundBracketToken(object):
+    lbp = LBP.get("lparen")
+
+    def nud(self):
+
+        # handle till ")"
+        expr = expression(self.lbp)
+
+        # handles ")"
+        match(RightRoundBracketToken)
+
+        return expr
+
+
+class RightRoundBracketToken(object):
+    lbp = LBP.get("rparen")
+
+
+class LeftCurlyBracketToken:
     lbp = LBP.get("left curly bracket")
 
 
-class RightCurlyBracketToken():
+class RightCurlyBracketToken:
     lbp = LBP.get("right curly bracket")
 
 
@@ -116,10 +134,17 @@ class FunctionToken(object):
     def nud(self):
 
         # expects "("
-        match(operator_lparen_token)
+        match(LeftRoundBracketToken)
+
+        args = []
+
+        if RightRoundBracketToken != type(token):
+
+            # expects args
+            args = expression(0)
 
         # expects ")"
-        match(operator_rparen_token)
+        match(RightRoundBracketToken)
 
         # expects "{"
         match(LeftCurlyBracketToken)
@@ -135,16 +160,16 @@ class FunctionToken(object):
         # expects "}"
         match(RightCurlyBracketToken)
 
-        return ['function', '(', ')', '{', ['body', body], '}']
+        return ['function', '(', ["args", args], ')', '{', ['body', body], '}']
 
     def led(self, left):
         # right = expression(self.lbp)
 
         print(left)
 
-        return ['function', '(', ')', '{', ['tijelo', left], '}']
-
         # return ["bool tester", ["LS", left], self.value, ["RS", right], ";"]
+
+        return ['function', '(', ')', '{', ['tijelo', left], '}']
 
 
 class EqualOperatorToken(object):
@@ -173,11 +198,13 @@ class operator_int_type_token(object):
     # def led(self, left):
     #     return expression(self.lbp)
 
+
 class operator_end_of_line_token(object):
     lbp = LBP.get("end_of_line")
 
     def led(self, left):
-        return left
+        return ["EOL", left]
+        # return ["instruction block", left, expression()]
 
 
 class operator_association_token(object):
@@ -187,23 +214,31 @@ class operator_association_token(object):
         return expression(100)
 
     def led(self, left):
-        right = expression(self.lbp)
-
-        match(operator_end_of_line_token)
-
-        # print(left)
-        # print(type(left))
+        # print("left", left)
+        print("t", left, token)
 
         if isinstance(left, str):
             left = [left]
             print("left reconfig")
 
+        right = expression(self.lbp)
+        print("r", right)
+        # print("right", right)
+
+        # expects ";"
+        match(operator_end_of_line_token)
+
         if isinstance(right, int):
             right = [right]
             print("right reconfig")
 
-        # return ["instruction", [left], "=", [right], ";"]
-        return ["instruction", ["LS", left], "=", ["RS", right], ";"]
+
+
+        instruction = ["instruction", ["LS", left], "=", ["RS", right], ";"]
+        print("handle", instruction)
+
+        return "xxx"
+        # return instruction
 
 
 class variable_token(object):
@@ -274,23 +309,6 @@ class operator_pow_token(object):
         return ["^", left, expression(self.lbp - 1)]
 
 
-class operator_lparen_token(object):
-    lbp = LBP.get("lparen")
-
-    def nud(self):
-        # handle till ")"
-        expr = expression(self.lbp)
-
-        # handles ")"
-        match(operator_rparen_token)
-
-        return expr
-
-
-class operator_rparen_token(object):
-    lbp = LBP.get("rparen")
-
-
 class end_token(object):
     lbp = LBP.get("EOF")
 
@@ -305,10 +323,17 @@ def test(test_input, correct_output):
         sys.exit()
 
 
+def formated_print(data, s_c=0):
+    if isinstance(data, (str, int)):
+        print(s_c * 4 * " " + str(data))
+
+    else:
+        for i in data:
+            formated_print(i, s_c+1)
+
+
 if __name__ == '__main__':
 
-    # parse("1 + ( 2 + 3 ) + 4")
-    #
     # test("1 + 1", ["+", 1, 1])
     # test("3 * ( 2 + - 4 ) ^ 4", ['*', 3, ['^', ['+', 2, -4], 4]])
     # test("1 - 1 + 1", ['+', ['-', 1, 1], 1])
@@ -317,17 +342,52 @@ if __name__ == '__main__':
     # test('3 * ( 2 + - 4 ) ^ var', ['*', 3, ['^', ['+', 2, -4], 'var']])
     # test("x = 100 ;", ["instruction", ["LS", ["x"]], "=", ["RS", [100]], ";"])
     # test("cijena = 1000 ;", ["instruction", ["LS", ["cijena"]], "=", ["RS", [1000]], ";"])
-    #
     # test("cijena = 100 + 2 * 3 ;", ["instruction", ["LS", ["cijena"]], "=", ["RS", ["+", 100, ["*", 2, 3]]], ";"])
-    #
     # test("int cijena = 1000 ;", ["instruction", ["LS", ["int", "cijena"]], "=", ["RS", [1000]], ";"])
-    #
     # test("cijena <= 20 + 20", ['bool tester', ['LS', ['cijena']], '<=', ['RS', ['+', 20, 20]], ';'])
 
-    # parse("imeFunkcije ( ) { cijena = 1000 ; }")
+    formated_print(parse("1 + 2 * 3 / 7 + 1"))
 
-    test("imeFunkcije ( ) { cijena = 1000 ; }",
-         ["function", "(", ")", "{", ["body", ["instruction", ["LS", ["cijena"]], "=", ["RS", [1000]], ";"]], "}"])
+    t = parse("x = 2 ; y = 3 ;")
+
+    formated_print(t)
+
+
+
+
+    # parse("x = 2 ; new_line y = 3 ;")
+
+    # parse("( 1 )")
+    # parse("( )")
+    # parse("( 2 + 3 ) + 1")
+
+    # test("imeFunkcije ( cijena ) { cijena = 1000 ; }",
+    #      ["function", "(", ["args", ["cijena"]], ")", "{", ["body", ["instruction", ["LS", ["cijena"]], "=", ["RS", [1000]], ";"]], "}"])
+
+    # test("imeFunkcije ( ) { cijena = 1000 ; }",
+    #      [
+    #          "function",
+    #          "(",
+    #          ["args", []],
+    #          ")",
+    #          "{",
+    #          ["body", ["instruction", ["LS", ["cijena"]], "=", ["RS", [1000]], ";"]],
+    #          "}"
+    #      ]
+    # )
+
+    # test("imeFunkcije ( ) { cijena = 1000 ; int x = 3 ; }",
+    #      ["function",
+    #       "(",
+    #       ["args", []],
+    #       ")",
+    #       "{",
+    #       ["body",
+    #        ["instruction", ["LS", ["cijena"]], "=", ["RS", [1000]], ";"],
+    #        ["instruction", ["LS", ["int", "x"]], "=", ["RS", [3]], ";"]
+    #       ],
+    #       "}"
+    #       ])
 
     print(80 * "=")
     print("all tests passed")
