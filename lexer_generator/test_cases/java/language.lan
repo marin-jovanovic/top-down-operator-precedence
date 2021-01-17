@@ -1,0 +1,40 @@
+{znamenka} 0|1|2|3|4|5|6|7|8|9
+{hexZnamenka} {znamenka}|a|b|c|d|e|f|A|B|C|D|E|F
+{broj} {znamenka}{znamenka}*|0x{hexZnamenka}{hexZnamenka}*
+{bjelina} \t|\n|\_
+{sviZnakovi} \(|\)|\{|\}|\||\*|\\|\$|\t|\n|\_|!|"|#|%|&|'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|<|=|>|?|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|~
+%X S_INIT S_komentar S_unarni
+%L OPERAND OP_MINUS UMINUS LIJEVA_ZAGRADA DESNA_ZAGRADA CLASS_NAME
+<S_INIT>\t|\_
+{
+-
+}
+<S_INIT>\n
+{
+-
+NOVI_REDAK
+}
+<S_INIT>//
+{
+UDJI_U_STANJE ONE_LINE_COMMENT
+}
+<ONE_LINE_COMMENT>\n
+{
+UDJI_U_STANJE S_INIT
+}
+<ONE_LINE_COMMENT>{sviZnakovi}
+{
+-
+}
+<S_INIT>package
+{
+VISIBILITY_MODIFIER
+}
+<S_INIT>;
+{
+END_OF_INSTRUCTION
+}
+<S_INIT>{sviZnakovi}
+{
+-
+}

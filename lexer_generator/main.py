@@ -18,6 +18,10 @@ IN_PATH = "test_cases/4/svaki_drugi_a1.in"
 LAN_PATH = "test_cases/5/svaki_drugi_a2.lan"
 IN_PATH = "test_cases/5/svaki_drugi_a2.in"
 
+LAN_PATH = "test_cases/java/language.lan"
+IN_PATH = "test_cases/java/java.in"
+
+
 LANGUAGE = [line[:-1] for line in open(LAN_PATH).readlines()]
 TOKENS = "".join([line for line in open(IN_PATH).readlines()])
 

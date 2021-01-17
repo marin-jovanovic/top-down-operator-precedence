@@ -47,21 +47,80 @@ def tokenize(program):
             yield LeftCurlyBracketToken()
         elif operator == "}":
             yield RightCurlyBracketToken()
-        elif operator[0].isalpha():
-            yield variable_token(operator)
         elif operator == "=":
             yield operator_association_token()
         elif operator == ";":
             yield operator_end_of_line_token()
         elif operator == "int":
             yield operator_int_type_token()
+        elif operator == "class":
+            yield ClassDefinitionToken()
+        elif operator == "className":
+            yield ClassNameToken()
+        elif operator == "public":
+            yield VisibilityToken()
+        elif operator == "void":
+            yield ReturnTypeToken()
+        elif operator == "methodName":
+            yield MethodNameToken()
         elif operator in ["==", "<", ">", ">=", "<=", "!="]:
             yield EqualOperatorToken(operator)
+        elif operator[0].isalpha():
+            yield variable_token(operator)
         else:
             raise SyntaxError('unknown operator: %s', operator)
 
     yield end_token()
 
+
+class ClassDefinitionToken:
+    def nud(self):
+
+        match(ClassNameToken)
+
+        match(LeftCurlyBracketToken)
+
+        methods = expression(-1)
+
+        match(RightCurlyBracketToken)
+
+        return ["class", "className", methods]
+
+
+    def led(self, left):
+        return
+
+
+class ClassNameToken:
+    def nud(self):
+        return
+
+    def led(self, left):
+        return
+
+
+class VisibilityToken:
+    def nud(self):
+        return
+
+    def led(self, left):
+        return
+
+
+class ReturnTypeToken:
+    def nud(self):
+        return
+
+    def led(self, left):
+        return
+
+
+class MethodNameToken:
+    def nud(self):
+        return
+
+    def led(self, left):
+        return
 
 def match(tok=None):
     global token
@@ -346,12 +405,17 @@ if __name__ == '__main__':
     # test("int cijena = 1000 ;", ["instruction", ["LS", ["int", "cijena"]], "=", ["RS", [1000]], ";"])
     # test("cijena <= 20 + 20", ['bool tester', ['LS', ['cijena']], '<=', ['RS', ['+', 20, 20]], ';'])
 
-    formated_print(parse("1 + 2 * 3 / 7 + 1"))
+    # formated_print(parse("1 + 2 * 3 / 7 + 1"))
 
-    t = parse("x = 2 ; y = 3 ;")
+    # t = parse("x = 2 ; y = 3 ;")
+    #
+    # formated_print(t)
+
+    t = parse("class className { public void methodName ( ) { int x = 1 ; int y = 2 ; }")
 
     formated_print(t)
 
+    # formated_print("class className { public static void main ( String[] args ) { System.out.println ( Hello, World!)\n)
 
 
 
