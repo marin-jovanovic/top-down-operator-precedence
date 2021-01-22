@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
         start_time = datetime.datetime.now()
 
-        program_output_lines = os.popen("py main.py < \"" + TESTS_PATH +
+        program_output_lines = os.popen("py toy_math_operations.py < \"" + TESTS_PATH +
                                         file + "/" + INPUT_FILES_PATH +
                                         "\"").read().split("\n")
         end_time = datetime.datetime.now()

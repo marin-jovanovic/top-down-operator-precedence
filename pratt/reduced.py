@@ -86,7 +86,6 @@ class ClassDefinitionToken:
 
         return ["class", "className", methods]
 
-
     def led(self, left):
         return
 

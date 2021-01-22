@@ -1,0 +1,42 @@
+[1]  Document        ::=  Header* Definition*
+[2]  Header          ::=  Include | CppInclude | Namespace
+[3]  Include         ::=  'include' Literal
+[4]  CppInclude      ::=  'cpp_include' Literal
+[5]  Namespace       ::=  ( 'namespace' ( NamespaceScope Identifier ) )
+[6]  NamespaceScope  ::=  '*' | 'c_glib' | 'cpp' | 'delphi' | 'haxe' | 'go' | 'java' | 'js' | 'lua' | 'netstd' | 'perl' | 'php' | 'py' | 'py.twisted' | 'rb' | 'st' | 'xsd'
+[7]  Definition      ::=  Const | Typedef | Enum | Senum | Struct | Union | Exception | Service
+[8]  Const           ::=  'const' FieldType Identifier '=' ConstValue ListSeparator?
+[9]  Typedef         ::=  'typedef' DefinitionType Identifier
+[10] Enum            ::=  'enum' Identifier '{' (Identifier ('=' IntConstant)? ListSeparator?)* '}'
+[11] Senum           ::=  'senum' Identifier '{' (Literal ListSeparator?)* '}'
+[12] Struct          ::=  'struct' Identifier 'xsd_all'? '{' Field* '}'
+[13] Union          ::=  'union' Identifier 'xsd_all'? '{' Field* '}'
+[14] Exception       ::=  'exception' Identifier '{' Field* '}'
+[15] Service         ::=  'service' Identifier ( 'extends' Identifier )? '{' Function* '}'
+[16] Field           ::=  FieldID? FieldReq? FieldType Identifier ('=' ConstValue)? XsdFieldOptions ListSeparator?
+[17] FieldID         ::=  IntConstant ':'
+[18] FieldReq        ::=  'required' | 'optional'
+[19] XsdFieldOptions ::=  'xsd_optional'? 'xsd_nillable'? XsdAttrs?
+[20] XsdAttrs        ::=  'xsd_attrs' '{' Field* '}'
+[21] Function        ::=  'oneway'? FunctionType Identifier '(' Field* ')' Throws? ListSeparator?
+[22] FunctionType    ::=  FieldType | 'void'
+[23] Throws          ::=  'throws' '(' Field* ')'
+[24] FieldType       ::=  Identifier | BaseType | ContainerType
+[25] DefinitionType  ::=  BaseType | ContainerType
+[26] BaseType        ::=  'bool' | 'byte' | 'i8' | 'i16' | 'i32' | 'i64' | 'double' | 'string' | 'binary' | 'slist'
+[27] ContainerType   ::=  MapType | SetType | ListType
+[28] MapType         ::=  'map' CppType? '<' FieldType ',' FieldType '>'
+[29] SetType         ::=  'set' CppType? '<' FieldType '>'
+[30] ListType        ::=  'list' '<' FieldType '>' CppType?
+[31] CppType         ::=  'cpp_type' Literal
+[32] ConstValue      ::=  IntConstant | DoubleConstant | Literal | Identifier | ConstList | ConstMap
+[33] IntConstant     ::=  ('+' | '-')? Digit+
+[34] DoubleConstant  ::=  ('+' | '-')? Digit* ('.' Digit+)? ( ('E' | 'e') IntConstant )?
+[35] ConstList       ::=  '[' (ConstValue ListSeparator?)* ']'
+[36] ConstMap        ::=  '{' (ConstValue ':' ConstValue ListSeparator?)* '}'
+[37] Literal         ::=  ('"' [^"]* '"') | ("'" [^']* "'")
+[38] Identifier      ::=  ( Letter | '_' ) ( Letter | Digit | '.' | '_' )*
+[39] STIdentifier    ::=  ( Letter | '_' ) ( Letter | Digit | '.' | '_' | '-' )*
+[40] ListSeparator   ::=  ',' | ';'
+[41] Letter          ::=  ['A'-'Z'] | ['a'-'z']
+[42] Digit           ::=  ['0'-'9']
