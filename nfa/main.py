@@ -1,6 +1,3 @@
-# import nfa.constants
-# impoa.constants
-
 INPUT_LIST = list()
 STATES = list()
 INPUT_SYMBOLS = list()
@@ -8,7 +5,6 @@ FINAL_STATES = list()
 INITIAL_STATE = list()
 TRANSITIONS = list()
 
-# ID = 0
 
 class Transition_function:
     def __init__(self, curr_state, input_data, new_states):
@@ -180,11 +176,6 @@ def driver(data):
 
 
 if __name__ == '__main__':
-
-
-
-    SOURCE_CODE = "     -  -0x12 - ( #| ovdje ce doci grupirane\noperacije |#\n3- -\n--076)" \
-                  " #| 3 - ---076 = 3 - -076 = 3 + 076 |#"
 
     SOURCE_CODE = ['a', 'b', 'a', 'b', 'a', 'b', 'a', '\n']
     SOURCE_CODE = "".join(SOURCE_CODE)
