@@ -1,0 +1,6 @@
+TOKENS
+[42] Digit           ::=  ['0'-'9']
+[41] Letter          ::=  ['A'-'Z'] | ['a'-'z']
+[40] ListSeparator   ::=  ',' | ';'
+[26] BaseType        ::=  'bool' | 'byte' | 'i8' | 'i16' | 'i32' | 'i64' | 'double' | 'string' | 'binary' | 'slist'
+[6]  NamespaceScope  ::=  '*' | 'c_glib' | 'cpp' | 'delphi' | 'haxe' | 'go' | 'java' | 'js' | 'lua' | 'netstd' | 'perl' | 'php' | 'py' | 'py.twisted' | 'rb' | 'st' | 'xsd'

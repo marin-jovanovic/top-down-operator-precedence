@@ -10,7 +10,7 @@
 [10] Enum            ::=  'enum' Identifier '{' (Identifier ('=' IntConstant)? ListSeparator?)* '}'
 [11] Senum           ::=  'senum' Identifier '{' (Literal ListSeparator?)* '}'
 [12] Struct          ::=  'struct' Identifier 'xsd_all'? '{' Field* '}'
-[13] Union          ::=  'union' Identifier 'xsd_all'? '{' Field* '}'
+[13] Union           ::=  'union' Identifier 'xsd_all'? '{' Field* '}'
 [14] Exception       ::=  'exception' Identifier '{' Field* '}'
 [15] Service         ::=  'service' Identifier ( 'extends' Identifier )? '{' Function* '}'
 [16] Field           ::=  FieldID? FieldReq? FieldType Identifier ('=' ConstValue)? XsdFieldOptions ListSeparator?
