@@ -1,7 +1,6 @@
 include
 cpp_include
 namespace
-*
 c_glib
 cpp
 delphi
@@ -19,11 +18,8 @@ rb
 st
 xsd
 const
-=
 typedef
 enum
-{
-}
 senum
 struct
 union
@@ -49,23 +45,24 @@ string
 binary
 slist
 map
-<
-,
->
 set
 list
 cpp_type
-+
--
-.
 E
 e
-[
-]
-:
-"
-'
-_
--
-,
-;
+asterisk *
+equal =
+left_curly_bracket {
+right_curly_bracket }
+left_square_bracket [
+right_square_bracket ]
+colon :
+double_quotes "
+single_quotes '
+plus +
+minus -
+dot .
+left_angle_bracket <
+comma ,
+right_angle_bracket >
+semicolon ;
