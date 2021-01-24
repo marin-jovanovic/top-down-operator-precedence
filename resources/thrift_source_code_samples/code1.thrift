@@ -35,7 +35,7 @@ namespace py ThriftTest
 namespace py.twisted ThriftTest
 namespace rb Thrift.Test
 namespace st ThriftTest
-namespace xsd test (uri = 'http://thrift.apache.org/ns/ThriftTest')
+namespace xsd test /* FIXME -> (uri = 'http://thrift.apache.org/ns/ThriftTest') */
 
 // Presence of namespaces and sub-namespaces for which there is
 // no generator should compile with warnings only
@@ -104,13 +104,13 @@ struct Insanity
 {
   1: map<Numberz, UserId> userMap,
   2: list<Xtruct> xtructs
-} (python.immutable= "")
+} /*FIXME -> (python.immutable= "")*/
 
 struct CrazyNesting {
   1: string string_field,
   2: optional set<Insanity> set_field,
   // Do not insert line break as test/go/Makefile.am is removing this line with pattern match
-  3: required list<map<set<i32> (python.immutable = ""), map<i32,set<list<map<Insanity,string>(python.immutable = "")> (python.immutable = "")>>>> list_field,
+  /*fixme -> 3: required list<map<set<i32> (python.immutable = ""), map<i32,set<list<map<Insanity,string>(python.immutable = "")> (python.immutable = "")>>>> list_field,*/
   4: binary binary_field
 }
 
@@ -396,7 +396,7 @@ struct NestedListsBonk {
 
 struct BoolTest {
   1: optional bool b = true;
-  2: optional string s = "true";
+  2: optional string s = " true "; /*fixme (was "true")*/
 }
 
 struct StructA {
@@ -409,5 +409,5 @@ struct StructB {
 }
 
 struct OptionalSetDefaultTest {
-  1: optional set<string> with_default = [ "test" ]
+  1: optional set<string> with_default = [ " test " /*fixme, was "test"*/ ]
 }

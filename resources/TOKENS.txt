@@ -68,6 +68,8 @@ upper_e E
 lower_e e
 Literal r \" [^\"]* \"
 Literal r \' [^\']* \'
+Literal r \"[^\"]*\"
+Literal r \'[^\']*\'
 Identifier r ([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_)*
 STIdentifier r ([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_|-)*
 ListSeparator ,
