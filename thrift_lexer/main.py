@@ -3,9 +3,12 @@ import re
 # todo check this statement
 # keywords and reserved words are treated as the same
 KEYWORDS_PREFIX = "KW__"
-KEYWORDS = {(line[:-1] if line.count(" ") == 0 else (line[:-1].split(" ", 1))[1]):
-              (line[:-1].upper() if line.count(" ") == 0 else ((line[:-1].split(" "))[0]).upper())
-          for line in open("..\\resources\\KEYWORDS_AND_RESERVED_WORDS.txt").readlines()}
+# TOKENS = {(line[:-1] if line.count(" ") == 0 else (line[:-1].split(" ", 1))[1]):
+#               (line[:-1].upper() if line.count(" ") == 0 else ((line[:-1].split(" "))[0]).upper())
+#           for line in open("..\\resources\\TOKENS.txt").readlines()}
+TOKENS = {(line[:-1] if line.count(" ") == 0 else (line[:-1].split(" ", 1))[1]):
+              (line[:-1] if line.count(" ") == 0 else ((line[:-1].split(" "))[0]))
+          for line in open("..\\resources\\TOKENS.txt").readlines()}
 # print(KEYWORDS)
 
 BNF_PATH = "..\\resources\\thrift_BNF.txt"
@@ -20,7 +23,7 @@ class Token:
         self.value = value
 
     def __str__(self):
-        return self.identifier + " " + str(self.row) + " " + self.value + "|"
+        return self.identifier + " " + str(self.row) + " " + self.value
 
 
 # todo delete this
@@ -87,25 +90,45 @@ def lex_driver():
 
     while True:
 
-        for keyword_id, keyword in KEYWORDS.items():
-            if source_code.startswith(keyword):
-                output.append(Token(KEYWORDS_PREFIX + keyword_id, row_number, keyword))
-                source_code = source_code[len(keyword):]
+        for keyword, keyword_id in TOKENS.items():
+            if len(keyword.split(" ")) == 2:
+                # regex
+                regex = (keyword.split(" "))[1]
+                if re.match(regex, source_code):
 
-                have_i_eaten = True
+                    output.append(Token(keyword_id, row_number, source_code[:re.match(regex, source_code).end()]))
 
+                    # output.append(Token(keyword_id, row_number, str(re.match(regex, source_code).end())))
+
+                    source_code = regex_cropper((keyword.split(" "))[1], source_code)
+
+                    have_i_eaten = True
+                    break
+
+            else:
+                # match
+                if source_code.startswith(keyword):
+                    output.append(Token(KEYWORDS_PREFIX + keyword_id, row_number, keyword))
+                    source_code = source_code[len(keyword):]
+                    have_i_eaten = True
+                    break
+
+        # space
         if source_code.startswith(" "):
             source_code = source_code[1:]
 
             have_i_eaten = True
 
+        # new row
         elif source_code.startswith("\n"):
             source_code = source_code[1:]
             row_number += 1
 
             have_i_eaten = True
 
+        # multiline comment
         elif source_code.startswith("/**"):
+
             source_code = source_code[3:]
 
             while not source_code.startswith("*/"):
@@ -117,14 +140,14 @@ def lex_driver():
 
             have_i_eaten = True
 
-        elif re.match(r"([a-z]|[A-Z]|_)([a-z]|[A-Z]|[0-9]|\.|_)*", source_code):
-
-            end = re.match(r"([a-z]|[A-Z]|_)([a-z]|[A-Z]|[0-9]|\.|_)*", source_code).end()
-            token = source_code[:end]
-            output.append(Token("IDENTIFIER", row_number, token))
-            source_code = source_code[end:]
-
-            have_i_eaten = True
+        # elif re.match(r"([a-z]|[A-Z]|_)([a-z]|[A-Z]|[0-9]|\.|_)*", source_code):
+        #
+        #     end = re.match(r"([a-z]|[A-Z]|_)([a-z]|[A-Z]|[0-9]|\.|_)*", source_code).end()
+        #     token = source_code[:end]
+        #     output.append(Token("IDENTIFIER", row_number, token))
+        #     source_code = source_code[end:]
+        #
+        #     have_i_eaten = True
 
         if not have_i_eaten:
             print("error while lexing?")
@@ -140,13 +163,29 @@ def lex_driver():
     print(source_code)
 
 
+def regex_cropper(regex, string):
+    return string[re.match(regex, string).end():] if re.match(regex, string) else string
+
+
 if __name__ == '__main__':
 
-    # kw = {(line[:-1].upper() if line.count(" ") == 0 else ((line[:-1].split(" "))[0]).upper()):
-    #           (line[:-1] if line.count(" ") == 0 else (line[:-1].split(" "))[1])
-    #       for line in open("..\\resources\\KEYWORDS_AND_RESERVED_WORDS.txt").readlines()}
+    [print(k + " -> " + v) for k, v in TOKENS.items()]
 
-    [print(k, v) for k, v in KEYWORDS.items()]
+    print("\n*** source code ***")
+    print(SOURCE_CODE)
+    # reg = "\" [^\"]* \""
+    # print(reg)
+    #
+    # testni = "\" blabla \"jfainowan"
+    # print(testni)
+    # print("01234567890123456")
+    # if re.match(reg, testni):
+    #     print("da")
+    #     end = re.match(reg, testni).end()
+    #     print(end)
+    #     testni = testni[end:]
+    #     print(testni)
+    #
 
-    # lex_driver()
-# (line[:-1] if line.count(" ") == 0 else (line[:-1].split(" ", 1))[1])
+    # print(regex_cropper(reg, "\" blabla \"jfainowan"))
+    lex_driver()
