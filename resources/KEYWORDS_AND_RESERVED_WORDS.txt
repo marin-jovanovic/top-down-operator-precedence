@@ -1,68 +1,71 @@
-include
-cpp_include
-namespace
-c_glib
-cpp
-delphi
-haxe
-go
-java
-js
-lua
-netstd
-perl
-php
-py
-py.twisted
-rb
-st
-xsd
+NamespaceScope *
+binary
+BaseType bool
+BaseType byte
+NamespaceScope c_glib
+colon :
+comma ,
 const
-typedef
+NamespaceScope cpp
+cpp_include
+cpp_type
+NamespaceScope delphi
+dot .
+double
+double_quotes "
+E
+e
 enum
-senum
-struct
-union
+equal =
 exception
-service
 extends
-required
-optional
-xsd_optional
-xsd_nillable
-xsd_attrs
-oneway
-void
-throws
-bool
-byte
-i8
+NamespaceScope go
+NamespaceScope haxe
 i16
 i32
 i64
-double
-string
-binary
-slist
-map
-set
-list
-cpp_type
-E
-e
-asterisk *
-equal =
-left_curly_bracket {
-right_curly_bracket }
-left_square_bracket [
-right_square_bracket ]
-colon :
-double_quotes "
-single_quotes '
-plus +
-minus -
-dot .
+BaseType i8
+include
+NamespaceScope java
+js
 left_angle_bracket <
-comma ,
+left_curly_bracket {
+left_round_bracket (
+left_square_bracket [
+list
+lua
+map
+minus -
+namespace
+netstd
+oneway
+FieldReq optional
+perl
+php
+plus +
+py
+py.twisted
+rb
+FieldReq required
 right_angle_bracket >
+right_curly_bracket }
+right_round_bracket )
+right_square_bracket ]
 semicolon ;
+senum
+service
+set
+single_quotes '
+slist
+st
+string
+struct
+throws
+typedef
+union
+void
+xds_all
+xsd
+xsd_attrs
+xsd_nillable
+xsd_optional
