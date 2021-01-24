@@ -3,8 +3,8 @@ import re
 # todo check this statement
 # keywords and reserved words are treated as the same
 KEYWORDS_PREFIX = "KW__"
-KEYWORDS = {(line[:-1].upper() if line.count(" ") == 0 else ((line[:-1].split(" "))[0]).upper()):
-              (line[:-1] if line.count(" ") == 0 else (line[:-1].split(" "))[1])
+KEYWORDS = {(line[:-1] if line.count(" ") == 0 else (line[:-1].split(" ", 1))[1]):
+              (line[:-1].upper() if line.count(" ") == 0 else ((line[:-1].split(" "))[0]).upper())
           for line in open("..\\resources\\KEYWORDS_AND_RESERVED_WORDS.txt").readlines()}
 # print(KEYWORDS)
 
@@ -148,4 +148,5 @@ if __name__ == '__main__':
 
     [print(k, v) for k, v in KEYWORDS.items()]
 
-    lex_driver()
+    # lex_driver()
+# (line[:-1] if line.count(" ") == 0 else (line[:-1].split(" ", 1))[1])
