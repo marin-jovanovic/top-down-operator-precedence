@@ -280,7 +280,7 @@ class operator_association_token(object):
             print("left reconfig")
 
         right = expression(self.lbp)
-        print("r", right)
+        print("resources", right)
         # print("right", right)
 
         # expects ";"

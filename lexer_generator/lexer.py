@@ -121,7 +121,7 @@ def f_4(may_i_eat=False):
     global MAX_EATER_NUMBER, MAX_EATER_POINTER, SOURCE_CODE, CURRENT_STATE, OUTPUT
     global LINE_NUMBER
 
-    # ['ONE_LINE_COMMENT', '(\\(|\\)|\\{|\\}|\\||\\*|\\\\|\\$|\\t|\\n|\\_|!|"|#|%|&|\'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|<|=|>|?|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|~)', ['-']]
+    # ['ONE_LINE_COMMENT', '(\\(|\\)|\\{|\\}|\\||\\*|\\\\|\\$|\\t|\\n|\\_|!|"|#|%|&|\'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|<|=|>|?|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|resources|s|t|u|v|w|x|y|z|~)', ['-']]
     if CURRENT_STATE == "ONE_LINE_COMMENT":
         print(4)
         t_in = [
@@ -303,7 +303,7 @@ def f_4(may_i_eat=False):
             ['S_0', '__$__', 'S_173'],
             ['S_173', 'q', 'S_174'],
             ['S_0', '__$__', 'S_175'],
-            ['S_175', 'r', 'S_176'],
+            ['S_175', 'resources', 'S_176'],
             ['S_0', '__$__', 'S_177'],
             ['S_177', 's', 'S_178'],
             ['S_0', '__$__', 'S_179'],
@@ -497,7 +497,7 @@ def f_7(may_i_eat=False):
     global MAX_EATER_NUMBER, MAX_EATER_POINTER, SOURCE_CODE, CURRENT_STATE, OUTPUT
     global LINE_NUMBER
 
-    # ['S_INIT', '(\\(|\\)|\\{|\\}|\\||\\*|\\\\|\\$|\\t|\\n|\\_|!|"|#|%|&|\'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|<|=|>|?|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|~)', ['-']]
+    # ['S_INIT', '(\\(|\\)|\\{|\\}|\\||\\*|\\\\|\\$|\\t|\\n|\\_|!|"|#|%|&|\'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|<|=|>|?|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|resources|s|t|u|v|w|x|y|z|~)', ['-']]
     if CURRENT_STATE == "S_INIT":
         print(7)
         t_in = [
@@ -679,7 +679,7 @@ def f_7(may_i_eat=False):
             ['S_0', '__$__', 'S_173'],
             ['S_173', 'q', 'S_174'],
             ['S_0', '__$__', 'S_175'],
-            ['S_175', 'r', 'S_176'],
+            ['S_175', 'resources', 'S_176'],
             ['S_0', '__$__', 'S_177'],
             ['S_177', 's', 'S_178'],
             ['S_0', '__$__', 'S_179'],

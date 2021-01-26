@@ -2,13 +2,9 @@ import re
 
 # todo check this statement
 # keywords and reserved words are treated as the same
-KEYWORDS_PREFIX = "KW__"
+from resources.resource_constants import KEYWORDS_PREFIX, TOKENS
 
-TOKENS = {(line[:-1] if line.count(" ") == 0 else (line[:-1].split(" ", 1))[1]):
-          (line[:-1] if line.count(" ") == 0 else ((line[:-1].split(" "))[0]))
-          for line in open("..\\resources\\TOKENS.txt").readlines()}
 
-# BNF_PATH = "..\\resources\\thrift_BNF.txt"
 
 
 class Token:
@@ -121,4 +117,4 @@ if __name__ == '__main__':
     # print("\n*** source code ***")
     # print(SOURCE_CODE)
 
-    get_tokens("..\\resources\\thrift_source_code_samples\\code4.thrift")
+    [print(i) for i in get_tokens("../resources/thrift_source_code_samples\\code4.thrift")]

@@ -56,7 +56,7 @@ if __name__ == '__main__':
             biggest_execution_time_miliseconds = miliseconds
 
         correct_output_lines = open(TESTS_PATH + file + "/" + OUTPUT_FILES_PATH,
-                                    "r").read().split("\n")
+                                    "resources").read().split("\n")
 
         if program_output_lines == correct_output_lines:
             print("\33[31mtest " + str(TEST_COUNT).rjust(len(str(num_of_tests))) +

@@ -1,7 +1,7 @@
 from thrift_lexer.main import get_tokens
 from thrift_lexer.main import Token
 
-TOKENS = get_tokens("..//resources//thrift_source_code_samples//test_code.thrift")
+TOKENS = get_tokens("../resources/thrift_source_code_samples//test_code.thrift")
 token = Token("", 0, "")
 
 token_pointer = 0
