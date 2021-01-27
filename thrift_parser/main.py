@@ -1,5 +1,5 @@
 from thrift_lexer.main import get_tokens
-from thrift_lexer.main import Token
+from resources.token_classes import Token
 
 TOKENS = get_tokens("../resources/thrift_source_code_samples//test_code.thrift")
 token = Token("", 0, "")
@@ -23,6 +23,14 @@ def match(tok=None):
 
 
 def parse():
+    print("\n*** lbp ***")
+    lbp = {((line.split(" "))[0]): ((line[:-1].split(" "))[1]) for line in open("left_binding_power.txt").readlines()}
+    for k, v in lbp.items():
+        print(k + " -> " + v)
+
+    print("\n*** tokens ***")
+    [print(i) for i in TOKENS]
+
     print(80 * "=")
 
     global token
@@ -49,15 +57,9 @@ def expression(rbp=0):
 
 if __name__ == '__main__':
 
-    print("\n*** lbp ***")
-    lbp = {((line.split(" "))[0]): ((line[:-1].split(" "))[1]) for line in open("left_binding_power.txt").readlines()}
-    for k, v in lbp.items():
-        print(k + " -> " + v)
-
-    print("\n*** tokens ***")
-    [print(i) for i in TOKENS]
-
     ast = parse()
+
+
 
     # parse(tokens)
     # [5]  Namespace       ::=  ( 'namespace' ( NamespaceScope Identifier ) )

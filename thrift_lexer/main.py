@@ -1,21 +1,18 @@
 import re
-
-# todo check this statement
-# keywords and reserved words are treated as the same
-from resources.resource_constants import KEYWORDS_PREFIX, TOKENS
+from resources.resource_constants import TOKENS
+from resources.token_classes import Token, KeywordToken
 
 
+def class_definer(keyword_id, row_number, keyword, is_regex, source_code):
+    print("\n cd")
+    print(keyword_id, keyword, source_code[:15])
 
 
-class Token:
+    if is_regex:
+        pass
 
-    def __init__(self, identifier, row, value):
-        self.identifier = identifier
-        self.row = row
-        self.value = value
-
-    def __str__(self):
-        return self.identifier + " " + str(self.row) + " " + self.value
+    else:
+        print("starts with", keyword)
 
 
 def get_tokens(source_code_path):
@@ -35,10 +32,19 @@ def get_tokens(source_code_path):
             break
 
         for keyword, keyword_id in TOKENS.items():
-            if len(keyword.split(" ")) == 1:
+
+            if keyword == keyword_id:
+                # keyword
+
+                output.append(KeywordToken(keyword_id, row_number, keyword))
+
+            elif len(keyword.split(" ")) == 1:
                 # direct match
+
                 if source_code.startswith(keyword):
-                    output.append(Token(KEYWORDS_PREFIX + keyword_id, row_number, keyword))
+                    # fixed
+                    output.append(class_definer(keyword_id, row_number, keyword, False, source_code))
+                    # output.append(KeywordToken(keyword_id, row_number, keyword))
                     source_code = source_code[len(keyword):]
 
                     have_i_eaten = True
@@ -46,9 +52,14 @@ def get_tokens(source_code_path):
 
             else:
                 # regex match
+
                 regex = keyword[2:]
                 if re.match(regex, source_code):
-                    output.append(Token(keyword_id, row_number, source_code[:re.match(regex, source_code).end()]))
+                    if keyword_id == "Identifier":
+                        pass
+                    output.append(class_definer(keyword_id, row_number, keyword, True, source_code))
+
+                    # output.append(Token(keyword_id, row_number, source_code[:re.match(regex, source_code).end()]))
                     source_code = regex_cropper(regex, source_code)
 
                     have_i_eaten = True
