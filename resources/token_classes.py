@@ -20,10 +20,10 @@ class KeywordToken(Token):
         self.value = value
 
 
-class NamespaceScope(Token):
+class NamespaceScopeToken(Token):
 
     def __str__(self):
-        return "Identifier " + self.row + " " + self.value
+        return "Identifier " + str(self.row) + " " + self.value
 
 
 # fixme lbp, expression

@@ -1,6 +1,25 @@
 include
 cpp_include
 namespace
+typedef
+enum
+senum
+struct
+xsd_all
+union
+exception
+service
+extends
+list
+map
+set
+cpp_type
+xsd_optional
+xsd_nillable
+xsd_attrs
+oneway
+void
+throws
 NamespaceScope *
 NamespaceScope c_glib
 NamespaceScope cpp
@@ -18,10 +37,7 @@ NamespaceScope py
 NamespaceScope rb
 NamespaceScope st
 NamespaceScope xsd
-const
 equal =
-typedef
-enum
 left_curly_bracket {
 right_curly_bracket }
 left_round_bracket (
@@ -30,22 +46,9 @@ left_square_bracket [
 right_square_bracket ]
 left_angle_bracket <
 right_angle_bracket >
-senum
-struct
-xsd_all
-union
-exception
-service
-extends
 colon :
 FieldReq required
 FieldReq optional
-xsd_optional
-xsd_nillable
-xsd_attrs
-oneway
-void
-throws
 BaseType bool
 BaseType byte
 BaseType i8
@@ -56,11 +59,7 @@ BaseType double
 BaseType string
 BaseType binary
 BaseType slist
-map
-set
 comma ,
-list
-cpp_type
 plus +
 minus -
 dot .
