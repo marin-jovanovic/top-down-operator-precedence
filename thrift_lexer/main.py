@@ -4,97 +4,6 @@ from resources.token_classes import Token, KeywordToken
 import resources.token_classes
 
 
-# def class_definer(keyword_id, row_number, keyword, is_regex, source_code, match, regex=""):
-#     # print(keyword)
-#     print(keyword_id, keyword, match)
-#     value = keyword
-#
-#     if len(keyword.split(" ")) == 1:
-#         # if keyword_id == "NameSpaceScope":
-#         #     return resources.token_classes.NamespaceScopeToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id in (("*", "c_glib", "cpp", "delphi", "haxe", "go", "java", "js", "lua", "netstd", "perl",
-#         #                      "php", "py.twisted", "py", "rb", "st", "xsd")):
-#         #     return resources.token_classes.NamespaceScopeToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id == "=":
-#         #     return resources.token_classes.EqualToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id == "{":
-#         #     return resources.token_classes.LeftCurlyBracketToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id == "}":
-#         #     return resources.token_classes.RightCurlyBracketToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id == "(":
-#         #     return resources.token_classes.LeftRoundBracketToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id == ")":
-#         #     return resources.token_classes.RightRoundBracketToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id == "[":
-#         #     return resources.token_classes.LeftSquareBracketToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id == "]":
-#         #     return resources.token_classes.RightSquareBracketToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id == "<":
-#         #     return resources.token_classes.LeftAngleBracketToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id == ">":
-#         #     return resources.token_classes.RightAngleBracketToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id == "<":
-#         #     return resources.token_classes.LeftAngleBracketToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id == ":":
-#         #     return resources.token_classes.ColonToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id in (("required", "optional")):
-#         #     return resources.token_classes.FieldReqToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id in (("bool", "byte", "i8", "i16", "i32", "i64", "double", "string", "binary", "slist")):
-#         #     return resources.token_classes.BaseTypeToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id in ((",", ";")):
-#         #     return resources.token_classes.CommaToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id == "+":
-#         #     return resources.token_classes.PlusToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id == "-":
-#         #     return resources.token_classes.MinusToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id == ".":
-#         #     return resources.token_classes.DotToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id == "e":
-#         #     return resources.token_classes.LowerEToken(keyword_id, row_number, match)
-#         #
-#         # elif keyword_id == "E":
-#         #     return resources.token_classes.UpperEToken(keyword_id, row_number, match)
-#         #
-#         # # elif keyword_id == ".":
-#         # #     return resources.token_classes.DotToken(keyword_id, row_number, value)
-#
-#     else:
-#         # regex
-#
-#         keyword = keyword[2:]
-#
-#         # if re.match(keyword, source_code):
-#         if keyword in (("\" [^\"]* \"", "\' [^\']* \'", "\"[^\"]*\"", "\'[^\']*\'")):
-#             # if keyword == "\" [^\"]* \"" or keyword == "\' [^\']* \'" or
-#             # keyword == "\"[^\"]*\"" or keyword == "\'[^\']*\'":
-#             return resources.token_classes.LiteralToken(keyword_id, row_number, regex)
-#
-#         elif keyword == "([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_)*":
-#             return resources.token_classes.IdentifierToken(keyword_id, row_number, regex)
-#
-#         elif keyword == "([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_|-)*":
-#             return resources.token_classes.STIdentifierToken(keyword_id, row_number, regex)
-
-
 def get_tokens(source_code_path):
     source_code = "".join([line for line in open(source_code_path).readlines()])
     output = []
@@ -105,7 +14,6 @@ def get_tokens(source_code_path):
 
     while True:
         print(source_code.replace("\n", "\\n"))
-        # print(source_code.split("\n"))
 
         if source_code == "":
             print("lexer; ok")
@@ -124,7 +32,7 @@ def get_tokens(source_code_path):
                                        "netstd", "perl", "php", "py.twisted", "py", "rb", "st", "xsd")):
 
                 t = ["*", "c_glib", "cpp", "delphi", "haxe", "go", "java", "js", "lua",
-                                       "netstd", "perl", "php", "py.twisted", "py", "rb", "st", "xsd"]
+                     "netstd", "perl", "php", "py.twisted", "py", "rb", "st", "xsd"]
                 for elem in t:
                     if source_code.startswith(elem):
                         output.append(resources.token_classes.NamespaceScopeToken("NamespaceScope",
@@ -180,11 +88,6 @@ def get_tokens(source_code_path):
                 source_code = source_code[1:]
                 have_i_eaten = True
 
-            # elif source_code.startswith("<"):
-            #     output.append(resources.token_classes.LeftAngleBracketToken(keyword_id, row_number, match))
-            #     source_code = source_code[1:]
-            #     have_i_eaten = True
-
             elif source_code.startswith(":"):
                 output.append(resources.token_classes.ColonToken("colon", row_number, ":"))
                 source_code = source_code[1:]
@@ -206,9 +109,7 @@ def get_tokens(source_code_path):
             elif source_code.startswith(("bool", "byte", "i8", "i16", "i32", "i64", "double", "string",
                                          "binary", "slist")):
 
-
-                t = ["bool", "byte", "i8", "i16", "i32", "i64", "double", "string",
-                                         "binary", "slist"]
+                t = ["bool", "byte", "i8", "i16", "i32", "i64", "double", "string", "binary", "slist"]
                 for elem in t:
                     if source_code.startswith(elem):
                         output.append(resources.token_classes.BaseTypeToken("BaseType", row_number, elem))
@@ -299,16 +200,21 @@ def get_tokens(source_code_path):
             else:
                 # regex
 
-                keyword = keyword[2:]
+                # regex = "\' [^\']* \'"
+                # token = resources.token_classes.DigitToken("Digit", row_number, "t")
 
                 if re.match("\" [^\"]* \"", source_code):
                     t = source_code[:re.match("\" [^\"]* \"", source_code).end()]
                     output.append(resources.token_classes.LiteralToken("Literal", row_number, t))
                     source_code = regex_cropper("\" [^\"]* \"", source_code)
 
+                # elif re.match(regex, source_code):
+                #     t = source_code[:re.match(regex, source_code).end()]
+                #     output.append(resources.token_classes.LiteralToken("Literal", row_number, t))
+                #     source_code = regex_cropper(regex, source_code)
+
                 elif re.match("\' [^\']* \'", source_code):
                     t = source_code[:re.match("\' [^\']* \'", source_code).end()]
-
                     output.append(resources.token_classes.LiteralToken("Literal", row_number, t))
                     source_code = regex_cropper("\' [^\']* \'", source_code)
 
@@ -329,21 +235,17 @@ def get_tokens(source_code_path):
 
                 elif re.match("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_|-)*", source_code):
                     t = source_code[:re.match("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_|-)*", source_code).end()]
-
                     output.append(resources.token_classes.STIdentifierToken("STIdentifier", row_number, t))
                     source_code = regex_cropper("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_|-)*", source_code)
 
                 elif re.match("[a-zA-Z]", source_code):
                     t = source_code[:re.match("[a-zA-Z]", source_code).end()]
-
                     output.append(resources.token_classes.LetterToken("Letter", row_number, t))
                     source_code = regex_cropper("[a-zA-Z]", source_code)
 
                 elif re.match("[0-9]", source_code):
                     t = source_code[:re.match("[0-9]", source_code).end()]
-
                     output.append(resources.token_classes.DigitToken("Digit", row_number, t))
-
                     source_code = regex_cropper("[0-9]", source_code)
 
                 else:
@@ -351,58 +253,11 @@ def get_tokens(source_code_path):
 
                 have_i_eaten = True
 
-
-
-            # for keyword, keyword_id in TOKENS.items():
-        #
-        #     if keyword == keyword_id and source_code.startswith(keyword):
-        #         # keyword
-        #
-        #         output.append(KeywordToken(keyword_id, row_number, keyword))
-        #
-        #     elif len(keyword.split(" ")) == 1:
-        #         # direct match
-        #
-        #         # if source_code.startswith(keyword):
-        #         #     fixed
-        #         match = source_code[:len(keyword)]
-        #         output.append(class_definer(keyword_id, row_number, keyword, False, source_code, match))
-        #         output.append(Token("0**" + keyword_id, row_number, keyword))
-        #         source_code = source_code[len(keyword):]
-        #
-        #         have_i_eaten = True
-        #         break
-        #
-        #
-        #
-        #     else:
-        #         # regex match
-        #
-        #         regex = keyword[2:]
-        #         # if re.match(regex, source_code):
-        #         output.append(class_definer(keyword_id,
-        #                                     row_number,
-        #                                     keyword,
-        #                                     True,
-        #                                     source_code,
-        #                                     source_code[:re.match(regex, source_code).end()]
-        #         ))
-        #         output.append(Token("1**" + keyword_id, row_number,
-        #                             source_code[:re.match(regex, source_code).end()]))
-        #         source_code = regex_cropper(regex, source_code)
-        #
-        #         have_i_eaten = True
-        #         break
-
-
-
         if not have_i_eaten:
             print("error while lexing?")
             break
 
         have_i_eaten = False
-
-    # print(source_code.split("\n"))
 
     return output
 
@@ -441,9 +296,5 @@ if __name__ == '__main__':
     # ; -> ListSeparator
     # r[a - zA - Z] -> Letter
     # r[0 - 9] -> Digit
-
-    #
-    # print("\n*** source code ***")
-    # print(SOURCE_CODE)
 
     [print(i) for i in get_tokens("../resources/thrift_source_code_samples\\code4.thrift")]
