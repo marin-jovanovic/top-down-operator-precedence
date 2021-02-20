@@ -59,19 +59,18 @@ BaseType double
 BaseType string
 BaseType binary
 BaseType slist
-comma ,
 plus +
 minus -
 dot .
 upper_e E
 lower_e e
+ListSeparator ,
+ListSeparator ;
 Literal r \" [^\"]* \"
 Literal r \' [^\']* \'
 Literal r \"[^\"]*\"
 Literal r \'[^\']*\'
 Identifier r ([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_)*
 STIdentifier r ([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_|-)*
-ListSeparator ,
-ListSeparator ;
 Letter r [a-zA-Z]
 Digit r [0-9]
