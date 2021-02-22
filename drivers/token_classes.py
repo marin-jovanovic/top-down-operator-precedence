@@ -2,52 +2,37 @@ import re
 
 from drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
 
+# fixme nested comments in parser
 
 ###########
 # token classes
 ###########
+LBP = {
+    "KeywordToken": 0,
+    "BaseTypeToken": 0
+}
 
 
-class Token:
+class Token(object):
 
     def __init__(self, identifier, row, value):
         self.identifier = identifier
         self.row = row
         self.value = value
+        self.lbp = LBP.get(self.__class__.__name__)
 
     def __str__(self):
         return self.identifier + " " + str(self.row) + " " + self.value
 
 
-class LeftCurlyBracketToken(Token):
-    pass
+class BaseTypeToken(Token):
+
+    def nud(self):
+
+        print("current", token)
 
 
-class RightCurlyBracketToken(Token):
-    pass
-
-
-class LeftRoundBracketToken(Token):
-    pass
-
-
-class RightRoundBracketToken(Token):
-    pass
-
-
-class LeftSquareBracketToken(Token):
-    pass
-
-
-class RightSquareBracketToken(Token):
-    pass
-
-
-class LeftAngleBracketToken(Token):
-    pass
-
-
-class RightAngleBracketToken(Token):
+class CommaToken(Token):
     pass
 
 
@@ -55,23 +40,7 @@ class ColonToken(Token):
     pass
 
 
-class FieldReqToken(Token):
-    pass
-
-
-class BaseTypeToken(Token):
-    pass
-
-
-class CommaToken(Token):
-    pass
-
-
-class PlusToken(Token):
-    pass
-
-
-class MinusToken(Token):
+class ConstValueToken(object):
     pass
 
 
@@ -79,7 +48,89 @@ class DotToken(Token):
     pass
 
 
-class UpperEToken(Token):
+class DigitToken(Token):
+    pass
+
+
+class EqualToken(Token):
+    pass
+
+
+class EOFToken(Token):
+    lbp = -1
+
+    # @staticmethod
+    def nud(self):
+        return ["EOF"]
+
+    def __str__(self):
+        return "EOF token"
+
+
+class FieldReqToken(Token):
+    pass
+
+
+class FieldTypeToken(Token):
+    pass
+
+
+class IdentifierToken(Token):
+    pass
+
+
+class KeywordToken(Token):
+
+    def __init__(self, identifier, row, value):
+        super().__init__(KEYWORDS_PREFIX + identifier, row, value)
+
+    def nud(self):
+        print("+++ KeywordToken +++")
+
+        if self.value == "namespace":
+            print("namespace")
+            print()
+
+            v1 = match(NamespaceScopeToken)
+
+            v2 = match(IdentifierToken)
+
+            print("current state")
+            print("\033[100m" + str(["namespace", v1, v2]) + "\033[0m")
+
+            print("current token")
+            global token
+            print(token)
+
+            return [["namespace", v1, v2], expression()]
+
+        elif self.value == "const":
+            # [8]  Const ::=  'const' FieldType Identifier '=' ConstValue ListSeparator?
+            print("const")
+            print()
+
+            v1 = match(FieldTypeToken)
+
+            v2 = match(IdentifierToken)
+            v3 = match(EqualToken)
+            v4 = match(ConstValueToken)
+
+            return [v1, v2, v3, v4, expression()]
+
+
+class LeftCurlyBracketToken(Token):
+    pass
+
+
+class LeftRoundBracketToken(Token):
+    pass
+
+
+class LeftSquareBracketToken(Token):
+    pass
+
+
+class LeftAngleBracketToken(Token):
     pass
 
 
@@ -91,14 +142,6 @@ class LiteralToken(Token):
     pass
 
 
-class IdentifierToken(Token):
-    pass
-
-
-class STIdentifierToken(Token):
-    pass
-
-
 class ListSeparatorToken(Token):
     pass
 
@@ -107,72 +150,42 @@ class LetterToken(Token):
     pass
 
 
-class DigitToken(Token):
-    pass
-
-
-class KeywordToken(Token):
-
-    def __init__(self, identifier, row, value):
-        super().__init__(KEYWORDS_PREFIX + identifier, row, value)
-
-    def nud(self):
-
-        print(self)
-
-        if self.value == "namespace":
-            print("namespace ok")
-            print()
-
-            global token
-            print("current t")
-            print(token)
-            print()
-
-            match(NamespaceScopeToken)
-
-            match(IdentifierToken)
-
-
-
-        # global token
-        # global t
-        #
-        # print(t)
-        # print(token)
-        # print(token.value)
-        # if token.value == "namespace":
-        #     print("namespace ok")
-        #     import sys
-        #     sys.exit()
-        #
-        # if match_exact_current_t("namespace"):
-        #     print("current token \"namespace\" ok")
-
-
-    # fixme
-    # # @staticmethod
-    # def nud(self):
-    #     match_exact("namespace")
-    #
-    #     match(NamespaceScopeToken)
-    #     # TODO
-    #     return ["namespace"]
-
-
 class NamespaceScopeToken(Token):
 
     def __str__(self):
         return "Identifier " + str(self.row) + " " + self.value
 
 
-# fixme lbp, expression
-class EqualToken(Token):
-    lbp = "todo"
+class MinusToken(Token):
+    pass
 
-    # def led(self, left):
-    #
-    #     return [left, "=", expression(self.lbp)]
+
+class PlusToken(Token):
+    pass
+
+
+class RightCurlyBracketToken(Token):
+    pass
+
+
+class RightRoundBracketToken(Token):
+    pass
+
+
+class RightSquareBracketToken(Token):
+    pass
+
+
+class RightAngleBracketToken(Token):
+    pass
+
+
+class STIdentifierToken(Token):
+    pass
+
+
+class UpperEToken(Token):
+    pass
 
 
 ###########
@@ -187,6 +200,7 @@ def regex_cropper(regex, string):
 def get_tokens(source_code_path):
     print("\033[92m+++ LEXER +++\033[0m")
 
+    '''string of source code'''
     source_code = "".join([line for line in open(source_code_path).readlines()])
     output = []
 
@@ -458,7 +472,12 @@ def get_next_token():
     global token_pointer
     global tokens
 
-    curr_token = tokens[token_pointer]
+    try:
+        curr_token = tokens[token_pointer]
+    except:
+        print("no more tokens")
+        return EOFToken("EOF", -1, "EOF")
+
     token_pointer += 1
     return curr_token
 
@@ -473,12 +492,15 @@ def match(tok=None):
     global token
 
     if tok and tok != type(token):
-        raise SyntaxError('Expected %s' % tok)
+        value = "err: skip"
 
-    print("match for", token.value, "ok")
+    else:
+        print("match for", token.value, "ok")
+
+        value = token.value
 
     token = get_next_token()
-
+    return value
 
 
 def match_exact_current_t(value):
@@ -517,6 +539,12 @@ def get_ast():
 
 
 def expression(rbp=0):
+    """
+    try matching by prefix for current token
+
+    :param rbp:
+    :return:
+    """
     global token
     t = token
     token = get_next_token()
@@ -537,3 +565,6 @@ if __name__ == '__main__':
     token_pointer = 0
 
     ast = get_ast()
+
+    print("+++ ast +++")
+    [print(i) for i in ast]

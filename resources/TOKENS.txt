@@ -1,6 +1,7 @@
 include
 cpp_include
 namespace
+const
 typedef
 enum
 senum
