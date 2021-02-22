@@ -121,6 +121,7 @@ class MethodNameToken:
     def led(self, left):
         return
 
+
 def match(tok=None):
     global token
     if tok and tok != type(token):
@@ -407,10 +408,12 @@ if __name__ == '__main__':
     # formated_print(parse("1 + 2 * 3 / 7 + 1"))
 
     # t = parse("x = 2 ; y = 3 ;")
+    t = parse("2 + 3 + 4 - 2 * ( - 2 + 3 )")
+    print(t)
     #
     # formated_print(t)
 
-    t = parse("class className { public void methodName ( ) { int x = 1 ; int y = 2 ; }")
+    # t = parse("class className { public void methodName ( ) { int x = 1 ; int y = 2 ; }")
 
     formated_print(t)
 
