@@ -12,7 +12,7 @@ namespace c_glib TTest
 
 namespace * thrift.test
 
-const Numberz myNumberz = Numberz.ONE;
+//const Numberz myNumberz = Numberz.ONE;
 
 /*
 enum Numberz

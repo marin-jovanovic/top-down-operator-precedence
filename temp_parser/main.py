@@ -4,12 +4,16 @@ from drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
 
 # fixme nested comments in parser
 
+
 ###########
 # token classes
 ###########
+
+
 LBP = {
     "KeywordToken": 0,
-    "BaseTypeToken": 0
+    "BaseTypeToken": 0,
+    "EOFToken": -1
 }
 
 
@@ -57,7 +61,6 @@ class EqualToken(Token):
 
 
 class EOFToken(Token):
-    lbp = -1
 
     # @staticmethod
     def nud(self):
@@ -71,12 +74,21 @@ class FieldReqToken(Token):
     pass
 
 
-class FieldTypeToken(Token):
-    pass
+# class FieldTypeToken(Token):
+#     pass
 
 
 class IdentifierToken(Token):
     pass
+
+
+
+def match_by_name(expected_token):
+    print("+++ matcher +++")
+
+    global token
+    token = get_next_token()
+    return "todo"
 
 
 class KeywordToken(Token):
@@ -88,35 +100,27 @@ class KeywordToken(Token):
         print("+++ KeywordToken +++")
 
         if self.value == "namespace":
-            print("namespace")
-            print()
 
             v1 = match(NamespaceScopeToken)
-
             v2 = match(IdentifierToken)
+            # v1 = match_by_name(NamespaceScopeToken)
 
-            print("current state")
-            print("\033[100m" + str(["namespace", v1, v2]) + "\033[0m")
+            # v2 = match_by_name(IdentifierToken)
 
-            print("current token")
-            global token
+            print(["namespace", v1, v2])
             print(token)
-
+            # return ["namespace", v1, v2], expression()
             return [["namespace", v1, v2], expression()]
 
-        elif self.value == "const":
-            # [8]  Const ::=  'const' FieldType Identifier '=' ConstValue ListSeparator?
-            print("const")
-            print()
+        elif self.value in ["include", "cpp_include"]:
+            print("todo")
 
-            v1 = match(FieldTypeToken)
+        else:
+            print("todo")
 
-            v2 = match(IdentifierToken)
-            v3 = match(EqualToken)
-            v4 = match(ConstValueToken)
-
-            return [v1, v2, v3, v4, expression()]
-
+        # print("todo")
+        # import sys
+        # sys.exit()
 
 class LeftCurlyBracketToken(Token):
     pass
@@ -151,10 +155,7 @@ class LetterToken(Token):
 
 
 class NamespaceScopeToken(Token):
-
-    def __str__(self):
-        return "Identifier " + str(self.row) + " " + self.value
-
+    pass
 
 class MinusToken(Token):
     pass
@@ -231,8 +232,7 @@ def get_tokens(source_code_path):
                      "netstd", "perl", "php", "py.twisted", "py", "rb", "st", "xsd"]
                 for elem in t:
                     if source_code.startswith(elem):
-                        output.append(NamespaceScopeToken("NamespaceScope",
-                                                          row_number, elem))
+                        output.append(NamespaceScopeToken("NamespaceScope", row_number, elem))
                         source_code = source_code[len(elem):]
                         break
 
@@ -482,6 +482,15 @@ def get_next_token():
     return curr_token
 
 
+class Error(object):
+
+    def __init__(self, error_message):
+        self.error_message = error_message
+
+    def __str__(self):
+        return self.error_message
+
+
 def match(tok=None):
     """
     checks if next token is expected token
@@ -549,6 +558,9 @@ def expression(rbp=0):
     t = token
     token = get_next_token()
     left = t.nud()
+    print("expression", token)
+    print(rbp)
+    print(token.lbp)
     while rbp < token.lbp:
         t = token
         token = get_next_token()
@@ -567,4 +579,6 @@ if __name__ == '__main__':
     ast = get_ast()
 
     print("+++ ast +++")
+    print("Document")
     [print(i) for i in ast]
+    print()
