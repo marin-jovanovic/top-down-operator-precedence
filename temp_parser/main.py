@@ -103,24 +103,32 @@ class KeywordToken(Token):
 
             v1 = match(NamespaceScopeToken)
             v2 = match(IdentifierToken)
-            # v1 = match_by_name(NamespaceScopeToken)
-
-            # v2 = match_by_name(IdentifierToken)
 
             print(["namespace", v1, v2])
-            print(token)
-            # return ["namespace", v1, v2], expression()
+            print("next", token)
+
             return [["namespace", v1, v2], expression()]
 
-        elif self.value in ["include", "cpp_include"]:
-            print("todo")
+        elif self.value == "include":
+
+            v1 = match(LiteralToken)
+
+            print(["include", v1])
+
+            return [["include", v1], expression()]
+
+        elif self.value == "cpp_include":
+
+            v1 = match(LiteralToken)
+
+            print(["cpp_include", v1])
+
+            return [["cpp_include", v1], expression()]
 
         else:
-            print("todo")
+            import sys
+            sys.exit()
 
-        # print("todo")
-        # import sys
-        # sys.exit()
 
 class LeftCurlyBracketToken(Token):
     pass
@@ -558,9 +566,6 @@ def expression(rbp=0):
     t = token
     token = get_next_token()
     left = t.nud()
-    print("expression", token)
-    print(rbp)
-    print(token.lbp)
     while rbp < token.lbp:
         t = token
         token = get_next_token()
@@ -570,7 +575,7 @@ def expression(rbp=0):
 
 if __name__ == '__main__':
     global tokens
-    tokens = get_tokens("../resources/thrift_source_code_samples//simple.thrift")
+    tokens = get_tokens("../resources/thrift_source_code_samples//reduced.thrift")
 
     global token
     global token_pointer
@@ -580,5 +585,6 @@ if __name__ == '__main__':
 
     print("+++ ast +++")
     print("Document")
-    [print(i) for i in ast]
+    # [print(i) for i in ast]
+    print(ast)
     print()
