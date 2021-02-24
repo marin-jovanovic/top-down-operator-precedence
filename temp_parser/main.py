@@ -9,6 +9,8 @@ from drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
 # token classes
 ###########
 
+SPACE
+
 
 LBP = {
     "KeywordToken": 0,
@@ -530,9 +532,7 @@ def match_exact_current_t(value):
     if value != token.value:
         print("not expected value")
         raise SyntaxError("Expected " + str(value))
-
-    # token = get_next_token()
-
+as
 
 def get_ast():
     print("\033[92m+++ PARSER +++\033[0m")
@@ -585,6 +585,5 @@ if __name__ == '__main__':
 
     print("+++ ast +++")
     print("Document")
-    # [print(i) for i in ast]
     print(ast)
     print()
