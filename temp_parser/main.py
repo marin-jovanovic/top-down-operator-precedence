@@ -9,8 +9,7 @@ from drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
 # token classes
 ###########
 
-SPACE
-
+# todo space counter
 
 LBP = {
     "KeywordToken": 0,
@@ -532,7 +531,6 @@ def match_exact_current_t(value):
     if value != token.value:
         print("not expected value")
         raise SyntaxError("Expected " + str(value))
-as
 
 def get_ast():
     print("\033[92m+++ PARSER +++\033[0m")
