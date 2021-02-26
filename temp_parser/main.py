@@ -94,45 +94,6 @@ def match_by_name(expected_token):
     return "todo"
 
 
-class KeywordToken(Token):
-
-    def __init__(self, identifier, row, value):
-        super().__init__(KEYWORDS_PREFIX + identifier, row, value)
-
-    def nud(self):
-        print("+++ KeywordToken +++")
-
-        if self.value == "include":
-            v1 = match(LiteralToken)
-
-            print(["include", v1])
-
-            return [["HEADER", ["INCLUDE", ["include", "LITERAL", [v1]]]],
-                    ["HEADERMANAGER", expression()]]
-
-        elif self.value == "cpp_include":
-
-            v1 = match(LiteralToken)
-
-            print(["cpp_include", v1])
-
-            return [["HEADER", ["CPP_INCLUDE", ["cpp_include", "LITERAL", [v1]]]],
-                    ["HEADERMANAGER", expression()]]
-
-        elif self.value == "namespace":
-
-            v1 = match(NamespaceScopeToken)
-            v2 = match(IdentifierToken)
-
-            print(["namespace", v1, v2])
-            print("next", token)
-
-            return [["HEADER", ["NAMESPACE", ["namespace", "NAMESPACESCOPE", [v1], "IDENTIFIER", [v2]]]],
-                    ["HEADERMANAGER", expression()]]
-
-        else:
-            import sys
-            sys.exit()
 
 
 class LeftCurlyBracketToken(Token):
@@ -200,6 +161,47 @@ class STIdentifierToken(Token):
 
 class UpperEToken(Token):
     pass
+
+
+class KeywordToken(Token):
+
+    def __init__(self, identifier, row, value):
+        super().__init__(KEYWORDS_PREFIX + identifier, row, value)
+
+    def nud(self):
+        print("+++ KeywordToken +++")
+
+        if self.value == "include":
+            v1 = match(LiteralToken)
+
+            print(["include", v1])
+
+            return ["HEADERMANAGER", ["HEADER", ["INCLUDE", ["include", "LITERAL", [v1]]],
+                    "HEADERMANAGER", expression()]]
+
+        elif self.value == "cpp_include":
+
+            v1 = match(LiteralToken)
+
+            print(["cpp_include", v1])
+
+            return ["HEADERMANAGER", ["HEADER", ["CPP_INCLUDE", ["cpp_include", "LITERAL", [v1]]],
+                    "HEADERMANAGER", expression()]]
+
+        elif self.value == "namespace":
+
+            v1 = match(NamespaceScopeToken)
+            v2 = match(IdentifierToken)
+
+            print(["namespace", v1, v2])
+            print("next", token)
+
+            return ["HEADERMANAGER", ["HEADER", ["NAMESPACE", ["namespace", "NAMESPACESCOPE", [v1],
+                    "IDENTIFIER", [v2]]], "HEADERMANAGER", expression()]]
+
+        else:
+            import sys
+            sys.exit()
 
 
 ###########
@@ -592,12 +594,7 @@ if __name__ == '__main__':
     global token_pointer
     token_pointer = 0
 
-    ast = get_ast()
+    ast = ["DOCUMENT", get_ast()]
 
     print("+++ ast +++")
-    print(ast)
-    print()
-
     fn(ast)
-
-    print("end")
