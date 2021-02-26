@@ -408,8 +408,8 @@ if __name__ == '__main__':
     # formated_print(parse("1 + 2 * 3 / 7 + 1"))
 
     # t = parse("x = 2 ; y = 3 ;")
-    t = parse("- 1")
-    # t = parse("2 + 3 + 4 - 2 * ( - 2 + 3 )")
+    #t = parse("- 1")
+    t = parse("2 + 3 + 4 - 2 * ( - 2 + 3 )")
     print(t)
     #
     # formated_print(t)

@@ -9,8 +9,6 @@ from drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
 # token classes
 ###########
 
-# todo space counter
-
 SPACE_COUNTER = 0
 PRINTER = []
 
@@ -78,61 +76,11 @@ class FieldReqToken(Token):
     pass
 
 
-# class FieldTypeToken(Token):
-#     pass
-
 class IdentifierToken(Token):
     pass
 
 
 
-def match_by_name(expected_token):
-    print("+++ matcher +++")
-
-    global token
-    token = get_next_token()
-    return "todo"
-
-
-class KeywordToken(Token):
-
-    def __init__(self, identifier, row, value):
-        super().__init__(KEYWORDS_PREFIX + identifier, row, value)
-
-    def nud(self):
-        print("+++ KeywordToken +++")
-
-        if self.value == "include":
-            v1 = match(LiteralToken)
-
-            print(["include", v1])
-
-            return [["HEADER", ["INCLUDE", ["include", "LITERAL", [v1]]]],
-                    ["HEADERMANAGER", expression()]]
-
-        elif self.value == "cpp_include":
-
-            v1 = match(LiteralToken)
-
-            print(["cpp_include", v1])
-
-            return [["HEADER", ["CPP_INCLUDE", ["cpp_include", "LITERAL", [v1]]]],
-                    ["HEADERMANAGER", expression()]]
-
-        elif self.value == "namespace":
-
-            v1 = match(NamespaceScopeToken)
-            v2 = match(IdentifierToken)
-
-            print(["namespace", v1, v2])
-            print("next", token)
-
-            return [["HEADER", ["NAMESPACE", ["namespace", "NAMESPACESCOPE", [v1], "IDENTIFIER", [v2]]]],
-                    ["HEADERMANAGER", expression()]]
-
-        else:
-            import sys
-            sys.exit()
 
 
 class LeftCurlyBracketToken(Token):
@@ -200,6 +148,45 @@ class STIdentifierToken(Token):
 
 class UpperEToken(Token):
     pass
+
+
+class KeywordToken(Token):
+
+    def __init__(self, identifier, row, value):
+        super().__init__(KEYWORDS_PREFIX + identifier, row, value)
+
+    def nud(self):
+        print("+++ KeywordToken +++")
+
+        if self.value == "namespace":
+
+            v1 = match(NamespaceScopeToken)
+            v2 = match(IdentifierToken)
+
+            print(["namespace", v1, v2])
+            print("next", token)
+
+            return [["HEADER", "namespace", v1, v2], expression()]
+
+        elif self.value == "include":
+
+            v1 = match(LiteralToken)
+
+            print(["include", v1])
+
+            return [["HEADER", "include", v1], expression()]
+
+        elif self.value == "cpp_include":
+
+            v1 = match(LiteralToken)
+
+            print(["cpp_include", v1])
+
+            return [["HEADER", "cpp_include", v1], expression()]
+
+        else:
+            import sys
+            sys.exit()
 
 
 ###########
@@ -495,15 +482,6 @@ def get_next_token():
     return curr_token
 
 
-class Error(object):
-
-    def __init__(self, error_message):
-        self.error_message = error_message
-
-    def __str__(self):
-        return self.error_message
-
-
 def match(tok=None):
     """
     checks if next token is expected token
@@ -524,17 +502,6 @@ def match(tok=None):
     token = get_next_token()
     return value
 
-
-def match_exact_current_t(value):
-    global token
-
-    print("+++ match_exact +++")
-    print(value)
-    print(token.value)
-
-    if value != token.value:
-        print("not expected value")
-        raise SyntaxError("Expected " + str(value))
 
 def get_ast():
     print("\033[92m+++ PARSER +++\033[0m")
@@ -575,15 +542,6 @@ def expression(rbp=0):
     return left
 
 
-def fn(items, level=0):
-    for item in items:
-        if isinstance(item, list):
-            fn(item, level + 1)
-        else:
-            indentation = '\t' * level
-            print('%s%s' % (indentation, item))
-
-
 if __name__ == '__main__':
     global tokens
     tokens = get_tokens("../resources/thrift_source_code_samples//reduced.thrift")
@@ -597,7 +555,3 @@ if __name__ == '__main__':
     print("+++ ast +++")
     print(ast)
     print()
-
-    fn(ast)
-
-    print("end")

@@ -1,4 +1,5 @@
 namespace c_glib TTest
+namespace c_glib TTest
 
 // Presence of namespaces and sub-namespaces for which there is
 // no generator should compile with warnings only
