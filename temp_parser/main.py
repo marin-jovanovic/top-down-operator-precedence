@@ -82,18 +82,9 @@ class FieldReqToken(Token):
 #     pass
 
 class IdentifierToken(Token):
-    pass
 
-
-
-def match_by_name(expected_token):
-    print("+++ matcher +++")
-
-    global token
-    token = get_next_token()
-    return "todo"
-
-
+    def nud(self):
+        print("id")
 
 
 class LeftCurlyBracketToken(Token):
@@ -171,13 +162,14 @@ class KeywordToken(Token):
     def nud(self):
         print("+++ KeywordToken +++")
 
+        '''header'''
         if self.value == "include":
             v1 = match(LiteralToken)
 
             print(["include", v1])
 
-            return ["HEADERMANAGER", ["HEADER", ["INCLUDE", ["include", "LITERAL", [v1]]],
-                    "HEADERMANAGER", expression()]]
+            return ["HEADER", ["INCLUDE", ["include", "LITERAL", [v1]]],
+                    expression()]
 
         elif self.value == "cpp_include":
 
@@ -185,8 +177,8 @@ class KeywordToken(Token):
 
             print(["cpp_include", v1])
 
-            return ["HEADERMANAGER", ["HEADER", ["CPP_INCLUDE", ["cpp_include", "LITERAL", [v1]]],
-                    "HEADERMANAGER", expression()]]
+            return ["HEADER", ["CPP_INCLUDE", ["cpp_include", "LITERAL", [v1]]],
+                    expression()]
 
         elif self.value == "namespace":
 
@@ -196,12 +188,20 @@ class KeywordToken(Token):
             print(["namespace", v1, v2])
             print("next", token)
 
-            return ["HEADERMANAGER", ["HEADER", ["NAMESPACE", ["namespace", "NAMESPACESCOPE", [v1],
-                    "IDENTIFIER", [v2]]], "HEADERMANAGER", expression()]]
+            return ["HEADER", ["NAMESPACE", ["namespace", "NAMESPACESCOPE", [v1],
+                    "IDENTIFIER", [v2]]], expression()]
 
-        else:
-            import sys
-            sys.exit()
+        elif self.value == "const":
+
+            v1 = match_multiple([IdentifierToken, BaseTypeToken])
+
+        # else:
+        #     '''definition'''
+        #
+        #     print("maybe definition?")
+        #
+        #     print("err ", token)
+        #     return ["empty: definition expected"]
 
 
 ###########
@@ -506,6 +506,35 @@ class Error(object):
         return self.error_message
 
 
+def match_multiple(expected_tokens=None):
+    global token
+
+    print(expected_tokens)
+
+    if expected_tokens and type(token) in expected_tokens:
+        print("match for ", token.value, "ok")
+        print("match at index ", expected_tokens.index(type(token)))
+        value = token.value
+
+    else:
+        value = "err: skip"
+
+    token = get_next_token()
+    return value
+
+    # l = ["a", "b", "cc"]
+    #
+    # if "c" in l:
+    #     print("da")
+    #
+    #     print(l.index("c"))
+    # try:
+    #     print(l.index("c"))
+    # except ValueError:
+    #     print("no match")
+
+
+
 def match(tok=None):
     """
     checks if next token is expected token
@@ -515,7 +544,8 @@ def match(tok=None):
     """
     global token
 
-    if tok and tok != type(token):
+    if tok and isinstance(tok,  type(token)):
+    # if tok and tok != type(token):
         value = "err: skip"
 
     else:
@@ -526,17 +556,6 @@ def match(tok=None):
     token = get_next_token()
     return value
 
-
-def match_exact_current_t(value):
-    global token
-
-    print("+++ match_exact +++")
-    print(value)
-    print(token.value)
-
-    if value != token.value:
-        print("not expected value")
-        raise SyntaxError("Expected " + str(value))
 
 def get_ast():
     print("\033[92m+++ PARSER +++\033[0m")
@@ -570,6 +589,11 @@ def expression(rbp=0):
     t = token
     token = get_next_token()
     left = t.nud()
+
+    print(t)
+    print(token)
+    print(left)
+
     while rbp < token.lbp:
         t = token
         token = get_next_token()
