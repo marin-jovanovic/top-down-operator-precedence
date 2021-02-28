@@ -1,23 +1,14 @@
 import re
-
 from drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
-
-# fixme nested comments in parser
 
 
 ###########
 # token classes
 ###########
 
-# todo space counter
-
-SPACE_COUNTER = 0
-PRINTER = []
-
 LBP = {
-    "KeywordToken": 0,
-    "BaseTypeToken": 0,
-    "EOFToken": -1
+    "LiteralToken": 1,
+    "NamespaceScopeToken": 1
 }
 
 
@@ -34,10 +25,7 @@ class Token(object):
 
 
 class BaseTypeToken(Token):
-
-    def nud(self):
-
-        print("current", token)
+    pass
 
 
 class CommaToken(Token):
@@ -48,7 +36,7 @@ class ColonToken(Token):
     pass
 
 
-class ConstValueToken(object):
+class ConstValueToken(Token):
     pass
 
 
@@ -65,26 +53,15 @@ class EqualToken(Token):
 
 
 class EOFToken(Token):
-
-    # @staticmethod
-    def nud(self):
-        return ["EOF"]
-
-    def __str__(self):
-        return "EOF token"
+    pass
 
 
 class FieldReqToken(Token):
     pass
 
 
-# class FieldTypeToken(Token):
-#     pass
-
 class IdentifierToken(Token):
-
-    def nud(self):
-        print("id")
+    pass
 
 
 class LeftCurlyBracketToken(Token):
@@ -108,7 +85,22 @@ class LowerEToken(Token):
 
 
 class LiteralToken(Token):
-    pass
+
+    def led(self, left):
+
+        print("left", left)
+
+        if left == "include":
+            print("this is Include")
+            return ["Header", ["Include", ["\"include\"", "Literal", [self.value]]]]
+
+        elif left == "cpp_include":
+            print("this is cpp_include")
+            return ["Header", ["CppInclude", ["\"cpp_include\"", "Literal", [self.value]]]]
+
+        else:
+            print("maybe error?")
+            return ["err?"]
 
 
 class ListSeparatorToken(Token):
@@ -120,7 +112,15 @@ class LetterToken(Token):
 
 
 class NamespaceScopeToken(Token):
-    pass
+
+    def led(self, left):
+
+        if left == "namespace":
+            v1 = match(IdentifierToken)
+
+            print("namespace token")
+
+            return ["Header", ["Namespace", ["\"namespace\"", self.value, v1]]]
 
 class MinusToken(Token):
     pass
@@ -155,81 +155,8 @@ class UpperEToken(Token):
 
 
 class KeywordToken(Token):
-
-    def __init__(self, identifier, row, value):
-        super().__init__(KEYWORDS_PREFIX + identifier, row, value)
-
     def nud(self):
-        print("+++ KeywordToken +++")
-
-        if self.value == "include":
-            '''header'''
-
-            v1 = match(LiteralToken)
-
-            print(["include", v1])
-
-            return ["HEADER", ["INCLUDE", ["include", "LITERAL", [v1]]],
-                    expression()]
-
-        elif self.value == "cpp_include":
-            '''header'''
-
-            v1 = match(LiteralToken)
-
-            print(["cpp_include", v1])
-
-            return ["HEADER", ["CPP_INCLUDE", ["cpp_include", "LITERAL", [v1]]],
-                    expression()]
-
-        elif self.value == "namespace":
-            '''header'''
-
-            v1 = match(NamespaceScopeToken)
-            v2 = match(IdentifierToken)
-
-            print(["namespace", v1, v2])
-            print("next", token)
-
-            return ["HEADER", ["NAMESPACE", ["namespace", "NAMESPACESCOPE", [v1],
-                    "IDENTIFIER", [v2]]], expression()]
-
-        elif self.value == "const":
-            '''definition'''
-
-            v1 = match_multiple([IdentifierToken, BaseTypeToken])
-
-        elif self.value == "typedef":
-            '''definition'''
-
-        elif self.value == "enum":
-            '''definition'''
-
-        elif self.value == "senum":
-            '''definition'''
-
-        elif self.value == "struct":
-            '''definition'''
-
-        elif self.value == "union":
-            '''definition'''
-
-        elif self.value == "exception":
-            '''definition'''
-
-        elif self.value == "service":
-            '''definition'''
-
-        else:
-            print("unexpected token")
-
-        # else:
-        #     '''definition'''
-        #
-        #     print("maybe definition?")
-        #
-        #     print("err ", token)
-        #     return ["empty: definition expected"]
+        return self.value
 
 
 ###########
@@ -253,7 +180,7 @@ def get_tokens(source_code_path):
     have_i_eaten = False
 
     while True:
-        print(source_code.replace("\n", "\\n"))
+        # print(source_code.replace("\n", "\\n"))
 
         if source_code == "":
             print("lexer; ok")
@@ -525,32 +452,6 @@ def get_next_token():
     return curr_token
 
 
-class Error(object):
-
-    def __init__(self, error_message):
-        self.error_message = error_message
-
-    def __str__(self):
-        return self.error_message
-
-
-def match_multiple(expected_tokens=None):
-    global token
-
-    print(expected_tokens)
-
-    if expected_tokens and type(token) in expected_tokens:
-        print("match for ", token.value, "ok")
-        print("match at index ", expected_tokens.index(type(token)))
-        value = token.value
-
-    else:
-        value = "err: skip"
-
-    token = get_next_token()
-    return value
-
-
 def match(tok=None):
     """
     checks if next token is expected token
@@ -613,7 +514,12 @@ def expression(rbp=0):
     while rbp < token.lbp:
         t = token
         token = get_next_token()
+
+        print("t", t)
+        print("token", token)
         left = t.led(left)
+
+        print("***", left)
     return left
 
 
@@ -630,6 +536,7 @@ if __name__ == '__main__':
     global tokens
     tokens = get_tokens("../resources/thrift_source_code_samples//reduced.thrift")
 
+    print()
     print("+++ source +++")
     # print(open("../resources/thrift_source_code_samples//reduced.thrift").readlines())
     [print(i[:-1]) for i in open("../resources/thrift_source_code_samples//reduced.thrift").readlines()]
