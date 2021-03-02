@@ -21,7 +21,6 @@ IN_PATH = "test_cases/5/svaki_drugi_a2.in"
 LAN_PATH = "test_cases/java/language.lan"
 IN_PATH = "test_cases/java/java.in"
 
-
 LANGUAGE = [line[:-1] for line in open(LAN_PATH).readlines()]
 TOKENS = "".join([line for line in open(IN_PATH).readlines()])
 
@@ -160,7 +159,6 @@ def insert_regex():
 
         new_rules_list.append([rule[0], pointer, rule[2]])
 
-
     RULES = new_rules_list
 
 
@@ -196,7 +194,7 @@ if __name__ == '__main__':
                   "LINE_NUMBER = 1",
                   "",
                   ""
-    ]
+                  ]
 
     for k, rule in enumerate(RULES):
         lexer_code.append("def f_" + str(k) + "(may_i_eat=False):")
@@ -212,7 +210,7 @@ if __name__ == '__main__':
         lexer_code.append("    # " + str(rule))
 
         lexer_code.append("    if CURRENT_STATE == \"" + rule[0] + "\":")
-        lexer_code.append("        print(" + str(k) +")")
+        lexer_code.append("        print(" + str(k) + ")")
 
         lexer_code.append("        " + "t_in = [")
         lexer_code.append("            " + "str(SOURCE_CODE),")
@@ -309,7 +307,7 @@ if __name__ == '__main__':
                               " + str(LINE_NUMBER" + (" -1" if is_line_count_increased else "") + ")" +
                               " + \" \" + SOURCE_CODE[:" +
                               (str(reduction_count) if is_reduction_made else "MAX_EATER_NUMBER") + "])"
-            )
+                              )
 
         if is_reduction_made:
             lexer_code.append("            SOURCE_CODE = SOURCE_CODE[" + t[1] + ":]")

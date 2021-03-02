@@ -1,6 +1,6 @@
 def tokenize(program):
     for operator in program.split(" "):
-    # for number, operator in token_pat.findall(program):
+        # for number, operator in token_pat.findall(program):
         if operator.isnumeric():
             yield literal_token(operator)
         elif operator == "+":
@@ -58,4 +58,3 @@ class end_token(object):
 if __name__ == '__main__':
     print(parse('1 + 2 + 3 + 4 + 5 + 6'))
     # print(parse("1-1+1"))
-

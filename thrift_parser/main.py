@@ -1,7 +1,5 @@
-
-
-    # parse(tokens)
-    # [5]  Namespace       ::=  ( 'namespace' ( NamespaceScope Identifier ) )
+# parse(tokens)
+# [5]  Namespace       ::=  ( 'namespace' ( NamespaceScope Identifier ) )
 
 # class Token:
 #

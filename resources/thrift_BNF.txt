@@ -1,9 +1,11 @@
 [1]  Document        ::=  Header* Definition*
+
 [2]  Header          ::=  Include | CppInclude | Namespace
 [3]  Include         ::=  'include' Literal
 [4]  CppInclude      ::=  'cpp_include' Literal
 [5]  Namespace       ::=  ( 'namespace' ( NamespaceScope Identifier ) )
 [6]  NamespaceScope  ::=  '*' | 'c_glib' | 'cpp' | 'delphi' | 'haxe' | 'go' | 'java' | 'js' | 'lua' | 'netstd' | 'perl' | 'php' | 'py' | 'py.twisted' | 'rb' | 'st' | 'xsd'
+
 [7]  Definition      ::=  Const | Typedef | Enum | Senum | Struct | Union | Exception | Service
 [8]  Const           ::=  'const' FieldType Identifier '=' ConstValue ListSeparator?
 [9]  Typedef         ::=  'typedef' DefinitionType Identifier
@@ -13,6 +15,7 @@
 [13] Union           ::=  'union' Identifier 'xsd_all'? '{' Field* '}'
 [14] Exception       ::=  'exception' Identifier '{' Field* '}'
 [15] Service         ::=  'service' Identifier ( 'extends' Identifier )? '{' Function* '}'
+
 [16] Field           ::=  FieldID? FieldReq? FieldType Identifier ('=' ConstValue)? XsdFieldOptions ListSeparator?
 [17] FieldID         ::=  IntConstant ':'
 [18] FieldReq        ::=  'required' | 'optional'

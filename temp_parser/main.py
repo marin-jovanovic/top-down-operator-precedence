@@ -33,10 +33,234 @@ class Token(object):
         return self.identifier + " " + str(self.row) + " " + self.value
 
 
+class ListTypeToken(Token):
+    pass
+
+
+class SetTypeToken(Token):
+    pass
+
+
+class MapTypeToken(Token):
+    pass
+
+
+class ContainerTypeToken(Token):
+    pass
+
+
+class DefinitionTypeToken(Token):
+    pass
+
+
+class FieldTypeToken(Token):
+    pass
+
+
+class ThrowsToken(Token):
+    pass
+
+
+class FunctionTypeToken(Token):
+    pass
+
+
+# DoubleConstant can be empty
+# ConstValue
+
+class XsdAttrsToken(Token):
+    pass
+
+
+class FunctionToken(Token):
+    pass
+
+
+class XsdFieldOptionsToken(Token):
+    pass
+
+
+class FieldIDToken(Token):
+    pass
+
+
+class FieldToken(Token):
+    pass
+
+
+class ServiceToken(Token):
+    pass
+
+
+class ExceptionToken(Token):
+    pass
+
+
+class UnionToken(Token):
+    pass
+
+
+class SenumToken(Token):
+    pass
+
+
+class DefinitionToken(Token):
+    pass
+
+
+class EnumToken(Token):
+    pass
+
+
+class TypedefToken(Token):
+    pass
+
+
+class ConstToken(Token):
+    pass
+
+
+class StructToken(Token):
+    pass
+
+
+class NamespaceToken(Token):
+    pass
+
+
+class IncludeToken(Token):
+    pass
+
+
+class HeaderToken(Token):
+    pass
+
+
+class CppIncludeToken(Token):
+    pass
+
+
+class DocumentToken(Token):
+    pass
+
+
+def starts_with(token):
+    if isinstance(token, DigitToken):
+        return DigitToken
+
+    elif isinstance(token, LetterToken):
+        return LetterToken
+
+    elif isinstance(token, ListSeparatorToken):
+        return ListSeparatorToken
+    elif isinstance(token, STIdentifierToken):
+        return STIdentifierToken
+    elif isinstance(token, IdentifierToken):
+        return IdentifierToken
+    elif isinstance(token, LiteralToken):
+        return LiteralToken
+    elif isinstance(token, ConstMapToken):
+        return "{"
+    elif isinstance(token, ConstListToken):
+        return "["
+    elif isinstance(token, DoubleConstantToken):
+        return ["+", "-", DigitToken, ".", "E", "e", None]
+    elif isinstance(token, IntConstantToken):
+        return ["+", "-", DigitToken]
+    elif isinstance(token, ConstValueToken):
+        return [starts_with(IntConstantToken),
+                starts_with(DoubleConstantToken),
+                starts_with(LiteralToken),
+                starts_with(IdentifierToken),
+                starts_with(ConstListToken),
+                starts_with(ConstMapToken)]
+    elif isinstance(token, CppTypeToken):
+        return "cpp_type"
+    elif isinstance(token, ListTypeToken):
+        return "list"
+    elif isinstance(token, SetTypeToken):
+        return "set"
+    elif isinstance(token, MapTypeToken):
+        return "map"
+    elif isinstance(token, ContainerTypeToken):
+        return [starts_with(MapTypeToken),
+                starts_with(SetTypeToken),
+                starts_with(ListTypeToken)]
+    elif isinstance(token, BaseTypeToken):
+        return BaseTypeToken
+    elif isinstance(token, DefinitionTypeToken):
+        return [starts_with(BaseTypeToken),
+                starts_with(ContainerTypeToken)]
+    elif isinstance(token, FieldTypeToken):
+        return [starts_with(IdentifierToken),
+                starts_with(BaseTypeToken),
+                starts_with(ContainerTypeToken)]
+    elif isinstance(token, ThrowsToken):
+        return "throws"
+    elif isinstance(token, FunctionTypeToken):
+        return [starts_with(FieldTypeToken),
+                "void"]
+    elif isinstance(token, FunctionToken):
+        return ["oneway", starts_with(FunctionTypeToken)]
+    elif isinstance(token, XsdAttrsToken):
+        return "xsd_attrs"
+    elif isinstance(token, XsdFieldOptionsToken):
+        return ["xsd_optional", "xsd_nillable", starts_with(XsdAttrsToken)]
+    elif isinstance(token, FieldReqToken):
+        return ["required", "optional"]
+    elif isinstance(token, FieldIDToken):
+        return starts_with(IntConstantToken)
+    elif isinstance(token, FieldToken):
+        return [starts_with(FieldIDToken),
+                starts_with(FieldReqToken),
+                starts_with(FieldTypeToken)]
+    elif isinstance(token, ServiceToken):
+        return "service"
+    elif isinstance(token, ExceptionToken):
+        return "exception"
+    elif isinstance(token, UnionToken):
+        return "union"
+    elif isinstance(token, StructToken):
+        return "struct"
+    elif isinstance(token, SenumToken):
+        return "senum"
+    elif isinstance(token, EnumToken):
+        return "enum"
+    elif isinstance(token, TypedefToken):
+        return "typedef"
+    elif isinstance(token, ConstToken):
+        return "const"
+    elif isinstance(token, DefinitionToken):
+        return [starts_with(ConstToken),
+                starts_with(TypedefToken),
+                starts_with(EnumToken),
+                starts_with(SenumToken),
+                starts_with(StructToken),
+                starts_with(UnionToken),
+                starts_with(ExceptionToken),
+                starts_with(ServiceToken)]
+    elif isinstance(token, NamespaceScopeToken):
+        return ['*', 'c_glib', 'cpp', 'delphi', 'haxe', 'go', 'java', 'js', 'lua', 'netstd', 'perl',
+                'php', 'py', 'py.twisted', 'rb', 'st', 'xsd']
+    elif isinstance(token, NamespaceToken):
+        return "namespace"
+    elif isinstance(token, CppIncludeToken):
+        return "namespace"
+    elif isinstance(token, IncludeToken):
+        return "namespace"
+    elif isinstance(token, HeaderToken):
+        return "namespace"
+    elif isinstance(token, DocumentToken):
+        return [starts_with(HeaderToken), starts_with(DefinitionToken)]
+
+
+class CppTypeToken(Token):
+    pass
+
+
 class BaseTypeToken(Token):
 
     def nud(self):
-
         print("current", token)
 
 
@@ -44,7 +268,23 @@ class CommaToken(Token):
     pass
 
 
+class DoubleConstantToken(Token):
+    pass
+
+
+class IntConstantToken(Token):
+    pass
+
+
 class ColonToken(Token):
+    pass
+
+
+class ConstListToken(Token):
+    pass
+
+
+class ConstMapToken(Token):
     pass
 
 
@@ -122,6 +362,7 @@ class LetterToken(Token):
 class NamespaceScopeToken(Token):
     pass
 
+
 class MinusToken(Token):
     pass
 
@@ -154,6 +395,10 @@ class UpperEToken(Token):
     pass
 
 
+is_first_header = True
+is_first_definition = True
+
+
 class KeywordToken(Token):
 
     def __init__(self, identifier, row, value):
@@ -161,6 +406,7 @@ class KeywordToken(Token):
 
     def nud(self):
         print("+++ KeywordToken +++")
+        global is_first_header
 
         if self.value == "include":
             '''header'''
@@ -169,8 +415,13 @@ class KeywordToken(Token):
 
             print(["include", v1])
 
-            return ["HEADER", ["INCLUDE", ["include", "LITERAL", [v1]]],
-                    expression()]
+            if is_first_header:
+                is_first_header = False
+                return ["HeaderManager", ["Header", ["Include", ["\"include\"", "Literal", [v1]]],
+                                          "HeaderManager", expression()]]
+            else:
+                return ["Header", ["Include", ["\"include\"", "Literal", [v1]]],
+                        "HeaderManager", expression()]
 
         elif self.value == "cpp_include":
             '''header'''
@@ -179,8 +430,13 @@ class KeywordToken(Token):
 
             print(["cpp_include", v1])
 
-            return ["HEADER", ["CPP_INCLUDE", ["cpp_include", "LITERAL", [v1]]],
-                    expression()]
+            if is_first_header:
+                is_first_header = False
+                return ["HeaderManager", ["Header", ["CppInclude", ["\"cpp_include\"", "Literal", [v1]]],
+                                          "HeaderManager", expression()]]
+            else:
+                return ["Header", ["CppInclude", ["\"cpp_include\"", "Literal", [v1]]],
+                        "HeaderManager", expression()]
 
         elif self.value == "namespace":
             '''header'''
@@ -191,8 +447,14 @@ class KeywordToken(Token):
             print(["namespace", v1, v2])
             print("next", token)
 
-            return ["HEADER", ["NAMESPACE", ["namespace", "NAMESPACESCOPE", [v1],
-                    "IDENTIFIER", [v2]]], expression()]
+            if is_first_header:
+                is_first_header = False
+                return ["HeaderManager",
+                        ["Header", ["Namespace", ["\"namespace\"", "NamespaceScope", [v1], "Identifier", [v2]]],
+                         "HeaderManager", expression()]]
+            else:
+                return ["Header", ["Namespace", ["\"namespace\"", "NamespaceScope", [v1], "Identifier", [v2]]],
+                        "HeaderManager", expression()]
 
         elif self.value == "const":
             '''definition'''
@@ -560,8 +822,8 @@ def match(tok=None):
     """
     global token
 
-    if tok and isinstance(tok,  type(token)):
-    # if tok and tok != type(token):
+    if tok and isinstance(tok, type(token)):
+        # if tok and tok != type(token):
         value = "err: skip"
 
     else:
@@ -622,23 +884,25 @@ def fn(items, level=0):
         if isinstance(item, list):
             fn(item, level + 1)
         else:
-            indentation = '\t' * level
+            indentation = " " * level
             print('%s%s' % (indentation, item))
 
 
 if __name__ == '__main__':
-    global tokens
-    tokens = get_tokens("../resources/thrift_source_code_samples//reduced.thrift")
+    print(starts_with(DigitToken("VLB", 5, "D")))
 
-    print("+++ source +++")
-    # print(open("../resources/thrift_source_code_samples//reduced.thrift").readlines())
-    [print(i[:-1]) for i in open("../resources/thrift_source_code_samples//reduced.thrift").readlines()]
-
-    global token
-    global token_pointer
-    token_pointer = 0
-
-    ast = ["DOCUMENT", get_ast()]
-
-    print("+++ ast +++")
-    fn(ast)
+    # global tokens
+    # tokens = get_tokens("../resources/thrift_source_code_samples//reduced.thrift")
+    #
+    # print("+++ source +++")
+    # [print(i[:-1]) for i in open("../resources/thrift_source_code_samples//reduced.thrift").readlines()]
+    #
+    # global token
+    # global token_pointer
+    # token_pointer = 0
+    #
+    # ast = ["DOCUMENT", get_ast()]
+    #
+    # print("+++ ast +++")
+    # print(ast)
+    # fn(ast)

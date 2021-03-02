@@ -1,6 +1,6 @@
 import re
-from drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
 
+from drivers.resource_constants import TOKENS
 
 ###########
 # token classes
@@ -8,7 +8,8 @@ from drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
 
 LBP = {
     "LiteralToken": 1,
-    "NamespaceScopeToken": 1
+    "NamespaceScopeToken": 1,
+    "EOFToken": -1
 }
 
 
@@ -61,7 +62,8 @@ class FieldReqToken(Token):
 
 
 class IdentifierToken(Token):
-    pass
+    def nud(self):
+        return self.value
 
 
 class LeftCurlyBracketToken(Token):
@@ -87,16 +89,14 @@ class LowerEToken(Token):
 class LiteralToken(Token):
 
     def led(self, left):
-
-        print("left", left)
+        global token
+        print("literal; left", left)
 
         if left == "include":
-            print("this is Include")
-            return ["Header", ["Include", ["\"include\"", "Literal", [self.value]]]]
+            return [["Header", ["Include", ["\"include\"", "Literal", [self.value]]]], expression()]
 
         elif left == "cpp_include":
-            print("this is cpp_include")
-            return ["Header", ["CppInclude", ["\"cpp_include\"", "Literal", [self.value]]]]
+            return [["Header", ["CppInclude", ["\"cpp_include\"", "Literal", [self.value]]]], expression()]
 
         else:
             print("maybe error?")
@@ -114,13 +114,13 @@ class LetterToken(Token):
 class NamespaceScopeToken(Token):
 
     def led(self, left):
-
         if left == "namespace":
             v1 = match(IdentifierToken)
 
             print("namespace token")
 
             return ["Header", ["Namespace", ["\"namespace\"", self.value, v1]]]
+
 
 class MinusToken(Token):
     pass
@@ -461,8 +461,8 @@ def match(tok=None):
     """
     global token
 
-    if tok and isinstance(tok,  type(token)):
-    # if tok and tok != type(token):
+    if tok and isinstance(tok, type(token)):
+        # if tok and tok != type(token):
         value = "err: skip"
 
     else:
@@ -507,19 +507,24 @@ def expression(rbp=0):
     token = get_next_token()
     left = t.nud()
 
+    print("+++")
     print(t)
     print(token)
     print(left)
 
+    print("lbp1 for", token)
     while rbp < token.lbp:
         t = token
         token = get_next_token()
 
-        print("t", t)
-        print("token", token)
+        print("pre led t     ", t)
+        print("pre led token ", token)
         left = t.led(left)
 
-        print("***", left)
+        print("post led t    ", t)
+        print("post led token", token)
+        print("post led left ", left)
+        print("lbp2 for", token)
     return left
 
 
@@ -528,7 +533,7 @@ def fn(items, level=0):
         if isinstance(item, list):
             fn(item, level + 1)
         else:
-            indentation = '\t' * level
+            indentation = " " * level
             print('%s%s' % (indentation, item))
 
 
@@ -546,6 +551,6 @@ if __name__ == '__main__':
     token_pointer = 0
 
     ast = ["DOCUMENT", get_ast()]
-
+    print(ast)
     print("+++ ast +++")
     fn(ast)

@@ -9,7 +9,7 @@ PROGRAM_PATH = "C:\\git\\nfa\\main.py"
 INPUT_FILES_PATH = "test.a"
 OUTPUT_FILES_PATH = "test.b"
 
-UPPER_TIME_BOUND = "10" # in seconds
+UPPER_TIME_BOUND = "10"  # in seconds
 TEST_COUNT = 1
 PASSED_TESTS = 0
 

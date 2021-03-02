@@ -123,4 +123,3 @@ class end_token(object):
 
 if __name__ == '__main__':
     print(parse('3 * (2 + -4) ^ 4'))
-

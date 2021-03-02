@@ -5,7 +5,7 @@
 documentation for project
 
     lexer_generator
-    
+
 tool for building lexer
 
     nfa

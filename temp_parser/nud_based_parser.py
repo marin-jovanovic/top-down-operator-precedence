@@ -34,7 +34,6 @@ class Token(object):
 class BaseTypeToken(Token):
 
     def nud(self):
-
         print("current", token)
 
 
@@ -80,9 +79,6 @@ class IdentifierToken(Token):
     pass
 
 
-
-
-
 class LeftCurlyBracketToken(Token):
     pass
 
@@ -117,6 +113,7 @@ class LetterToken(Token):
 
 class NamespaceScopeToken(Token):
     pass
+
 
 class MinusToken(Token):
     pass

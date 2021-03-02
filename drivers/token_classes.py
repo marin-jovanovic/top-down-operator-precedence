@@ -28,7 +28,6 @@ class Token(object):
 class BaseTypeToken(Token):
 
     def nud(self):
-
         print("current", token)
 
 

@@ -1,9 +1,7 @@
 # Resources
 
-
 ## TOKENS.txt
-    
-        
+
     if 1 element in row:
         token = element
         token id = prefix + element

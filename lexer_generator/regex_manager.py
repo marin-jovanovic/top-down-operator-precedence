@@ -5,7 +5,6 @@ ROW = 1
 # ret true ako je ovo |
 # ret false ako je ovo \|
 def is_escaped_at_index(s, index):
-
     s = s[:index]
 
     count = 0
@@ -48,7 +47,6 @@ def split_by_separator(v_regex):
         elif token == "|":
 
             if state_of_brackets == 0 and is_escaped_at_index(v_regex, iterator_1):
-
                 ret.append("".join([i for i in t_0[:-1]]))
                 t_0 = ""
         else:

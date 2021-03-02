@@ -6,7 +6,7 @@ LBP = {
     "variable": 1,
     "literal": None,
     "lparen": 0,
-    "rparen": 0,    # not important
+    "rparen": 0,  # not important
     "EOF": 0,
     "end_of_line": -1,
     "association": 2,
@@ -75,7 +75,6 @@ def tokenize(program):
 
 class ClassDefinitionToken:
     def nud(self):
-
         match(ClassNameToken)
 
         match(LeftCurlyBracketToken)
@@ -162,7 +161,6 @@ class LeftRoundBracketToken(object):
     lbp = LBP.get("lparen")
 
     def nud(self):
-
         # handle till ")"
         expr = expression(self.lbp)
 
@@ -191,14 +189,12 @@ class FunctionToken(object):
         self.value = value
 
     def nud(self):
-
         # expects "("
         match(LeftRoundBracketToken)
 
         args = []
 
         if RightRoundBracketToken != type(token):
-
             # expects args
             args = expression(0)
 
@@ -291,8 +287,6 @@ class operator_association_token(object):
             right = [right]
             print("right reconfig")
 
-
-
         instruction = ["instruction", ["LS", left], "=", ["RS", right], ";"]
         print("handle", instruction)
 
@@ -332,7 +326,6 @@ class operator_add_token(object):
         return expression(100)
 
     def led(self, left):
-
         right = expression(self.lbp)
         return ["+", left, right]
 
@@ -388,11 +381,10 @@ def formated_print(data, s_c=0):
 
     else:
         for i in data:
-            formated_print(i, s_c+1)
+            formated_print(i, s_c + 1)
 
 
 if __name__ == '__main__':
-
     # test("1 + 1", ["+", 1, 1])
     # test("3 * ( 2 + - 4 ) ^ 4", ['*', 3, ['^', ['+', 2, -4], 4]])
     # test("1 - 1 + 1", ['+', ['-', 1, 1], 1])
@@ -408,7 +400,7 @@ if __name__ == '__main__':
     # formated_print(parse("1 + 2 * 3 / 7 + 1"))
 
     # t = parse("x = 2 ; y = 3 ;")
-    #t = parse("- 1")
+    # t = parse("- 1")
     t = parse("2 + 3 + 4 - 2 * ( - 2 + 3 )")
     print(t)
     #
@@ -419,8 +411,6 @@ if __name__ == '__main__':
     formated_print(t)
 
     # formated_print("class className { public static void main ( String[] args ) { System.out.println ( Hello, World!)\n)
-
-
 
     # parse("x = 2 ; new_line y = 3 ;")
 

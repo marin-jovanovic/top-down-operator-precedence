@@ -1,13 +1,13 @@
-main.py 
+main.py
 
     generates lexer.py
 
-out.txt 
+out.txt
 
     example of lexer.py output
-   
+
 regex_manager.py
-    
+
     my regex tool
     algorithm:
         in: fg|de|fgheij
