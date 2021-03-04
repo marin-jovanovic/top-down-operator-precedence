@@ -65,9 +65,6 @@ class FunctionTypeToken(Token):
     pass
 
 
-# DoubleConstant can be empty
-# ConstValue
-
 class XsdAttrsToken(Token):
     pass
 
@@ -144,114 +141,6 @@ class DocumentToken(Token):
     pass
 
 
-def starts_with(token):
-    if isinstance(token, DigitToken):
-        return DigitToken
-
-    elif isinstance(token, LetterToken):
-        return LetterToken
-
-    elif isinstance(token, ListSeparatorToken):
-        return ListSeparatorToken
-    elif isinstance(token, STIdentifierToken):
-        return STIdentifierToken
-    elif isinstance(token, IdentifierToken):
-        return IdentifierToken
-    elif isinstance(token, LiteralToken):
-        return LiteralToken
-    elif isinstance(token, ConstMapToken):
-        return "{"
-    elif isinstance(token, ConstListToken):
-        return "["
-    elif isinstance(token, DoubleConstantToken):
-        return ["+", "-", DigitToken, ".", "E", "e", None]
-    elif isinstance(token, IntConstantToken):
-        return ["+", "-", DigitToken]
-    elif isinstance(token, ConstValueToken):
-        return [starts_with(IntConstantToken),
-                starts_with(DoubleConstantToken),
-                starts_with(LiteralToken),
-                starts_with(IdentifierToken),
-                starts_with(ConstListToken),
-                starts_with(ConstMapToken)]
-    elif isinstance(token, CppTypeToken):
-        return "cpp_type"
-    elif isinstance(token, ListTypeToken):
-        return "list"
-    elif isinstance(token, SetTypeToken):
-        return "set"
-    elif isinstance(token, MapTypeToken):
-        return "map"
-    elif isinstance(token, ContainerTypeToken):
-        return [starts_with(MapTypeToken),
-                starts_with(SetTypeToken),
-                starts_with(ListTypeToken)]
-    elif isinstance(token, BaseTypeToken):
-        return BaseTypeToken
-    elif isinstance(token, DefinitionTypeToken):
-        return [starts_with(BaseTypeToken),
-                starts_with(ContainerTypeToken)]
-    elif isinstance(token, FieldTypeToken):
-        return [starts_with(IdentifierToken),
-                starts_with(BaseTypeToken),
-                starts_with(ContainerTypeToken)]
-    elif isinstance(token, ThrowsToken):
-        return "throws"
-    elif isinstance(token, FunctionTypeToken):
-        return [starts_with(FieldTypeToken),
-                "void"]
-    elif isinstance(token, FunctionToken):
-        return ["oneway", starts_with(FunctionTypeToken)]
-    elif isinstance(token, XsdAttrsToken):
-        return "xsd_attrs"
-    elif isinstance(token, XsdFieldOptionsToken):
-        return ["xsd_optional", "xsd_nillable", starts_with(XsdAttrsToken)]
-    elif isinstance(token, FieldReqToken):
-        return ["required", "optional"]
-    elif isinstance(token, FieldIDToken):
-        return starts_with(IntConstantToken)
-    elif isinstance(token, FieldToken):
-        return [starts_with(FieldIDToken),
-                starts_with(FieldReqToken),
-                starts_with(FieldTypeToken)]
-    elif isinstance(token, ServiceToken):
-        return "service"
-    elif isinstance(token, ExceptionToken):
-        return "exception"
-    elif isinstance(token, UnionToken):
-        return "union"
-    elif isinstance(token, StructToken):
-        return "struct"
-    elif isinstance(token, SenumToken):
-        return "senum"
-    elif isinstance(token, EnumToken):
-        return "enum"
-    elif isinstance(token, TypedefToken):
-        return "typedef"
-    elif isinstance(token, ConstToken):
-        return "const"
-    elif isinstance(token, DefinitionToken):
-        return [starts_with(ConstToken),
-                starts_with(TypedefToken),
-                starts_with(EnumToken),
-                starts_with(SenumToken),
-                starts_with(StructToken),
-                starts_with(UnionToken),
-                starts_with(ExceptionToken),
-                starts_with(ServiceToken)]
-    elif isinstance(token, NamespaceScopeToken):
-        return ['*', 'c_glib', 'cpp', 'delphi', 'haxe', 'go', 'java', 'js', 'lua', 'netstd', 'perl',
-                'php', 'py', 'py.twisted', 'rb', 'st', 'xsd']
-    elif isinstance(token, NamespaceToken):
-        return "namespace"
-    elif isinstance(token, CppIncludeToken):
-        return "namespace"
-    elif isinstance(token, IncludeToken):
-        return "namespace"
-    elif isinstance(token, HeaderToken):
-        return "namespace"
-    elif isinstance(token, DocumentToken):
-        return [starts_with(HeaderToken), starts_with(DefinitionToken)]
 
 
 class CppTypeToken(Token):
@@ -288,7 +177,7 @@ class ConstMapToken(Token):
     pass
 
 
-class ConstValueToken(object):
+class ConstValueToken(Token):
     pass
 
 
@@ -317,9 +206,6 @@ class EOFToken(Token):
 class FieldReqToken(Token):
     pass
 
-
-# class FieldTypeToken(Token):
-#     pass
 
 class IdentifierToken(Token):
 
@@ -494,9 +380,7 @@ class KeywordToken(Token):
         #     return ["empty: definition expected"]
 
 
-###########
-# lexer
-###########
+'''lexer'''
 
 
 def regex_cropper(regex, string):
@@ -515,7 +399,7 @@ def get_tokens(source_code_path):
     have_i_eaten = False
 
     while True:
-        print(source_code.replace("\n", "\\n"))
+        # print(source_code.replace("\n", "\\n"))
 
         if source_code == "":
             print("lexer; ok")
@@ -763,10 +647,117 @@ def get_tokens(source_code_path):
     return output
 
 
-###########
-# parser
-###########
+'''parser'''
 
+
+def starts_with(token):
+    if isinstance(token, DigitToken):
+        return DigitToken
+
+    elif isinstance(token, LetterToken):
+        return LetterToken
+
+    elif isinstance(token, ListSeparatorToken):
+        return ListSeparatorToken
+    elif isinstance(token, STIdentifierToken):
+        return STIdentifierToken
+    elif isinstance(token, IdentifierToken):
+        return IdentifierToken
+    elif isinstance(token, LiteralToken):
+        return LiteralToken
+    elif isinstance(token, ConstMapToken):
+        return "{"
+    elif isinstance(token, ConstListToken):
+        return "["
+    elif isinstance(token, DoubleConstantToken):
+        return ["+", "-", DigitToken, ".", "E", "e", None]
+    elif isinstance(token, IntConstantToken):
+        return ["+", "-", DigitToken]
+    elif isinstance(token, ConstValueToken):
+        return [starts_with(IntConstantToken),
+                starts_with(DoubleConstantToken),
+                starts_with(LiteralToken),
+                starts_with(IdentifierToken),
+                starts_with(ConstListToken),
+                starts_with(ConstMapToken)]
+    elif isinstance(token, CppTypeToken):
+        return "cpp_type"
+    elif isinstance(token, ListTypeToken):
+        return "list"
+    elif isinstance(token, SetTypeToken):
+        return "set"
+    elif isinstance(token, MapTypeToken):
+        return "map"
+    elif isinstance(token, ContainerTypeToken):
+        return [starts_with(MapTypeToken),
+                starts_with(SetTypeToken),
+                starts_with(ListTypeToken)]
+    elif isinstance(token, BaseTypeToken):
+        return BaseTypeToken
+    elif isinstance(token, DefinitionTypeToken):
+        return [starts_with(BaseTypeToken),
+                starts_with(ContainerTypeToken)]
+    elif isinstance(token, FieldTypeToken):
+        return [starts_with(IdentifierToken),
+                starts_with(BaseTypeToken),
+                starts_with(ContainerTypeToken)]
+    elif isinstance(token, ThrowsToken):
+        return "throws"
+    elif isinstance(token, FunctionTypeToken):
+        return [starts_with(FieldTypeToken),
+                "void"]
+    elif isinstance(token, FunctionToken):
+        return ["oneway", starts_with(FunctionTypeToken)]
+    elif isinstance(token, XsdAttrsToken):
+        return "xsd_attrs"
+    elif isinstance(token, XsdFieldOptionsToken):
+        return ["xsd_optional", "xsd_nillable", starts_with(XsdAttrsToken)]
+    elif isinstance(token, FieldReqToken):
+        return ["required", "optional"]
+    elif isinstance(token, FieldIDToken):
+        return starts_with(IntConstantToken)
+    elif isinstance(token, FieldToken):
+        return [starts_with(FieldIDToken),
+                starts_with(FieldReqToken),
+                starts_with(FieldTypeToken)]
+    elif isinstance(token, ServiceToken):
+        return "service"
+    elif isinstance(token, ExceptionToken):
+        return "exception"
+    elif isinstance(token, UnionToken):
+        return "union"
+    elif isinstance(token, StructToken):
+        return "struct"
+    elif isinstance(token, SenumToken):
+        return "senum"
+    elif isinstance(token, EnumToken):
+        return "enum"
+    elif isinstance(token, TypedefToken):
+        return "typedef"
+    elif isinstance(token, ConstToken):
+        return "const"
+    elif isinstance(token, DefinitionToken):
+        return [starts_with(ConstToken),
+                starts_with(TypedefToken),
+                starts_with(EnumToken),
+                starts_with(SenumToken),
+                starts_with(StructToken),
+                starts_with(UnionToken),
+                starts_with(ExceptionToken),
+                starts_with(ServiceToken)]
+    elif isinstance(token, NamespaceScopeToken):
+        return ['*', 'c_glib', 'cpp', 'delphi', 'haxe', 'go', 'java', 'js', 'lua', 'netstd', 'perl',
+                'php', 'py', 'py.twisted', 'rb', 'st', 'xsd']
+    elif isinstance(token, NamespaceToken):
+        return "namespace"
+    elif isinstance(token, CppIncludeToken):
+        return "namespace"
+    elif isinstance(token, IncludeToken):
+        return "namespace"
+    elif isinstance(token, HeaderToken):
+        return "namespace"
+    elif isinstance(token, DocumentToken):
+        return [starts_with(HeaderToken), starts_with(DefinitionToken)]
 
 def get_next_token():
     """
@@ -840,18 +831,14 @@ def get_ast():
     print()
 
     global tokens
-    print("+++ tokens +++")
-    [print(i) for i in tokens]
-    print()
-
     global token
     token = get_next_token()
     print("+++ token +++\n" + str(token) + "\n")
 
     ret = expression()
 
-    print("+++ output +++")
-    print("output:", ret)
+    # print("+++ output +++")
+    # print("output:", ret)
 
     return ret
 
@@ -889,20 +876,26 @@ def fn(items, level=0):
 
 
 if __name__ == '__main__':
-    print(starts_with(DigitToken("VLB", 5, "D")))
+    source_code_path = "../resources/thrift_source_code_samples//reduced.thrift"
 
-    # global tokens
-    # tokens = get_tokens("../resources/thrift_source_code_samples//reduced.thrift")
-    #
-    # print("+++ source +++")
-    # [print(i[:-1]) for i in open("../resources/thrift_source_code_samples//reduced.thrift").readlines()]
-    #
-    # global token
-    # global token_pointer
-    # token_pointer = 0
-    #
-    # ast = ["DOCUMENT", get_ast()]
-    #
-    # print("+++ ast +++")
-    # print(ast)
-    # fn(ast)
+    print("+++ source +++")
+    [print(i[:-1]) for i in open(source_code_path).readlines()]
+    print()
+
+    global tokens
+    tokens = get_tokens(source_code_path)
+    print()
+
+    print("+++ tokens +++")
+    [print(i) for i in tokens]
+    print()
+
+    global token
+    global token_pointer
+    token_pointer = 0
+
+    ast = ["DOCUMENT", get_ast()]
+
+    print("+++ ast +++")
+    print(ast)
+    fn(ast)
