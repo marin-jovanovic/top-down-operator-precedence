@@ -4,12 +4,21 @@ from drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
 
 # fixme nested comments in parser
 
+
 ###########
 # token classes
 ###########
+
+
 LBP = {
-    "KeywordToken": 0,
-    "BaseTypeToken": 0
+    # "KeywordToken": 1
+    "LiteralToken": 1
+    ,
+    "NamespaceScopeToken": 1
+
+    # "BaseTypeToken": 0,
+    ,
+    "EOFToken": -1
 }
 
 
@@ -31,15 +40,7 @@ class BaseTypeToken(Token):
         print("current", token)
 
 
-class CommaToken(Token):
-    pass
-
-
 class ColonToken(Token):
-    pass
-
-
-class ConstValueToken(Token):
     pass
 
 
@@ -55,66 +56,44 @@ class EqualToken(Token):
     pass
 
 
-class EOFToken(Token):
-    lbp = -1
-
-    # @staticmethod
-    def nud(self):
-        return ["EOF"]
-
-    def __str__(self):
-        return "EOF token"
-
-
 class FieldReqToken(Token):
     pass
 
 
-class FieldTypeToken(Token):
-    pass
-
-
 class IdentifierToken(Token):
-    pass
+
+    def led(self, left):
+
+        # if left == "enum":
+        #
+        #     return ["Definition",
+        #             ["Enum", ["\"enum\"",
+        #                       "Identifier",
+        #                       [self.value],
+        #                       match(LeftCurlyBracketToken),
+        #                       "Identifier",
+        #                       match(IdentifierToken)]
+        #              ],
+        #             "DefinitionManager",
+        #             expression()
+        #             ]
+
+        if left == "service":
 
 
-class KeywordToken(Token):
+            return ["Definition",
+                    ["Service", ["\"service\"", "Identifier", [self.identifier], expression(),
+                                 match(LeftCurlyBracketToken), "FunctionManager", expression(),
+                                 match(RightCurlyBracketToken)]],
+                    "DefinitionManager",
+                    expression()
+            ]
 
-    def __init__(self, identifier, row, value):
-        super().__init__(KEYWORDS_PREFIX + identifier, row, value)
+        else:
 
-    def nud(self):
-        print("+++ KeywordToken +++")
-
-        if self.value == "namespace":
-            print("namespace")
-            print()
-
-            v1 = match(NamespaceScopeToken)
-
-            v2 = match(IdentifierToken)
-
-            print("current state")
-            print("\033[100m" + str(["namespace", v1, v2]) + "\033[0m")
-
-            print("current token")
-            global token
-            print(token)
-
-            return [["namespace", v1, v2], expression()]
-
-        elif self.value == "const":
-            # [8]  Const ::=  'const' FieldType Identifier '=' ConstValue ListSeparator?
-            print("const")
-            print()
-
-            v1 = match(FieldTypeToken)
-
-            v2 = match(IdentifierToken)
-            v3 = match(EqualToken)
-            v4 = match(ConstValueToken)
-
-            return [v1, v2, v3, v4, expression()]
+            print("IdentifierToken led err")
+            import sys
+            sys.exit()
 
 
 class LeftCurlyBracketToken(Token):
@@ -137,22 +116,12 @@ class LowerEToken(Token):
     pass
 
 
-class LiteralToken(Token):
-    pass
-
-
 class ListSeparatorToken(Token):
     pass
 
 
 class LetterToken(Token):
     pass
-
-
-class NamespaceScopeToken(Token):
-
-    def __str__(self):
-        return "Identifier " + str(self.row) + " " + self.value
 
 
 class MinusToken(Token):
@@ -187,9 +156,108 @@ class UpperEToken(Token):
     pass
 
 
-###########
-# lexer
-###########
+class NamespaceScopeToken(Token):
+
+    def led(self, left):
+
+        if left == "namespace":
+
+            return ["Header",
+                    ["Include", ["\"include\"", "Literal", [self.value], "Identifier", match(IdentifierToken)]],
+                    "HeaderManager",
+                    expression()
+            ]
+
+        else:
+
+            print("namespacescope led err")
+            import sys
+            sys.exit()
+
+
+class LiteralToken(Token):
+
+    def led(self, left):
+
+        if left == "include":
+
+            return ["Header",
+                    ["Include", ["\"include\"", "Literal", [self.value]]],
+                    "HeaderManager",
+                    expression()
+                    ]
+
+        elif left == "cpp_include":
+
+            return ["Header",
+                    ["CppInclude", ["\"cpp_include\"", "Literal", [self.value]]],
+                    "HeaderManager",
+                    expression()
+                    ]
+
+        else:
+            print("err led literal ")
+            import sys
+            sys.exit()
+
+
+class KeywordToken(Token):
+
+    def __init__(self, identifier, row, value):
+        super().__init__(KEYWORDS_PREFIX + identifier, row, value)
+
+    def nud(self):
+
+        if self.value == "include":
+            return self.value
+
+        elif self.value == "cpp_include":
+            return self.value
+
+        elif self.value == "namespace":
+            return self.value
+
+        elif self.value == "const":
+            return self.value
+
+        elif self.value == "typedef":
+            return self.value
+
+        elif self.value == "enum":
+            return self.value
+
+        elif self.value == "senum":
+            return self.value
+
+        elif self.value == "struct":
+            return self.value
+
+        elif self.value == "union":
+            return self.value
+
+        elif self.value == "exception":
+            return self.value
+
+        elif self.value == "service":
+            return self.value
+
+        else:
+            print("unexpected token in keyword token led")
+            import sys
+            sys.exit()
+
+
+class EOFToken(Token):
+
+    # @staticmethod
+    def nud(self):
+        return ["end of header instructions"]
+
+    def __str__(self):
+        return "EOF token"
+
+
+'''lexer'''
 
 
 def regex_cropper(regex, string):
@@ -208,7 +276,7 @@ def get_tokens(source_code_path):
     have_i_eaten = False
 
     while True:
-        print(source_code.replace("\n", "\\n"))
+        # print(source_code.replace("\n", "\\n"))
 
         if source_code == "":
             print("lexer; ok")
@@ -230,8 +298,7 @@ def get_tokens(source_code_path):
                      "netstd", "perl", "php", "py.twisted", "py", "rb", "st", "xsd"]
                 for elem in t:
                     if source_code.startswith(elem):
-                        output.append(NamespaceScopeToken("NamespaceScope",
-                                                          row_number, elem))
+                        output.append(NamespaceScopeToken("NamespaceScope", row_number, elem))
                         source_code = source_code[len(elem):]
                         break
 
@@ -457,9 +524,7 @@ def get_tokens(source_code_path):
     return output
 
 
-###########
-# parser
-###########
+'''parser'''
 
 
 def get_next_token():
@@ -481,6 +546,23 @@ def get_next_token():
     return curr_token
 
 
+def match_multiple(expected_tokens=None):
+    global token
+
+    print(expected_tokens)
+
+    if expected_tokens and type(token) in expected_tokens:
+        print("match for ", token.value, "ok")
+        print("match at index ", expected_tokens.index(type(token)))
+        value = token.value
+
+    else:
+        value = "err: skip"
+
+    token = get_next_token()
+    return value
+
+
 def match(tok=None):
     """
     checks if next token is expected token
@@ -490,11 +572,11 @@ def match(tok=None):
     """
     global token
 
-    if tok and tok != type(token):
+    if tok and isinstance(tok, type(token)):
+        # if tok and tok != type(token):
         value = "err: skip"
 
     else:
-        print("match for", token.value, "ok")
 
         value = token.value
 
@@ -502,37 +584,16 @@ def match(tok=None):
     return value
 
 
-def match_exact_current_t(value):
-    global token
-
-    print("+++ match_exact +++")
-    print(value)
-    print(token.value)
-
-    if value != token.value:
-        print("not expected value")
-        raise SyntaxError("Expected " + str(value))
-
-    # token = get_next_token()
-
-
 def get_ast():
     print("\033[92m+++ PARSER +++\033[0m")
     print()
 
     global tokens
-    print("+++ tokens +++")
-    [print(i) for i in tokens]
-    print()
-
     global token
     token = get_next_token()
     print("+++ token +++\n" + str(token) + "\n")
 
     ret = expression()
-
-    print("+++ output +++")
-    print("output:", ret)
 
     return ret
 
@@ -548,22 +609,49 @@ def expression(rbp=0):
     t = token
     token = get_next_token()
     left = t.nud()
+
+    print("pre  while token", token)
+
     while rbp < token.lbp:
         t = token
         token = get_next_token()
         left = t.led(left)
+
+        print("post while token", token)
+
     return left
 
 
+def fn(items, level=0):
+    for item in items:
+        if isinstance(item, list):
+            fn(item, level + 1)
+        else:
+            indentation = " " * level
+            print('%s%s' % (indentation, item))
+
+
 if __name__ == '__main__':
+    source_code_path = "../resources/thrift_source_code_samples//reduced.thrift"
+
+    print("+++ source +++")
+    [print(i[:-1]) for i in open(source_code_path).readlines()]
+    print()
+
     global tokens
-    tokens = get_tokens("../resources/thrift_source_code_samples//simple.thrift")
+    tokens = get_tokens(source_code_path)
+    print()
+
+    print("+++ tokens +++")
+    [print(i) for i in tokens]
+    print()
 
     global token
     global token_pointer
     token_pointer = 0
 
-    ast = get_ast()
+    ast = ["DOCUMENT", ["HeaderManager", get_ast()], ["DefinitionManager", get_ast()]]
 
     print("+++ ast +++")
-    [print(i) for i in ast]
+    print(ast)
+    fn(ast)
