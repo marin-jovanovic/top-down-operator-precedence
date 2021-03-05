@@ -557,7 +557,7 @@ def expression(rbp=0):
 
 if __name__ == '__main__':
     global tokens
-    tokens = get_tokens("../resources/thrift_source_code_samples//simple.thrift")
+    tokens = get_tokens("../resources/thrift_source_code_samples/simple.thrift")
 
     global token
     global token_pointer

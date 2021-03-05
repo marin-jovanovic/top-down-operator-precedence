@@ -78,6 +78,22 @@ class IdentifierToken(Token):
         #             expression()
         #             ]
 
+        if left == "const":
+
+            identifier = match(IdentifierToken)
+
+            equal = match(EqualToken)
+
+
+
+
+
+            return ["Definition", [
+                "Const", ["\"const\"", "FieldType", ["Identifier", [self.value]], "Identifier", [identifier],
+                          equal, "ConstValue", [], "ListSeparator", []]
+            ], "DefinitionManager", expression()]
+
+
         if left == "service":
 
 
@@ -655,3 +671,5 @@ if __name__ == '__main__':
     print("+++ ast +++")
     print(ast)
     fn(ast)
+
+

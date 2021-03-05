@@ -1,0 +1,18 @@
+comment: comment line starts with "comment:"
+comment: empty lines are permitted
+
+comment: if next token occurs which is not expected parser will try to find one of the following tokens
+comment: and start parsing from that token
+
+include
+cpp_include
+namespace
+
+const
+typedef
+enum
+senum
+struct
+union
+exception
+service

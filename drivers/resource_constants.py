@@ -25,5 +25,12 @@ TOKENS = {(line[:-1] if line.count(" ") == 0 else (line[:-1].split(" ", 1))[1]):
 
 # BNF_PATH = "..\\resources\\thrift_BNF.txt"
 
+synchronization_tokens_path = "../resources/synchronization_tokens.txt"
+SYNCHRONIZATION_TOKENS = []
+
+for i in open(synchronization_tokens_path).readlines():
+    if not (i.startswith("comment:") or i.isspace()):
+        SYNCHRONIZATION_TOKENS.append(i[:-1])
+
 if __name__ == '__main__':
     [print(k, "->", v) for k, v in TOKENS.items()]
