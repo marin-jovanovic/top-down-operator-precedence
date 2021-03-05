@@ -4,12 +4,6 @@ from drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
 
 # fixme nested comments in parser
 
-
-###########
-# token classes
-###########
-
-
 LBP = {
     # "KeywordToken": 1
     "LiteralToken": 1
@@ -20,6 +14,8 @@ LBP = {
     ,
     "EOFToken": -1
 }
+
+''' token classes '''
 
 
 class Token(object):

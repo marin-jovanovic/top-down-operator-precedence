@@ -876,7 +876,7 @@ def fn(items, level=0):
 
 
 if __name__ == '__main__':
-    source_code_path = "../resources/thrift_source_code_samples//reduced.thrift"
+    source_code_path = "../../resources/thrift_source_code_samples/reduced.thrift"
 
     print("+++ source +++")
     [print(i[:-1]) for i in open(source_code_path).readlines()]
