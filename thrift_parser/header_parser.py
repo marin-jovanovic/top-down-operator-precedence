@@ -31,10 +31,7 @@ class Token(object):
 
 
 class BaseTypeToken(Token):
-
-    def nud(self):
-        print("current", token)
-
+    pass
 
 class ColonToken(Token):
     pass
@@ -56,56 +53,7 @@ class FieldReqToken(Token):
     pass
 
 
-class IdentifierToken(Token):
 
-    def led(self, left):
-
-        # if left == "enum":
-        #
-        #     return ["Definition",
-        #             ["Enum", ["\"enum\"",
-        #                       "Identifier",
-        #                       [self.value],
-        #                       match(LeftCurlyBracketToken),
-        #                       "Identifier",
-        #                       match(IdentifierToken)]
-        #              ],
-        #             "DefinitionManager",
-        #             expression()
-        #             ]
-
-        if left == "const":
-
-            identifier = match(IdentifierToken)
-
-            equal = match(EqualToken)
-
-
-
-
-
-            return ["Definition", [
-                "Const", ["\"const\"", "FieldType", ["Identifier", [self.value]], "Identifier", [identifier],
-                          equal, "ConstValue", [], "ListSeparator", []]
-            ], "DefinitionManager", expression()]
-
-
-        if left == "service":
-
-
-            return ["Definition",
-                    ["Service", ["\"service\"", "Identifier", [self.identifier], expression(),
-                                 match(LeftCurlyBracketToken), "FunctionManager", expression(),
-                                 match(RightCurlyBracketToken)]],
-                    "DefinitionManager",
-                    expression()
-            ]
-
-        else:
-
-            print("IdentifierToken led err")
-            import sys
-            sys.exit()
 
 
 class LeftCurlyBracketToken(Token):
@@ -163,10 +111,94 @@ class RightAngleBracketToken(Token):
 class STIdentifierToken(Token):
     pass
 
+class UnderscoreToken(Token):
+    pass
 
 class UpperEToken(Token):
     pass
 
+err_message_not_same_type = "err: wrong type"
+err_message_no_optional_t = "err: no optional token"
+
+
+def optional_match(expected_token):
+    global token
+
+    if isinstance(expected_token, type(token)):
+        value = err_message_no_optional_t
+
+    else:
+        value = token.value
+        token = get_next_token()
+
+    return value
+
+
+
+
+class IdentifierToken(Token):
+
+    def led(self, left):
+
+        # if left == "enum":
+        #
+        #     return ["Definition",
+        #             ["Enum", ["\"enum\"",
+        #                       "Identifier",
+        #                       [self.value],
+        #                       match(LeftCurlyBracketToken),
+        #                       "Identifier",
+        #                       match(IdentifierToken)]
+        #              ],
+        #             "DefinitionManager",
+        #             expression()
+        #             ]
+
+        if left == "const":
+            identifier = match(IdentifierToken)
+
+            equal = match(EqualToken)
+
+            if not optional_match(PlusToken) == err_message_no_optional_t:
+
+                return ["Definition", [
+                "Const", ["\"const\"", "FieldType", ["Identifier", [self.value]], "Identifier", [identifier],
+                          equal, "ConstValue", ["IntConstant", ["+", match(DigitToken)]], "ListSeparator",
+                          [optional_match(ListSeparatorToken)]]
+            ], "DefinitionManager", expression()]
+
+            elif not optional_match(MinusToken) == err_message_no_optional_t:
+
+                return ["Definition", [
+                    "Const", ["\"const\"", "FieldType", ["Identifier", [self.value]], "Identifier", [identifier],
+                              equal, "ConstValue", ["IntConstant", ["-", match(DigitToken)]], "ListSeparator",
+                              [optional_match(ListSeparatorToken)]]
+                ], "DefinitionManager", expression()]
+
+
+            constValue
+
+
+            return ["Definition", [
+                "Const", ["\"const\"", "FieldType", ["Identifier", [self.value]], "Identifier", [identifier],
+                          equal, "ConstValue", [], "ListSeparator", []]
+            ], "DefinitionManager", expression()]
+
+        if left == "service":
+
+            return ["Definition",
+                    ["Service", ["\"service\"", "Identifier", [self.identifier], expression(),
+                                 match(LeftCurlyBracketToken), "FunctionManager", expression(),
+                                 match(RightCurlyBracketToken)]],
+                    "DefinitionManager",
+                    expression()
+                    ]
+
+        else:
+
+            print("IdentifierToken led err")
+            import sys
+            sys.exit()
 
 class NamespaceScopeToken(Token):
 
@@ -178,7 +210,7 @@ class NamespaceScopeToken(Token):
                     ["Include", ["\"include\"", "Literal", [self.value], "Identifier", match(IdentifierToken)]],
                     "HeaderManager",
                     expression()
-            ]
+                    ]
 
         else:
 
@@ -290,148 +322,57 @@ def get_tokens(source_code_path):
     while True:
         # print(source_code.replace("\n", "\\n"))
 
+        # exit condition
         if source_code == "":
             print("lexer; ok")
             break
 
+        #  keywords
         for keyword, keyword_id in TOKENS.items():
-            if keyword == keyword_id and source_code.startswith(keyword):
-                output.append(KeywordToken(keyword_id, row_number, keyword))
-                source_code = source_code[len(keyword):]
-                have_i_eaten = True
+            if have_i_eaten:
                 break
+
+
+            if keyword == keyword_id:
+                # keyword
+
+                if source_code.startswith(keyword):
+                    print(keyword, "->", keyword_id)
+                    output.append(KeywordToken(keyword_id, row_number, keyword))
+                    source_code = source_code[len(keyword):]
+                    have_i_eaten = True
+
+            else:
+
+                if len(keyword.split(" ")) == 1:
+                    # non regex
+
+                    if source_code.startswith(keyword):
+                        print(keyword, "->", keyword_id)
+                        exec("output.append(" + keyword_id + "Token(keyword_id, row_number, keyword))")
+                        source_code = source_code[len(keyword):]
+                        have_i_eaten = True
+
+                else:
+                    # regex
+                    if re.match(re.compile(keyword[2:]), source_code):
+                        print(keyword, "->", keyword_id)
+                        m = re.search(re.compile(keyword[2:]), source_code).group()
+                        exec("output.append(" + keyword_id + "Token(keyword_id, row_number, m))")
+
+                        source_code = source_code[len(m):]
+                        have_i_eaten = True
+
+
+        # print(output)
+        # [print(i) for i in output]
+        # import sys
+        # sys.exit()
 
         if not have_i_eaten:
 
-            if source_code.startswith(("*", "c_glib", "cpp", "delphi", "haxe", "go", "java", "js", "lua",
-                                       "netstd", "perl", "php", "py.twisted", "py", "rb", "st", "xsd")):
-
-                t = ["*", "c_glib", "cpp", "delphi", "haxe", "go", "java", "js", "lua",
-                     "netstd", "perl", "php", "py.twisted", "py", "rb", "st", "xsd"]
-                for elem in t:
-                    if source_code.startswith(elem):
-                        output.append(NamespaceScopeToken("NamespaceScope", row_number, elem))
-                        source_code = source_code[len(elem):]
-                        break
-
-                have_i_eaten = True
-
-            elif source_code.startswith("="):
-                output.append(EqualToken("equal", row_number, "="))
-                source_code = source_code[1:]
-
-                have_i_eaten = True
-
-            elif source_code.startswith("{"):
-                output.append(LeftCurlyBracketToken("left_curly_bracket", row_number, "{"))
-                source_code = source_code[1:]
-                have_i_eaten = True
-
-            elif source_code.startswith("}"):
-                output.append(RightCurlyBracketToken("right_curly_bracket", row_number, "}"))
-                source_code = source_code[1:]
-                have_i_eaten = True
-
-            elif source_code.startswith("("):
-                output.append(LeftRoundBracketToken("left_round_bracket", row_number, "("))
-                source_code = source_code[1:]
-                have_i_eaten = True
-
-            elif source_code.startswith(")"):
-                output.append(RightRoundBracketToken("right_round_bracket", row_number, ")"))
-                source_code = source_code[1:]
-                have_i_eaten = True
-
-            elif source_code.startswith("["):
-                output.append(LeftSquareBracketToken("left_square_bracket", row_number, "["))
-                source_code = source_code[1:]
-                have_i_eaten = True
-
-            elif source_code.startswith("]"):
-                output.append(RightSquareBracketToken("right_square_bracket", row_number, "]"))
-                source_code = source_code[1:]
-                have_i_eaten = True
-
-            elif source_code.startswith("<"):
-                output.append(LeftAngleBracketToken("left_angle_bracket", row_number, "<"))
-                source_code = source_code[1:]
-                have_i_eaten = True
-
-            elif source_code.startswith(">"):
-                output.append(RightAngleBracketToken("right_angle_bracket", row_number, ">"))
-                source_code = source_code[1:]
-                have_i_eaten = True
-
-            elif source_code.startswith(":"):
-                output.append(ColonToken("colon", row_number, ":"))
-                source_code = source_code[1:]
-                have_i_eaten = True
-
-            elif source_code.startswith(("required", "optional")):
-
-                t = ["required", "optional"]
-
-                for elem in t:
-                    if source_code.startswith(elem):
-                        output.append(NamespaceScopeToken("FieldReq",
-                                                          row_number, elem))
-                        source_code = source_code[len(elem):]
-                        break
-
-                have_i_eaten = True
-
-            elif source_code.startswith(("bool", "byte", "i8", "i16", "i32", "i64", "double", "string",
-                                         "binary", "slist")):
-
-                t = ["bool", "byte", "i8", "i16", "i32", "i64", "double", "string", "binary", "slist"]
-                for elem in t:
-                    if source_code.startswith(elem):
-                        output.append(BaseTypeToken("BaseType", row_number, elem))
-                        source_code = source_code[len(elem):]
-                        break
-
-                have_i_eaten = True
-
-            # fixme comma vs list separator
-            elif source_code.startswith((",", ";")):
-                t = [",", ";"]
-                for elem in t:
-                    if source_code.startswith(elem):
-                        output.append(BaseTypeToken("ListSeparator", row_number, elem))
-                        source_code = source_code[len(elem):]
-                        break
-
-                # output.append(resources.token_classes.CommaToken(keyword_id, row_number, match))
-                # source_code = source_code[1:]
-                have_i_eaten = True
-
-            elif source_code.startswith("+"):
-                output.append(PlusToken("plus", row_number, "+"))
-                source_code = source_code[1:]
-                have_i_eaten = True
-
-            elif source_code.startswith("-"):
-                output.append(MinusToken("minus", row_number, "-"))
-                source_code = source_code[1:]
-                have_i_eaten = True
-
-            elif source_code.startswith("."):
-                output.append(DotToken("dot", row_number, "."))
-                source_code = source_code[1:]
-                have_i_eaten = True
-
-            elif source_code.startswith("e"):
-                output.append(LowerEToken("lower_e", row_number, "e"))
-                source_code = source_code[1:]
-                have_i_eaten = True
-
-            elif source_code.startswith("E"):
-                output.append(UpperEToken("upper_e", row_number, "E"))
-                source_code = source_code[1:]
-                have_i_eaten = True
-
             # functional actions
-            elif source_code.startswith((" ", "\t")):
+            if source_code.startswith((" ", "\t")):
                 # space, indentation
 
                 source_code = source_code[1:]
@@ -471,61 +412,58 @@ def get_tokens(source_code_path):
 
                 have_i_eaten = True
 
-            else:
-                # regex
-
-                # regex = "\' [^\']* \'"
-                # token = resources.token_classes.DigitToken("Digit", row_number, "t")
-
-                if re.match("\" [^\"]* \"", source_code):
-                    t = source_code[:re.match("\" [^\"]* \"", source_code).end()]
-                    output.append(LiteralToken("Literal", row_number, t))
-                    source_code = regex_cropper("\" [^\"]* \"", source_code)
-
-                # elif re.match(regex, source_code):
-                #     t = source_code[:re.match(regex, source_code).end()]
-                #     output.append(resources.token_classes.LiteralToken("Literal", row_number, t))
-                #     source_code = regex_cropper(regex, source_code)
-
-                elif re.match("\' [^\']* \'", source_code):
-                    t = source_code[:re.match("\' [^\']* \'", source_code).end()]
-                    output.append(LiteralToken("Literal", row_number, t))
-                    source_code = regex_cropper("\' [^\']* \'", source_code)
-
-                elif re.match("\"[^\"]*\"", source_code):
-                    t = source_code[:re.match("\"[^\"]*\"", source_code).end()]
-                    output.append(LiteralToken("Literal", row_number, t))
-                    source_code = regex_cropper("\"[^\"]*\"", source_code)
-
-                elif re.match("\'[^\']*\'", source_code):
-                    t = source_code[:re.match("\'[^\']*\'", source_code).end()]
-                    output.append(LiteralToken("Literal", row_number, t))
-                    source_code = regex_cropper("\'[^\']*\'", source_code)
-
-                elif re.match("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_)*", source_code):
-                    t = source_code[:re.match("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_)*", source_code).end()]
-                    output.append(IdentifierToken("Identifier", row_number, t))
-                    source_code = regex_cropper("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_)*", source_code)
-
-                elif re.match("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_|-)*", source_code):
-                    t = source_code[:re.match("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_|-)*", source_code).end()]
-                    output.append(STIdentifierToken("STIdentifier", row_number, t))
-                    source_code = regex_cropper("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_|-)*", source_code)
-
-                elif re.match("[a-zA-Z]", source_code):
-                    t = source_code[:re.match("[a-zA-Z]", source_code).end()]
-                    output.append(LetterToken("Letter", row_number, t))
-                    source_code = regex_cropper("[a-zA-Z]", source_code)
-
-                elif re.match("[0-9]", source_code):
-                    t = source_code[:re.match("[0-9]", source_code).end()]
-                    output.append(DigitToken("Digit", row_number, t))
-                    source_code = regex_cropper("[0-9]", source_code)
-
-                else:
-                    pass
-
-                have_i_eaten = True
+            # else:
+            #     # regex
+            #
+            #     if re.match("\" [^\"]* \"", source_code):
+            #         t = source_code[:re.match("\" [^\"]* \"", source_code).end()]
+            #         output.append(LiteralToken("Literal", row_number, t))
+            #         source_code = regex_cropper("\" [^\"]* \"", source_code)
+            #
+            #     elif re.match("\' [^\']* \'", source_code):
+            #         t = source_code[:re.match("\' [^\']* \'", source_code).end()]
+            #         output.append(LiteralToken("Literal", row_number, t))
+            #         source_code = regex_cropper("\' [^\']* \'", source_code)
+            #
+            #     elif re.match("\"[^\"]*\"", source_code):
+            #         t = source_code[:re.match("\"[^\"]*\"", source_code).end()]
+            #         output.append(LiteralToken("Literal", row_number, t))
+            #         source_code = regex_cropper("\"[^\"]*\"", source_code)
+            #
+            #     elif re.match("\'[^\']*\'", source_code):
+            #         t = source_code[:re.match("\'[^\']*\'", source_code).end()]
+            #         output.append(LiteralToken("Literal", row_number, t))
+            #         source_code = regex_cropper("\'[^\']*\'", source_code)
+            #
+            #
+            #
+            #
+            #
+            #
+            #     elif re.match("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_)*", source_code):
+            #         t = source_code[:re.match("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_)*", source_code).end()]
+            #         output.append(IdentifierToken("Identifier", row_number, t))
+            #         source_code = regex_cropper("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_)*", source_code)
+            #
+            #     elif re.match("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_|-)*", source_code):
+            #         t = source_code[:re.match("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_|-)*", source_code).end()]
+            #         output.append(STIdentifierToken("STIdentifier", row_number, t))
+            #         source_code = regex_cropper("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_|-)*", source_code)
+            #
+            #     elif re.match("[a-zA-Z]", source_code):
+            #         t = source_code[:re.match("[a-zA-Z]", source_code).end()]
+            #         output.append(LetterToken("Letter", row_number, t))
+            #         source_code = regex_cropper("[a-zA-Z]", source_code)
+            #
+            #     elif re.match("[0-9]", source_code):
+            #         t = source_code[:re.match("[0-9]", source_code).end()]
+            #         output.append(DigitToken("Digit", row_number, t))
+            #         source_code = regex_cropper("[0-9]", source_code)
+            #
+            #     else:
+            #         pass
+            #
+            #     have_i_eaten = True
 
         if not have_i_eaten:
             print("error while lexing?")
@@ -642,6 +580,21 @@ def fn(items, level=0):
             indentation = " " * level
             print('%s%s' % (indentation, item))
 
+def group_tokens(tokens):
+    formatted_tokens = []
+
+    for i, token in enumerate(tokens):
+        print(i, token)
+
+        if token == LetterToken or token == UnderscoreToken:
+            t = token.value
+            i += 1
+
+            while tokens[i] in (LetterToken, DigitToken, DotToken, UnderscoreToken, MinusToken):
+                t += tokens[i]
+                i += 1
+
+            formatted_tokens.append(STIdentifierToken)
 
 if __name__ == '__main__':
     source_code_path = "../resources/thrift_source_code_samples//reduced.thrift"
@@ -654,18 +607,18 @@ if __name__ == '__main__':
     tokens = get_tokens(source_code_path)
     print()
 
+    # tokens = group_tokens(tokens)
+
     print("+++ tokens +++")
     [print(i) for i in tokens]
     print()
 
-    global token
-    global token_pointer
-    token_pointer = 0
-
-    ast = ["DOCUMENT", ["HeaderManager", get_ast()], ["DefinitionManager", get_ast()]]
-
-    print("+++ ast +++")
-    print(ast)
-    fn(ast)
-
-
+    # global token
+    # global token_pointer
+    # token_pointer = 0
+    #
+    # ast = ["DOCUMENT", ["HeaderManager", get_ast()], ["DefinitionManager", get_ast()]]
+    #
+    # print("+++ ast +++")
+    # print(ast)
+    # fn(ast)

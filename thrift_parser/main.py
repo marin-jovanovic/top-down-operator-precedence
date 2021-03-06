@@ -196,8 +196,6 @@ class EqualToken(Token):
     pass
 
 
-
-
 class FieldReqToken(Token):
     pass
 
@@ -267,12 +265,20 @@ class STIdentifierToken(Token):
 class UpperEToken(Token):
     pass
 
+mismatch_err_message = "err"
 
 class NamespaceScopeToken(Token):
 
     def led(self, left):
 
         if left == "namespace":
+
+            identifier = match(IdentifierToken)
+            #
+            # if identifier == mismatch_err_message:
+            #     print("mismatch")
+            #
+            #     return [mismatch_err_message, expression()]
 
             return ["Header",
                     ["Include", ["\"include\"", "Literal", [self.value], "Identifier", match(IdentifierToken)]],
@@ -320,6 +326,7 @@ class KeywordToken(Token):
 
     def nud(self):
 
+        '''header'''
         if self.value == "include":
             return self.value
 
@@ -329,7 +336,8 @@ class KeywordToken(Token):
         elif self.value == "namespace":
             return self.value
 
-        elif self.value == "const":
+        '''definition'''
+        if self.value == "const":
             return self.value
 
         elif self.value == "typedef":
@@ -796,13 +804,20 @@ def match(tok=None):
 
     if tok and isinstance(tok, type(token)):
         # if tok and tok != type(token):
-        value = "err: skip"
+        value = "err: mismatch"
+
+        print("err mismatch")
+
+        import sys
+        sys.exit()
+
+
 
     else:
 
         value = token.value
 
-    token = get_next_token()
+        token = get_next_token()
     return value
 
 
@@ -845,7 +860,6 @@ def expression(rbp=0):
         print("post while token", token)
 
     return left
-
 
 
 def fn(items, level=0):
