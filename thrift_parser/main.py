@@ -395,12 +395,12 @@ def get_tokens(source_code_path):
 
     have_i_eaten = False
 
-    while True:
+    while source_code != "":
         # print(source_code.replace("\n", "\\n"))
 
-        if source_code == "":
-            print("lexer; ok")
-            break
+        # if source_code == "":
+        #     print("lexer; ok")
+        #     break
 
         for keyword, keyword_id in TOKENS.items():
             if keyword == keyword_id and source_code.startswith(keyword):
@@ -640,6 +640,8 @@ def get_tokens(source_code_path):
             break
 
         have_i_eaten = False
+
+    print("lexer done")
 
     return output
 

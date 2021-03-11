@@ -117,6 +117,9 @@ class UnderscoreToken(Token):
 class UpperEToken(Token):
     pass
 
+class IntConstantToken(Token):
+    pass
+
 err_message_not_same_type = "err: wrong type"
 err_message_no_optional_t = "err: no optional token"
 
@@ -176,7 +179,7 @@ class IdentifierToken(Token):
                 ], "DefinitionManager", expression()]
 
 
-            constValue
+            # constValue
 
 
             return ["Definition", [
@@ -308,6 +311,109 @@ def regex_cropper(regex, string):
     return string[re.match(regex, string).end():] if re.match(regex, string) else string
 
 
+# def get_tokens(source_code_path):
+#     print("\033[92m+++ LEXER +++\033[0m")
+#
+#     '''string of source code'''
+#     source_code = "".join([line for line in open(source_code_path).readlines()])
+#     output = []
+#
+#     row_number = 1
+#
+#     have_i_eaten = False
+#
+#     while not source_code == "":
+#
+#         #  keywords
+#         for keyword, keyword_id in TOKENS.items():
+#             if have_i_eaten:
+#                 break
+#
+#             if keyword == keyword_id:
+#                 # keyword
+#
+#                 if source_code.startswith(keyword):
+#                     print(keyword, "->", keyword_id)
+#                     output.append(KeywordToken(keyword_id, row_number, keyword))
+#                     source_code = source_code[len(keyword):]
+#                     have_i_eaten = True
+#
+#             else:
+#
+#                 if len(keyword.split(" ")) == 1:
+#                     # non regex
+#
+#                     if source_code.startswith(keyword):
+#                         print(keyword, "->", keyword_id)
+#                         exec("output.append(" + keyword_id + "Token(keyword_id, row_number, keyword))")
+#                         source_code = source_code[len(keyword):]
+#                         have_i_eaten = True
+#
+#                 else:
+#                     # regex
+#                     if re.match(re.compile(keyword[2:]), source_code):
+#                         print(keyword, "->", keyword_id)
+#                         m = re.search(re.compile(keyword[2:]), source_code).group()
+#                         exec("output.append(" + keyword_id + "Token(keyword_id, row_number, m))")
+#
+#                         source_code = source_code[len(m):]
+#                         have_i_eaten = True
+#
+#         if not have_i_eaten:
+#
+#             # functional actions
+#             if source_code.startswith((" ", "\t")):
+#                 # space, indentation
+#
+#                 source_code = source_code[1:]
+#
+#                 have_i_eaten = True
+#
+#             elif source_code.startswith("\n"):
+#                 # new row
+#
+#                 source_code = source_code[1:]
+#                 row_number += 1
+#
+#                 have_i_eaten = True
+#
+#             elif source_code.startswith("#") or source_code.startswith("//"):
+#                 # single line comment
+#
+#                 while not source_code.startswith("\n"):
+#                     source_code = source_code[1:]
+#
+#                 source_code = source_code[1:]
+#                 row_number += 1
+#                 have_i_eaten = True
+#
+#             elif source_code.startswith("/*"):
+#                 # multiline comment
+#
+#                 source_code = source_code[2:]
+#                 # todo check if row starts with "*"
+#                 while not source_code.startswith("*/"):
+#                     if source_code.startswith("\n"):
+#                         row_number += 1
+#                     source_code = source_code[1:]
+#
+#                 # handles */
+#                 source_code = source_code[2:]
+#
+#                 have_i_eaten = True
+#
+#
+#         if not have_i_eaten:
+#             print("error while lexing?")
+#             break
+#
+#         have_i_eaten = False
+#
+#     print("lexing done")
+#
+#     return output
+
+
 def get_tokens(source_code_path):
     print("\033[92m+++ LEXER +++\033[0m")
 
@@ -315,164 +421,56 @@ def get_tokens(source_code_path):
     source_code = "".join([line for line in open(source_code_path).readlines()])
     output = []
 
-    row_number = 1
+    r = "../resources/thrift_source_code_samples/reduced.thrift"
 
-    have_i_eaten = False
+    row_number = 0
 
-    while True:
-        # print(source_code.replace("\n", "\\n"))
+    # todo multiline comments and nested mulitline comments
 
-        # exit condition
-        if source_code == "":
-            print("lexer; ok")
-            break
+    for line in [i.replace("\n", "") for i in open(source_code_path).readlines()]:
+        row_number += 1
 
-        #  keywords
-        for keyword, keyword_id in TOKENS.items():
-            if have_i_eaten:
+        print(row_number, line.split(" "))
+
+        # is_comment_activated = False
+        for t in line.split(" "):
+
+            if t == "//":
+                # single line comment
                 break
 
+            for keyword, keyword_id in TOKENS.items():
+                # if have_i_eaten:
+                #     break
 
-            if keyword == keyword_id:
-                # keyword
+                if keyword == keyword_id:
+                    # keyword
 
-                if source_code.startswith(keyword):
-                    print(keyword, "->", keyword_id)
-                    output.append(KeywordToken(keyword_id, row_number, keyword))
-                    source_code = source_code[len(keyword):]
-                    have_i_eaten = True
+                    if t == keyword:
 
-            else:
+                        # print(keyword, "->", keyword_id)
+                        output.append(KeywordToken(keyword_id, row_number, keyword))
+                        break
 
-                if len(keyword.split(" ")) == 1:
-                    # non regex
+                elif len(keyword.split(" ")) == 1:
+                        # non regex
 
-                    if source_code.startswith(keyword):
-                        print(keyword, "->", keyword_id)
-                        exec("output.append(" + keyword_id + "Token(keyword_id, row_number, keyword))")
-                        source_code = source_code[len(keyword):]
-                        have_i_eaten = True
+                        if t == keyword:
 
-                else:
+                            # print(keyword, "->", keyword_id)
+                            exec("output.append(" + keyword_id + "Token(keyword_id, row_number, keyword))")
+                            break
+
+                elif re.match(re.compile(keyword[2:]), t):
                     # regex
-                    if re.match(re.compile(keyword[2:]), source_code):
-                        print(keyword, "->", keyword_id)
-                        m = re.search(re.compile(keyword[2:]), source_code).group()
-                        exec("output.append(" + keyword_id + "Token(keyword_id, row_number, m))")
 
-                        source_code = source_code[len(m):]
-                        have_i_eaten = True
+                    # print(keyword, "->", keyword_id)
+                    exec("output.append(" + keyword_id + "Token(keyword_id, row_number, t))")
+                    break
 
-
-        # print(output)
-        # [print(i) for i in output]
-        # import sys
-        # sys.exit()
-
-        if not have_i_eaten:
-
-            # functional actions
-            if source_code.startswith((" ", "\t")):
-                # space, indentation
-
-                source_code = source_code[1:]
-
-                have_i_eaten = True
-
-            elif source_code.startswith("\n"):
-                # new row
-
-                source_code = source_code[1:]
-                row_number += 1
-
-                have_i_eaten = True
-
-            elif source_code.startswith("#") or source_code.startswith("//"):
-                # single line comment
-
-                while not source_code.startswith("\n"):
-                    source_code = source_code[1:]
-
-                source_code = source_code[1:]
-                row_number += 1
-                have_i_eaten = True
-
-            elif source_code.startswith("/*"):
-                # multiline comment
-
-                source_code = source_code[2:]
-                # todo check if row starts with "*"
-                while not source_code.startswith("*/"):
-                    if source_code.startswith("\n"):
-                        row_number += 1
-                    source_code = source_code[1:]
-
-                # handles */
-                source_code = source_code[2:]
-
-                have_i_eaten = True
-
-            # else:
-            #     # regex
-            #
-            #     if re.match("\" [^\"]* \"", source_code):
-            #         t = source_code[:re.match("\" [^\"]* \"", source_code).end()]
-            #         output.append(LiteralToken("Literal", row_number, t))
-            #         source_code = regex_cropper("\" [^\"]* \"", source_code)
-            #
-            #     elif re.match("\' [^\']* \'", source_code):
-            #         t = source_code[:re.match("\' [^\']* \'", source_code).end()]
-            #         output.append(LiteralToken("Literal", row_number, t))
-            #         source_code = regex_cropper("\' [^\']* \'", source_code)
-            #
-            #     elif re.match("\"[^\"]*\"", source_code):
-            #         t = source_code[:re.match("\"[^\"]*\"", source_code).end()]
-            #         output.append(LiteralToken("Literal", row_number, t))
-            #         source_code = regex_cropper("\"[^\"]*\"", source_code)
-            #
-            #     elif re.match("\'[^\']*\'", source_code):
-            #         t = source_code[:re.match("\'[^\']*\'", source_code).end()]
-            #         output.append(LiteralToken("Literal", row_number, t))
-            #         source_code = regex_cropper("\'[^\']*\'", source_code)
-            #
-            #
-            #
-            #
-            #
-            #
-            #     elif re.match("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_)*", source_code):
-            #         t = source_code[:re.match("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_)*", source_code).end()]
-            #         output.append(IdentifierToken("Identifier", row_number, t))
-            #         source_code = regex_cropper("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_)*", source_code)
-            #
-            #     elif re.match("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_|-)*", source_code):
-            #         t = source_code[:re.match("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_|-)*", source_code).end()]
-            #         output.append(STIdentifierToken("STIdentifier", row_number, t))
-            #         source_code = regex_cropper("([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_|-)*", source_code)
-            #
-            #     elif re.match("[a-zA-Z]", source_code):
-            #         t = source_code[:re.match("[a-zA-Z]", source_code).end()]
-            #         output.append(LetterToken("Letter", row_number, t))
-            #         source_code = regex_cropper("[a-zA-Z]", source_code)
-            #
-            #     elif re.match("[0-9]", source_code):
-            #         t = source_code[:re.match("[0-9]", source_code).end()]
-            #         output.append(DigitToken("Digit", row_number, t))
-            #         source_code = regex_cropper("[0-9]", source_code)
-            #
-            #     else:
-            #         pass
-            #
-            #     have_i_eaten = True
-
-        if not have_i_eaten:
-            print("error while lexing?")
-            break
-
-        have_i_eaten = False
+    print("lexing done")
 
     return output
-
 
 '''parser'''
 

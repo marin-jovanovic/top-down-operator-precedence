@@ -86,11 +86,9 @@ BaseType string
 BaseType binary
 BaseType slist
 
-comment: Literal r \" [^\"]* \"
-comment: Literal r \' [^\']* \'
-Literal r \"[^\"]*\"
-Literal r \'[^\']*\'
-Identifier r ([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_)*
+IntConstant r (\+|-)?[0-9]+
+Literal r (\"[^\"]*\")|(\'[^\']*\')
 STIdentifier r ([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_|-)*
+Identifier r ([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_)*
 Letter r [a-zA-Z]
 Digit r [0-9]

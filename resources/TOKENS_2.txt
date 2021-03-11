@@ -1,0 +1,121 @@
+comment: if one token in line
+comment:    keyword
+comment: if two tokens in line
+comment:    first token = token name
+comment:    second token = token value
+comment:
+comment: if three tokens in line
+comment:    first token = token name
+comment:    second token =
+comment:    third token = regex value
+comment: fixme comma vs list separator
+
+Keyword
+	include
+	cpp_include
+	namespace
+	const
+	typedef
+	enum
+	senum
+	struct
+	xsd_all
+	union
+	exception
+	service
+	extends
+	list
+	map
+	set
+	cpp_type
+	xsd_optional
+	xsd_nillable
+	xsd_attrs
+	oneway
+	void
+	throws
+
+NamespaceScope
+	\*
+	c_glib
+	cpp
+	delphi
+	haxe
+	go
+	java
+	js
+	lua
+	netstd
+	perl
+	php
+	py.twisted
+	py
+	rb
+	st
+	xsd
+
+LeftCurlyBracket 
+	{
+RightCurlyBracket 
+	}
+LeftRoundBracket 
+	\(
+RightRoundBracket 
+	\)
+LeftSquareBracket 
+	\[
+RightSquareBracket 
+	\]
+LeftAngleBracket 
+	<
+RightAngleBracket 
+	>
+Equal 
+	=
+Underscore 
+	_
+Colon 
+	:
+Plus 
+	\+
+Minus 
+	-
+Dot 
+	\.
+UpperE 
+	E
+LowerE 
+	e
+
+ListSeparator
+	,
+	;
+
+FieldReq
+	required
+	optional
+
+BaseType
+	bool
+	byte
+	i8
+	i16
+	i32
+	i64
+	double
+	string
+	binary
+	slist
+
+IntConstant 
+	(\+|-)?[0-9]+
+Literal 
+	(\"[^\"]*\")|(\'[^\']*\')
+Identifier
+	([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_)*
+STIdentifier 
+	([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_|-)*
+Letter 
+	[a-zA-Z]
+Digit 
+	[0-9]
