@@ -265,7 +265,9 @@ class STIdentifierToken(Token):
 class UpperEToken(Token):
     pass
 
+
 mismatch_err_message = "err"
+
 
 class NamespaceScopeToken(Token):
 

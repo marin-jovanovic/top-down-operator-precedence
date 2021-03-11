@@ -27,11 +27,13 @@ class Token(object):
         self.lbp = LBP.get(self.__class__.__name__)
 
     def __str__(self):
-        return self.identifier + " " + str(self.row) + " " + self.value
+        return "{:20} {:10}   {:10}".format(self.identifier, self.row, self.value)
+        # return self.identifier + " " + str(self.row) + " " + self.value
 
 
 class BaseTypeToken(Token):
     pass
+
 
 class ColonToken(Token):
     pass
@@ -51,9 +53,6 @@ class EqualToken(Token):
 
 class FieldReqToken(Token):
     pass
-
-
-
 
 
 class LeftCurlyBracketToken(Token):
@@ -111,14 +110,18 @@ class RightAngleBracketToken(Token):
 class STIdentifierToken(Token):
     pass
 
+
 class UnderscoreToken(Token):
     pass
+
 
 class UpperEToken(Token):
     pass
 
+
 class IntConstantToken(Token):
     pass
+
 
 err_message_not_same_type = "err: wrong type"
 err_message_no_optional_t = "err: no optional token"
@@ -135,8 +138,6 @@ def optional_match(expected_token):
         token = get_next_token()
 
     return value
-
-
 
 
 class IdentifierToken(Token):
@@ -165,10 +166,10 @@ class IdentifierToken(Token):
             if not optional_match(PlusToken) == err_message_no_optional_t:
 
                 return ["Definition", [
-                "Const", ["\"const\"", "FieldType", ["Identifier", [self.value]], "Identifier", [identifier],
-                          equal, "ConstValue", ["IntConstant", ["+", match(DigitToken)]], "ListSeparator",
-                          [optional_match(ListSeparatorToken)]]
-            ], "DefinitionManager", expression()]
+                    "Const", ["\"const\"", "FieldType", ["Identifier", [self.value]], "Identifier", [identifier],
+                              equal, "ConstValue", ["IntConstant", ["+", match(DigitToken)]], "ListSeparator",
+                              [optional_match(ListSeparatorToken)]]
+                ], "DefinitionManager", expression()]
 
             elif not optional_match(MinusToken) == err_message_no_optional_t:
 
@@ -178,9 +179,7 @@ class IdentifierToken(Token):
                               [optional_match(ListSeparatorToken)]]
                 ], "DefinitionManager", expression()]
 
-
             # constValue
-
 
             return ["Definition", [
                 "Const", ["\"const\"", "FieldType", ["Identifier", [self.value]], "Identifier", [identifier],
@@ -202,6 +201,7 @@ class IdentifierToken(Token):
             print("IdentifierToken led err")
             import sys
             sys.exit()
+
 
 class NamespaceScopeToken(Token):
 
@@ -307,132 +307,23 @@ class EOFToken(Token):
 '''lexer'''
 
 
-def regex_cropper(regex, string):
-    return string[re.match(regex, string).end():] if re.match(regex, string) else string
-
-
-# def get_tokens(source_code_path):
-#     print("\033[92m+++ LEXER +++\033[0m")
-#
-#     '''string of source code'''
-#     source_code = "".join([line for line in open(source_code_path).readlines()])
-#     output = []
-#
-#     row_number = 1
-#
-#     have_i_eaten = False
-#
-#     while not source_code == "":
-#
-#         #  keywords
-#         for keyword, keyword_id in TOKENS.items():
-#             if have_i_eaten:
-#                 break
-#
-#             if keyword == keyword_id:
-#                 # keyword
-#
-#                 if source_code.startswith(keyword):
-#                     print(keyword, "->", keyword_id)
-#                     output.append(KeywordToken(keyword_id, row_number, keyword))
-#                     source_code = source_code[len(keyword):]
-#                     have_i_eaten = True
-#
-#             else:
-#
-#                 if len(keyword.split(" ")) == 1:
-#                     # non regex
-#
-#                     if source_code.startswith(keyword):
-#                         print(keyword, "->", keyword_id)
-#                         exec("output.append(" + keyword_id + "Token(keyword_id, row_number, keyword))")
-#                         source_code = source_code[len(keyword):]
-#                         have_i_eaten = True
-#
-#                 else:
-#                     # regex
-#                     if re.match(re.compile(keyword[2:]), source_code):
-#                         print(keyword, "->", keyword_id)
-#                         m = re.search(re.compile(keyword[2:]), source_code).group()
-#                         exec("output.append(" + keyword_id + "Token(keyword_id, row_number, m))")
-#
-#                         source_code = source_code[len(m):]
-#                         have_i_eaten = True
-#
-#         if not have_i_eaten:
-#
-#             # functional actions
-#             if source_code.startswith((" ", "\t")):
-#                 # space, indentation
-#
-#                 source_code = source_code[1:]
-#
-#                 have_i_eaten = True
-#
-#             elif source_code.startswith("\n"):
-#                 # new row
-#
-#                 source_code = source_code[1:]
-#                 row_number += 1
-#
-#                 have_i_eaten = True
-#
-#             elif source_code.startswith("#") or source_code.startswith("//"):
-#                 # single line comment
-#
-#                 while not source_code.startswith("\n"):
-#                     source_code = source_code[1:]
-#
-#                 source_code = source_code[1:]
-#                 row_number += 1
-#                 have_i_eaten = True
-#
-#             elif source_code.startswith("/*"):
-#                 # multiline comment
-#
-#                 source_code = source_code[2:]
-#                 # todo check if row starts with "*"
-#                 while not source_code.startswith("*/"):
-#                     if source_code.startswith("\n"):
-#                         row_number += 1
-#                     source_code = source_code[1:]
-#
-#                 # handles */
-#                 source_code = source_code[2:]
-#
-#                 have_i_eaten = True
-#
-#
-#         if not have_i_eaten:
-#             print("error while lexing?")
-#             break
-#
-#         have_i_eaten = False
-#
-#     print("lexing done")
-#
-#     return output
+# def regex_cropper(regex, string):
+#     return string[re.match(regex, string).end():] if re.match(regex, string) else string
 
 
 def get_tokens(source_code_path):
     print("\033[92m+++ LEXER +++\033[0m")
 
-    '''string of source code'''
-    source_code = "".join([line for line in open(source_code_path).readlines()])
     output = []
-
-    r = "../resources/thrift_source_code_samples/reduced.thrift"
-
     row_number = 0
 
-    # todo multiline comments and nested mulitline comments
+    # todo multiline comments and nested multiline comments, multiline comment starts with * ?
 
     for line in [i.replace("\n", "") for i in open(source_code_path).readlines()]:
         row_number += 1
 
         print(row_number, line.split(" "))
 
-        # is_comment_activated = False
         for t in line.split(" "):
 
             if t == "//":
@@ -451,39 +342,10 @@ def get_tokens(source_code_path):
             if not is_matched:
                 print("no match")
 
-
-            # for keyword, keyword_id in TOKENS.items():
-            #     # if have_i_eaten:
-            #     #     break
-            #
-            #     if keyword == keyword_id:
-            #         # keyword
-            #
-            #         if t == keyword:
-            #
-            #             # print(keyword, "->", keyword_id)
-            #             output.append(KeywordToken(keyword_id, row_number, keyword))
-            #             break
-            #
-            #     elif len(keyword.split(" ")) == 1:
-            #             # non regex
-            #
-            #             if t == keyword:
-            #
-            #                 # print(keyword, "->", keyword_id)
-            #                 exec("output.append(" + keyword_id + "Token(keyword_id, row_number, keyword))")
-            #                 break
-            #
-            #     elif re.match(re.compile(keyword[2:]), t):
-            #         # regex
-            #
-            #         # print(keyword, "->", keyword_id)
-            #         exec("output.append(" + keyword_id + "Token(keyword_id, row_number, t))")
-            #         break
-
     print("lexing done")
 
     return output
+
 
 '''parser'''
 
@@ -591,6 +453,7 @@ def fn(items, level=0):
             indentation = " " * level
             print('%s%s' % (indentation, item))
 
+
 def group_tokens(tokens):
     formatted_tokens = []
 
@@ -606,6 +469,7 @@ def group_tokens(tokens):
                 i += 1
 
             formatted_tokens.append(STIdentifierToken)
+
 
 if __name__ == '__main__':
     source_code_path = "../resources/thrift_source_code_samples//reduced.thrift"
