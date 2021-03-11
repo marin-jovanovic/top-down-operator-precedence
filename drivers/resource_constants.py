@@ -51,7 +51,6 @@ def get_tokens():
         if line.startswith("comment:") or line.isspace():
             continue
 
-        # key = line[:-1]
         key = str(line).strip()
         i += 1
 
@@ -78,6 +77,4 @@ def get_tokens():
 TOKENS = get_tokens()
 
 if __name__ == '__main__':
-    # get_tokens()
-
     [print(k + " -> " + v) for k, v in TOKENS.items()]

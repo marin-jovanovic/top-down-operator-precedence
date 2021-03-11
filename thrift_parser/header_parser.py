@@ -439,34 +439,47 @@ def get_tokens(source_code_path):
                 # single line comment
                 break
 
-            for keyword, keyword_id in TOKENS.items():
-                # if have_i_eaten:
-                #     break
+            is_matched = False
 
-                if keyword == keyword_id:
-                    # keyword
-
-                    if t == keyword:
-
-                        # print(keyword, "->", keyword_id)
-                        output.append(KeywordToken(keyword_id, row_number, keyword))
-                        break
-
-                elif len(keyword.split(" ")) == 1:
-                        # non regex
-
-                        if t == keyword:
-
-                            # print(keyword, "->", keyword_id)
-                            exec("output.append(" + keyword_id + "Token(keyword_id, row_number, keyword))")
-                            break
-
-                elif re.match(re.compile(keyword[2:]), t):
-                    # regex
-
-                    # print(keyword, "->", keyword_id)
-                    exec("output.append(" + keyword_id + "Token(keyword_id, row_number, t))")
+            for k, v in TOKENS.items():
+                if re.match(v, t):
+                    print(re.match(v, t))
+                    exec("output.append(" + k + "Token(t, row_number, t))")
+                    is_matched = True
                     break
+
+            if not is_matched:
+                print("no match")
+
+
+            # for keyword, keyword_id in TOKENS.items():
+            #     # if have_i_eaten:
+            #     #     break
+            #
+            #     if keyword == keyword_id:
+            #         # keyword
+            #
+            #         if t == keyword:
+            #
+            #             # print(keyword, "->", keyword_id)
+            #             output.append(KeywordToken(keyword_id, row_number, keyword))
+            #             break
+            #
+            #     elif len(keyword.split(" ")) == 1:
+            #             # non regex
+            #
+            #             if t == keyword:
+            #
+            #                 # print(keyword, "->", keyword_id)
+            #                 exec("output.append(" + keyword_id + "Token(keyword_id, row_number, keyword))")
+            #                 break
+            #
+            #     elif re.match(re.compile(keyword[2:]), t):
+            #         # regex
+            #
+            #         # print(keyword, "->", keyword_id)
+            #         exec("output.append(" + keyword_id + "Token(keyword_id, row_number, t))")
+            #         break
 
     print("lexing done")
 
