@@ -334,7 +334,7 @@ def get_tokens(source_code_path):
 
             for k, v in TOKENS.items():
                 if re.match(v, t):
-                    print(re.match(v, t))
+                    # print(re.match(v, t))
                     exec("output.append(" + k + "Token(t, row_number, t))")
                     is_matched = True
                     break
@@ -488,12 +488,12 @@ if __name__ == '__main__':
     [print(i) for i in tokens]
     print()
 
-    # global token
-    # global token_pointer
-    # token_pointer = 0
-    #
-    # ast = ["DOCUMENT", ["HeaderManager", get_ast()], ["DefinitionManager", get_ast()]]
-    #
-    # print("+++ ast +++")
-    # print(ast)
-    # fn(ast)
+    global token
+    global token_pointer
+    token_pointer = 0
+
+    ast = ["DOCUMENT", ["HeaderManager", get_ast()], ["DefinitionManager", get_ast()]]
+
+    print("+++ ast +++")
+    print(ast)
+    fn(ast)

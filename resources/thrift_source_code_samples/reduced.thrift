@@ -1,13 +1,3 @@
-+
-"test"
-'test'
-a---
-am--....
-ammfma___dff
-a
-ab
-1
-12
 include "incl0"
 include "incl1"
 include "incl2"
