@@ -210,7 +210,8 @@ class NamespaceScopeToken(Token):
         if left == "namespace":
 
             return ["Header",
-                    ["Include", ["\"include\"", "Literal", [self.value], "Identifier", match(IdentifierToken)]],
+                    ["Namespace", ["\"namespace\"", "NamespaceScope",
+                    [self.value], "Identifier", [match(IdentifierToken)]]],
                     "HeaderManager",
                     expression()
                     ]
@@ -493,7 +494,7 @@ if __name__ == '__main__':
     # source_code_path = "../resources/thrift_source_code_samples//reduced.thrift"
 
     test_prefix = "../tests/"
-    test_name = "include2"
+    test_name = "namespace"
 
     source_code_path = test_prefix + test_name + ".in"
     result = test_prefix + test_name + ".out"
