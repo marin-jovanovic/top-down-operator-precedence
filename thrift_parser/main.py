@@ -203,6 +203,12 @@ class FieldReqToken(Token):
 class IdentifierToken(Token):
 
     def nud(self):
+
+        print(classmethod.__name__, "; nud;", self)
+
+
+
+
         print("id")
 
 
@@ -891,7 +897,7 @@ if __name__ == '__main__':
     """
 
     # source_code_path = "../resources/thrift_source_code_samples//reduced.thrift"
-    source_code_path = "../tests/include2.in"
+    source_code_path = "../tests/include.in"
 
     print_blue("--- source code ---")
     print(open(source_code_path).read())

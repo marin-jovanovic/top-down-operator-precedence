@@ -444,15 +444,16 @@ def expression(rbp=0):
 
     return left
 
-
+RESULT = []
 def fn(items, level=0):
+    global RESULT
     for item in items:
         if isinstance(item, list):
             fn(item, level + 1)
         else:
             indentation = " " * level
             print('%s%s' % (indentation, item))
-
+            RESULT.append('%s%s' % (indentation, item))
 
 def group_tokens(tokens):
     formatted_tokens = []
@@ -471,29 +472,97 @@ def group_tokens(tokens):
             formatted_tokens.append(STIdentifierToken)
 
 
+"""other functions"""
+
+def print_green(data):
+    print("\033[92m"+data+  "\033[0m")
+
+
+def print_blue(data):
+    print("\33[34m" + data + "\033[0m")
+
+
+def print_red(data):
+    print("\33[31m" + data + "\033[0m")
+
+
 if __name__ == '__main__':
-    source_code_path = "../resources/thrift_source_code_samples//reduced.thrift"
+    """load source code
+    """
 
-    print("+++ source +++")
-    [print(i[:-1]) for i in open(source_code_path).readlines()]
-    print()
+    # source_code_path = "../resources/thrift_source_code_samples//reduced.thrift"
 
-    global tokens
+    test_prefix = "../tests/"
+    test_name = "include2"
+
+    source_code_path = test_prefix + test_name + ".in"
+    result = test_prefix + test_name + ".out"
+        # "../tests/include.out"
+
+    print_blue("--- source code ---")
+    print(open(source_code_path).read())
+
+    """lexer
+    """
     tokens = get_tokens(source_code_path)
     print()
 
-    # tokens = group_tokens(tokens)
-
-    print("+++ tokens +++")
+    print_blue("--- tokens ---")
     [print(i) for i in tokens]
     print()
 
-    global token
-    global token_pointer
+    """parser
+    """
     token_pointer = 0
 
-    ast = ["DOCUMENT", ["HeaderManager", get_ast()], ["DefinitionManager", get_ast()]]
+    ast = ["Document", ["HeaderManager", get_ast()], ["DefinitionManager", "todo"]]
 
     print("+++ ast +++")
     print(ast)
     fn(ast)
+
+    print(RESULT)
+
+    is_ok = True
+    [print(i) for i in RESULT]
+    print()
+
+    t = [i for i in open(result).read().split("\n")]
+    print(RESULT)
+    print(t)
+
+    for i, token in enumerate((open(result).read().split("\n"))[:-1]):
+        if token == RESULT[i]:
+            continue
+        else:
+            is_ok = False
+            print("NOT SAME")
+
+    print(is_ok)
+
+
+    # source_code_path = "../resources/thrift_source_code_samples//reduced.thrift"
+    #
+    # print("+++ source +++")
+    # [print(i[:-1]) for i in open(source_code_path).readlines()]
+    # print()
+    #
+    # global tokens
+    # tokens = get_tokens(source_code_path)
+    # print()
+    #
+    # # tokens = group_tokens(tokens)
+    #
+    # print("+++ tokens +++")
+    # [print(i) for i in tokens]
+    # print()
+    #
+    # global token
+    # global token_pointer
+    # token_pointer = 0
+    #
+    # ast = ["DOCUMENT", ["HeaderManager", get_ast()], ["DefinitionManager", get_ast()]]
+    #
+    # print("+++ ast +++")
+    # print(ast)
+    # fn(ast)

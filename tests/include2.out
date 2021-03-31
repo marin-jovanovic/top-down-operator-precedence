@@ -1,0 +1,17 @@
+Document
+ HeaderManager
+  Header
+   Include
+    "include"
+    Literal
+     "t_include_"
+  HeaderManager
+   Header
+    CppInclude
+     "cpp_include"
+     Literal
+      "cpp_include_"
+   HeaderManager
+    end of header instructions
+ DefinitionManager
+ todo
