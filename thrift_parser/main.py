@@ -387,8 +387,7 @@ def regex_cropper(regex, string):
 
 
 def get_tokens(source_code_path):
-    print("\033[92m+++ LEXER +++\033[0m")
-
+    print_green("--- lexer ---")
     '''string of source code'''
     source_code = "".join([line for line in open(source_code_path).readlines()])
     output = []
@@ -836,9 +835,6 @@ def get_ast():
 
     ret = expression()
 
-    # print("+++ output +++")
-    # print("output:", ret)
-
     return ret
 
 
@@ -874,27 +870,46 @@ def fn(items, level=0):
             indentation = " " * level
             print('%s%s' % (indentation, item))
 
+"""other functions"""
+
+def print_green(data):
+    print("\033[92m"+data+  "\033[0m")
+
+
+def print_blue(data):
+    print("\33[34m" + data + "\033[0m")
+
+
+def print_red(data):
+    print("\33[31m" + data + "\033[0m")
+
+
+"""main"""
 
 if __name__ == '__main__':
-    source_code_path = "../resources/thrift_source_code_samples//reduced.thrift"
+    """load source code
+    """
 
-    print("+++ source +++")
-    [print(i[:-1]) for i in open(source_code_path).readlines()]
-    print()
+    # source_code_path = "../resources/thrift_source_code_samples//reduced.thrift"
+    source_code_path = "../tests/include2.in"
 
-    global tokens
+    print_blue("--- source code ---")
+    print(open(source_code_path).read())
+
+    """lexer
+    """
     tokens = get_tokens(source_code_path)
     print()
 
-    print("+++ tokens +++")
+    print_blue("--- tokens ---")
     [print(i) for i in tokens]
     print()
 
-    global token
-    global token_pointer
+    """parser
+    """
     token_pointer = 0
 
-    ast = ["DOCUMENT", ["HeaderManager", get_ast()]]
+    ast = ["DOCUMENT", ["HeaderManager", get_ast()], ["DefinitionManager", "todo"]]
 
     print("+++ ast +++")
     print(ast)
