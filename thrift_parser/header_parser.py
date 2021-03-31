@@ -27,7 +27,8 @@ class Token(object):
         self.lbp = LBP.get(self.__class__.__name__)
 
     def __str__(self):
-        return "{:20} {:10}   {:10}".format(self.identifier, self.row, self.value)
+        return "{:20} {:10}   {:10}".format(self.identifier, self.row,
+                                            self.value)
         # return self.identifier + " " + str(self.row) + " " + self.value
 
 
@@ -123,23 +124,6 @@ class IntConstantToken(Token):
     pass
 
 
-err_message_not_same_type = "err: wrong type"
-err_message_no_optional_t = "err: no optional token"
-
-
-def optional_match(expected_token):
-    global token
-
-    if isinstance(expected_token, type(token)):
-        value = err_message_no_optional_t
-
-    else:
-        value = token.value
-        token = get_next_token()
-
-    return value
-
-
 class IdentifierToken(Token):
 
     def led(self, left):
@@ -166,31 +150,41 @@ class IdentifierToken(Token):
             if not optional_match(PlusToken) == err_message_no_optional_t:
 
                 return ["Definition", [
-                    "Const", ["\"const\"", "FieldType", ["Identifier", [self.value]], "Identifier", [identifier],
-                              equal, "ConstValue", ["IntConstant", ["+", match(DigitToken)]], "ListSeparator",
-                              [optional_match(ListSeparatorToken)]]
+                    "Const",
+                    ["\"const\"", "FieldType", ["Identifier", [self.value]],
+                     "Identifier", [identifier],
+                     equal, "ConstValue",
+                     ["IntConstant", ["+", match(DigitToken)]], "ListSeparator",
+                     [optional_match(ListSeparatorToken)]]
                 ], "DefinitionManager", expression()]
 
             elif not optional_match(MinusToken) == err_message_no_optional_t:
 
                 return ["Definition", [
-                    "Const", ["\"const\"", "FieldType", ["Identifier", [self.value]], "Identifier", [identifier],
-                              equal, "ConstValue", ["IntConstant", ["-", match(DigitToken)]], "ListSeparator",
-                              [optional_match(ListSeparatorToken)]]
+                    "Const",
+                    ["\"const\"", "FieldType", ["Identifier", [self.value]],
+                     "Identifier", [identifier],
+                     equal, "ConstValue",
+                     ["IntConstant", ["-", match(DigitToken)]], "ListSeparator",
+                     [optional_match(ListSeparatorToken)]]
                 ], "DefinitionManager", expression()]
 
             # constValue
 
             return ["Definition", [
-                "Const", ["\"const\"", "FieldType", ["Identifier", [self.value]], "Identifier", [identifier],
-                          equal, "ConstValue", [], "ListSeparator", []]
+                "Const",
+                ["\"const\"", "FieldType", ["Identifier", [self.value]],
+                 "Identifier", [identifier],
+                 equal, "ConstValue", [], "ListSeparator", []]
             ], "DefinitionManager", expression()]
 
         if left == "service":
 
             return ["Definition",
-                    ["Service", ["\"service\"", "Identifier", [self.identifier], expression(),
-                                 match(LeftCurlyBracketToken), "FunctionManager", expression(),
+                    ["Service", ["\"service\"", "Identifier", [self.identifier],
+                                 expression(),
+                                 match(LeftCurlyBracketToken),
+                                 "FunctionManager", expression(),
                                  match(RightCurlyBracketToken)]],
                     "DefinitionManager",
                     expression()
@@ -211,7 +205,8 @@ class NamespaceScopeToken(Token):
 
             return ["Header",
                     ["Namespace", ["\"namespace\"", "NamespaceScope",
-                    [self.value], "Identifier", [match(IdentifierToken)]]],
+                                   [self.value], "Identifier",
+                                   [match(IdentifierToken)]]],
                     "HeaderManager",
                     expression()
                     ]
@@ -238,7 +233,8 @@ class LiteralToken(Token):
         elif left == "cpp_include":
 
             return ["Header",
-                    ["CppInclude", ["\"cpp_include\"", "Literal", [self.value]]],
+                    ["CppInclude",
+                     ["\"cpp_include\"", "Literal", [self.value]]],
                     "HeaderManager",
                     expression()
                     ]
@@ -304,6 +300,25 @@ class EOFToken(Token):
     def __str__(self):
         return "EOF token"
 
+"""other"""
+
+
+err_message_not_same_type = "err: wrong type"
+err_message_no_optional_t = "err: no optional token"
+
+
+def optional_match(expected_token):
+    global token
+
+    if isinstance(expected_token, type(token)):
+        value = err_message_no_optional_t
+
+    else:
+        value = token.value
+        token = get_next_token()
+
+    return value
+
 
 '''lexer'''
 
@@ -320,7 +335,8 @@ def get_tokens(source_code_path):
 
     # todo multiline comments and nested multiline comments, multiline comment starts with * ?
 
-    for line in [i.replace("\n", "") for i in open(source_code_path).readlines()]:
+    for line in [i.replace("\n", "") for i in
+                 open(source_code_path).readlines()]:
         row_number += 1
 
         print(row_number, line.split(" "))
@@ -408,7 +424,7 @@ def match(tok=None):
     return value
 
 
-def get_ast():
+def get_head_ast():
     print("\033[92m+++ PARSER +++\033[0m")
     print()
 
@@ -445,7 +461,10 @@ def expression(rbp=0):
 
     return left
 
+
 RESULT = []
+
+
 def fn(items, level=0):
     global RESULT
     for item in items:
@@ -455,6 +474,7 @@ def fn(items, level=0):
             indentation = " " * level
             print('%s%s' % (indentation, item))
             RESULT.append('%s%s' % (indentation, item))
+
 
 def group_tokens(tokens):
     formatted_tokens = []
@@ -466,7 +486,8 @@ def group_tokens(tokens):
             t = token.value
             i += 1
 
-            while tokens[i] in (LetterToken, DigitToken, DotToken, UnderscoreToken, MinusToken):
+            while tokens[i] in (
+            LetterToken, DigitToken, DotToken, UnderscoreToken, MinusToken):
                 t += tokens[i]
                 i += 1
 
@@ -475,8 +496,9 @@ def group_tokens(tokens):
 
 """other functions"""
 
+
 def print_green(data):
-    print("\033[92m"+data+  "\033[0m")
+    print("\033[92m" + data + "\033[0m")
 
 
 def print_blue(data):
@@ -487,18 +509,20 @@ def print_red(data):
     print("\33[31m" + data + "\033[0m")
 
 
+def get_definition_ast():
+    return ["todo"]
+
+
 if __name__ == '__main__':
     """load source code
     """
 
-    # source_code_path = "../resources/thrift_source_code_samples//reduced.thrift"
-
     test_prefix = "../tests/"
-    test_name = "namespace"
+    test_name = "typedef"
 
     source_code_path = test_prefix + test_name + ".in"
     result = test_prefix + test_name + ".out"
-        # "../tests/include.out"
+    # "../tests/include.out"
 
     print_blue("--- source code ---")
     print(open(source_code_path).read())
@@ -516,7 +540,8 @@ if __name__ == '__main__':
     """
     token_pointer = 0
 
-    ast = ["Document", ["HeaderManager", get_ast()], ["DefinitionManager", "todo"]]
+    ast = ["Document", ["HeaderManager", get_head_ast()],
+           ["DefinitionManager", get_definition_ast()]]
 
     print("+++ ast +++")
     print(ast)
@@ -540,7 +565,6 @@ if __name__ == '__main__':
             print("NOT SAME")
 
     print(is_ok)
-
 
     # source_code_path = "../resources/thrift_source_code_samples//reduced.thrift"
     #
