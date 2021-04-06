@@ -438,8 +438,10 @@ def get_head_ast():
     return ret
 
 
-def expression(rbp=0):
+def expression(rbp=0, name):
     """
+    main driver
+
     try matching by prefix for current token
 
     :param rbp:
@@ -450,8 +452,8 @@ def expression(rbp=0):
     token = get_next_token()
     left = t.nud()
 
-    print("pre  while token", token)
-
+    print("pre  while token", token, token.lbp)
+    print("rbp", rbp)
     while rbp < token.lbp:
         t = token
         token = get_next_token()
