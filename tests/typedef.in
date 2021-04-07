@@ -1,4 +1,2 @@
 include "incl"
-
-enum i__dentifier { }
-typedef bool varijabla
+include "incl"

@@ -17,7 +17,7 @@ def fn(items, level=0, result=[]):
             fn(item, level + 1, result)
         else:
             indentation = " " * level
-            print('%s%s' % (indentation, item))
+            # print('%s%s' % (indentation, item))
             result.append('%s%s' % (indentation, item))
 
     return result

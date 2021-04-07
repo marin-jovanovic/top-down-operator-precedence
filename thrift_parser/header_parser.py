@@ -10,10 +10,12 @@ IDENTIFIER_PREFIX = "ID__"
 #     super().__init__(NAMESPACE_PREFIX + identifier, row, value)
 
 LBP = {
-    "LiteralToken": 2,
-    "NamespaceScopeToken": 2,
-    "EOFToken": -1,
-    # "IdentifierToken": 1
+    "Literal": 1,
+    "NamespaceScope": 1,
+    "EOF": -1,
+    "Identifier": 1,
+    "BaseType": 1,
+    "Keyword": 1
     }
 
 def isBaseTypeToken(data):
@@ -33,7 +35,15 @@ class Token(object):
         self.identifier = identifier
         self.row = row
         self.value = value
-        self.lbp = LBP.get(self.__class__.__name__)
+        # t = self.__class__.__name__
+        # print(t)
+        # print(t[:-5])
+        # import sys
+        # sys.exit()
+        # print(self.__class__.__name__)
+
+        # token has length of 5
+        self.lbp = LBP.get(self.__class__.__name__[:-5])
 
     def __str__(self):
         return "{:20} {:10}   {:10}".format(self.identifier, self.row,
@@ -68,6 +78,9 @@ class EqualToken(Token):
 
 
 class FieldReqToken(Token):
+    pass
+
+class IntConstantToken(Token):
     pass
 
 
@@ -135,8 +148,7 @@ class UpperEToken(Token):
     pass
 
 
-class IntConstantToken(Token):
-    pass
+
 
 
 """used classes"""
@@ -147,6 +159,8 @@ class BaseTypeToken(Token):
     def __init__(self, identifier, row, value):
         super().__init__(BASETYPE_PREFIX + identifier, row, value)
 
+    def led(self, left):
+        return self.value
 
 class IdentifierToken(Token):
 
@@ -155,19 +169,9 @@ class IdentifierToken(Token):
 
     def led(self, left):
 
-        # if left == "enum":
-        #
-        #     return ["Definition",
-        #             ["Enum", ["\"enum\"",
-        #                       "Identifier",
-        #                       [self.value],
-        #                       match(LeftCurlyBracketToken),
-        #                       "Identifier",
-        #                       match(IdentifierToken)]
-        #              ],
-        #             "DefinitionManager",
-        #             expression()
-        #             ]
+        # print("left", left)
+
+
 
         if left == "const":
             identifier = match(IdentifierToken)
@@ -205,7 +209,7 @@ class IdentifierToken(Token):
                  equal, "ConstValue", [], "ListSeparator", []]
             ], "DefinitionManager", expression()]
 
-        if left == "service":
+        elif left == "service":
 
             return ["Definition",
                     ["Service", ["\"service\"", "Identifier", [self.identifier],
@@ -217,8 +221,23 @@ class IdentifierToken(Token):
                     expression()
                     ]
 
+        elif left == "enum":
+
+            return ["Definition",
+                    ["Enum", ["\"enum\"",
+                              "Identifier",
+                              [self.value],
+                              match(LeftCurlyBracketToken),
+                              "Identifier",
+                              match(IdentifierToken)]
+                     ],
+                    "DefinitionManager",
+                    expression()
+                    ]
+
         elif isBaseTypeToken(left):
             print("left is base type token")
+            # self.lbp = 5
 
 
 
@@ -228,6 +247,23 @@ class IdentifierToken(Token):
             print("IdentifierToken led err")
             import sys
             sys.exit()
+
+    def nud(self):
+        print(self)
+
+        # import sys
+        # sys.exit()
+
+        return [
+            "nud identifier", match(LeftCurlyBracketToken), "check todo", match(RightCurlyBracketToken),
+
+        "caption manager",
+
+            expression(),
+
+            "caption manager"
+
+        ]
 
 
 class NamespaceScopeToken(Token):
@@ -243,8 +279,13 @@ class NamespaceScopeToken(Token):
                                    [self.value], "Identifier",
                                    [match(IdentifierToken)]]],
                     "HeaderManager",
+                    expression(HEADER_RBP),
+                    "definition part",
                     expression()
                     ]
+
+        # ast = ["Document", ["HeaderManager", get_head_ast()],
+        #        ["DefinitionManager", get_definition_ast()]]
 
         else:
 
@@ -253,25 +294,63 @@ class NamespaceScopeToken(Token):
             sys.exit()
 
 
+DEFINITION_STARTERS = ["const", "typedef", "enum", "senum", "struct", "union",
+                       "exception", "service"]
+
 class LiteralToken(Token):
+    #
+# enum i__dentifier { }
+# typedef bool varijabla
+
 
     def led(self, left):
 
         if left == "include":
 
-            return ["Header",
-                    ["Include", ["\"include\"", "Literal", [self.value]]],
-                    "HeaderManager",
-                    expression()
-                    ]
+            print(token)
+
+            if token.value in DEFINITION_STARTERS:
+                # start with definitions
+
+
+                return ["Header",
+                             ["Include", ["\"include\"", "Literal", [self.value]]],
+                        "HeaderManager",
+                             ["$"],
+                        "DefinitionManager",
+                            expression(HEADER_RBP)
+
+                        ]
+
+            else:
+                return ["Header",
+                        ["Include", ["\"include\"", "Literal", [self.value]]],
+                        "HeaderManager",
+                        expression(HEADER_RBP)
+                        ]
+
 
         elif left == "cpp_include":
 
-            return ["Header",
+
+            if token.value in DEFINITION_STARTERS:
+                # start with definitions
+
+                return ["Header",
                     ["CppInclude",
                      ["\"cpp_include\"", "Literal", [self.value]]],
                     "HeaderManager",
-                    expression()
+                    ["$"],
+                        "DefinitionManager",
+                        expression(HEADER_RBP)
+                    ]
+
+            else:
+                return ["Header",
+                    ["CppInclude",
+                     ["\"cpp_include\"", "Literal", [self.value]]],
+                    "HeaderManager",
+                    expression(HEADER_RBP)
                     ]
 
         else:
@@ -279,11 +358,28 @@ class LiteralToken(Token):
             import sys
             sys.exit()
 
+    def nud(self):
+        print("ffff")
+        print(token)
+
+        if isinstance(token, EOFToken):
+            print("end of file")
+            return ["eof confirm"]
+
+
+        import sys
+        sys.exit()
+
 
 class KeywordToken(Token):
 
     def __init__(self, identifier, row, value):
         super().__init__(KEYWORDS_PREFIX + identifier, row, value)
+
+    def led(self, left):
+        print("left", left)
+        import sys
+        sys.exit()
 
     def nud(self):
 
@@ -334,7 +430,7 @@ class EOFToken(Token):
 
     # @staticmethod
     def nud(self):
-        return ["end of header instructions"]
+        return ["$ end of header instructions"]
 
     def __str__(self):
         return "EOF token"
@@ -474,11 +570,6 @@ def get_head_ast():
     return ret
 
 
-def get_definition_ast():
-    print_red("entered definition part")
-    return ["todo definition part"]
-
-
 def expression(rbp=0):
     """
     main driver
@@ -493,8 +584,8 @@ def expression(rbp=0):
     token = get_next_token()
     left = t.nud()
 
-    # print("pre  while token", token, token.lbp)
-    # print("rbp", rbp)
+    print("pre  while token", token, token.lbp)
+    print("rbp", rbp)
 
     try:
         temp = rbp < token.lbp
@@ -510,7 +601,7 @@ def expression(rbp=0):
         token = get_next_token()
         left = t.led(left)
 
-        # print("post while token", token)
+        print("post while token", token)
 
         try:
             temp = rbp < token.lbp
@@ -528,18 +619,6 @@ def expression(rbp=0):
 
 
 if __name__ == '__main__':
-    # Document
-    #  HeaderManager
-    #   Header
-    #    Include
-    #     "include"
-    #     Literal
-    #      "incl"
-    #   HeaderManager
-    #    end of header instructions
-    #  DefinitionManager
-    #   tdo definition part
-
     """load source code
     """
 
@@ -567,25 +646,28 @@ if __name__ == '__main__':
     """
     token_pointer = 0
 
-    ast = ["Document", ["HeaderManager", get_head_ast()],
-           ["DefinitionManager", get_definition_ast()]]
+    ast = ["Documentation", get_head_ast()]
 
+    # ast = ["Document", ["HeaderManager", get_head_ast()],
+    #        ["DefinitionManager", get_definition_ast()]]
+    #
     print("+++ ast +++")
-    print(ast)
-    r = fn(ast)
+    # print(ast)
+    ast_printable = fn(ast)
 
-    print(r)
+    # check with .out file
 
     is_ok = True
-    [print(i) for i in r]
+    [print(i) for i in ast_printable]
     print()
 
     t = [i for i in open(result).read().split("\n")]
-    print(r)
+    print(ast_printable)
+
     print(t)
 
     for i, token in enumerate((open(result).read().split("\n"))[:-1]):
-        if token == r[i]:
+        if token == ast_printable[i]:
             continue
         else:
             is_ok = False
