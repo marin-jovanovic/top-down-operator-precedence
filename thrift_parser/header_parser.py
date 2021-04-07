@@ -1,6 +1,13 @@
 import re
 
 from drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
+from thrift_parser.tools import print_blue, print_red, fn
+
+NAMESPACE_PREFIX = "NS__"
+BASETYPE_PREFIX = "BT__"
+
+# def __init__(self, identifier, row, value):
+#     super().__init__(NAMESPACE_PREFIX + identifier, row, value)
 
 # fixme nested comments in parser
 
@@ -12,8 +19,10 @@ LBP = {
 
     # "BaseTypeToken": 0,
     ,
-    "EOFToken": -1
-}
+    "EOFToken": -1,
+    "BaseTypeToken": -5
+
+    }
 
 ''' token classes '''
 
@@ -30,10 +39,6 @@ class Token(object):
         return "{:20} {:10}   {:10}".format(self.identifier, self.row,
                                             self.value)
         # return self.identifier + " " + str(self.row) + " " + self.value
-
-
-class BaseTypeToken(Token):
-    pass
 
 
 class ColonToken(Token):
@@ -124,6 +129,16 @@ class IntConstantToken(Token):
     pass
 
 
+class BaseTypeToken(Token):
+
+    def __init__(self, identifier, row, value):
+        super().__init__(BASETYPE_PREFIX + identifier, row, value)
+
+    def led(self, left):
+        print("left", left)
+        return "left"
+
+
 class IdentifierToken(Token):
 
     def led(self, left):
@@ -198,6 +213,8 @@ class IdentifierToken(Token):
 
 
 class NamespaceScopeToken(Token):
+    def __init__(self, identifier, row, value):
+        super().__init__(NAMESPACE_PREFIX + identifier, row, value)
 
     def led(self, left):
 
@@ -324,7 +341,8 @@ def optional_match(expected_token):
 
 
 # def regex_cropper(regex, string):
-#     return string[re.match(regex, string).end():] if re.match(regex, string) else string
+#     return string[re.match(regex, string).end():] if
+#     re.match(regex, string) else string
 
 
 def get_tokens(source_code_path):
@@ -333,10 +351,11 @@ def get_tokens(source_code_path):
     output = []
     row_number = 0
 
-    # todo multiline comments and nested multiline comments, multiline comment starts with * ?
+    # todo multiline comments and nested multiline comments,
+    #  multiline comment starts with * ?
+    # todo connected lines
 
-    for line in [i.replace("\n", "") for i in
-                 open(source_code_path).readlines()]:
+    for line in open(source_code_path).read().split("\n"):
         row_number += 1
 
         print(row_number, line.split(" "))
@@ -351,7 +370,6 @@ def get_tokens(source_code_path):
 
             for k, v in TOKENS.items():
                 if re.match(v, t):
-                    # print(re.match(v, t))
                     exec("output.append(" + k + "Token(t, row_number, t))")
                     is_matched = True
                     break
@@ -438,7 +456,7 @@ def get_head_ast():
     return ret
 
 
-def expression(rbp=0, name):
+def expression(rbp=0):
     """
     main driver
 
@@ -454,6 +472,17 @@ def expression(rbp=0, name):
 
     print("pre  while token", token, token.lbp)
     print("rbp", rbp)
+
+    try:
+        temp = rbp < token.lbp
+    except TypeError:
+        print_red("no lbp for")
+        print(token)
+
+        import sys
+        sys.exit()
+
+
     while rbp < token.lbp:
         t = token
         token = get_next_token()
@@ -464,51 +493,7 @@ def expression(rbp=0, name):
     return left
 
 
-RESULT = []
-
-
-def fn(items, level=0):
-    global RESULT
-    for item in items:
-        if isinstance(item, list):
-            fn(item, level + 1)
-        else:
-            indentation = " " * level
-            print('%s%s' % (indentation, item))
-            RESULT.append('%s%s' % (indentation, item))
-
-
-def group_tokens(tokens):
-    formatted_tokens = []
-
-    for i, token in enumerate(tokens):
-        print(i, token)
-
-        if token == LetterToken or token == UnderscoreToken:
-            t = token.value
-            i += 1
-
-            while tokens[i] in (
-            LetterToken, DigitToken, DotToken, UnderscoreToken, MinusToken):
-                t += tokens[i]
-                i += 1
-
-            formatted_tokens.append(STIdentifierToken)
-
-
 """other functions"""
-
-
-def print_green(data):
-    print("\033[92m" + data + "\033[0m")
-
-
-def print_blue(data):
-    print("\33[34m" + data + "\033[0m")
-
-
-def print_red(data):
-    print("\33[31m" + data + "\033[0m")
 
 
 def get_definition_ast():
@@ -522,9 +507,10 @@ if __name__ == '__main__':
     test_prefix = "../tests/"
     test_name = "typedef"
 
+    print("opening", test_name)
+
     source_code_path = test_prefix + test_name + ".in"
     result = test_prefix + test_name + ".out"
-    # "../tests/include.out"
 
     print_blue("--- source code ---")
     print(open(source_code_path).read())
@@ -547,49 +533,23 @@ if __name__ == '__main__':
 
     print("+++ ast +++")
     print(ast)
-    fn(ast)
+    r = fn(ast)
 
-    print(RESULT)
+    print(r)
 
     is_ok = True
-    [print(i) for i in RESULT]
+    [print(i) for i in r]
     print()
 
     t = [i for i in open(result).read().split("\n")]
-    print(RESULT)
+    print(r)
     print(t)
 
     for i, token in enumerate((open(result).read().split("\n"))[:-1]):
-        if token == RESULT[i]:
+        if token == r[i]:
             continue
         else:
             is_ok = False
             print("NOT SAME")
 
     print(is_ok)
-
-    # source_code_path = "../resources/thrift_source_code_samples//reduced.thrift"
-    #
-    # print("+++ source +++")
-    # [print(i[:-1]) for i in open(source_code_path).readlines()]
-    # print()
-    #
-    # global tokens
-    # tokens = get_tokens(source_code_path)
-    # print()
-    #
-    # # tokens = group_tokens(tokens)
-    #
-    # print("+++ tokens +++")
-    # [print(i) for i in tokens]
-    # print()
-    #
-    # global token
-    # global token_pointer
-    # token_pointer = 0
-    #
-    # ast = ["DOCUMENT", ["HeaderManager", get_ast()], ["DefinitionManager", get_ast()]]
-    #
-    # print("+++ ast +++")
-    # print(ast)
-    # fn(ast)
