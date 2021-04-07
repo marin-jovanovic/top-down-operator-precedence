@@ -12,16 +12,11 @@ BASETYPE_PREFIX = "BT__"
 # fixme nested comments in parser
 
 LBP = {
-    # "KeywordToken": 1
-    "LiteralToken": 1
-    ,
-    "NamespaceScopeToken": 1
-
-    # "BaseTypeToken": 0,
-    ,
+    "LiteralToken": 1,
+    "NamespaceScopeToken": 1,
     "EOFToken": -1,
-    "BaseTypeToken": -5
-
+    "BaseTypeToken": 1,
+    "IdentifierToken": 1
     }
 
 ''' token classes '''
@@ -38,7 +33,16 @@ class Token(object):
     def __str__(self):
         return "{:20} {:10}   {:10}".format(self.identifier, self.row,
                                             self.value)
-        # return self.identifier + " " + str(self.row) + " " + self.value
+
+    def nud(self):
+        print("todo nud for", self.__class__.__name__)
+        import sys
+        sys.exit()
+
+    def led(self, left):
+        print("todo led for", self.__class__.__name__)
+        import sys
+        sys.exit()
 
 
 class ColonToken(Token):
@@ -138,8 +142,15 @@ class BaseTypeToken(Token):
         print("left", left)
         return "left"
 
+IDENTIFIER_PREFIX = "ID__"
+
+def isBaseTypeToken(data):
+    return data in ["bool", "byte", "i8", "i16", "i32", "i64", "double", "string", "binary", "slist"]
 
 class IdentifierToken(Token):
+
+    def __init__(self, identifier, row, value):
+        super().__init__(IDENTIFIER_PREFIX + identifier, row, value)
 
     def led(self, left):
 
@@ -205,7 +216,13 @@ class IdentifierToken(Token):
                     expression()
                     ]
 
+        elif isBaseTypeToken(left):
+            print("left is base type token")
+
+
+
         else:
+            print(left)
 
             print("IdentifierToken led err")
             import sys
@@ -278,7 +295,11 @@ class KeywordToken(Token):
         elif self.value == "namespace":
             return self.value
 
-        elif self.value == "const":
+        print_red("--- definition part ---")
+
+        """definition part"""
+
+        if self.value == "const":
             return self.value
 
         elif self.value == "typedef":
@@ -489,6 +510,15 @@ def expression(rbp=0):
         left = t.led(left)
 
         print("post while token", token)
+
+        try:
+            temp = rbp < token.lbp
+        except TypeError:
+            print_red("inside while ,no lbp for")
+            print(token)
+
+            import sys
+            sys.exit()
 
     return left
 
