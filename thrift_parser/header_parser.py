@@ -5,20 +5,25 @@ from thrift_parser.tools import print_blue, print_red, fn
 
 NAMESPACE_PREFIX = "NS__"
 BASETYPE_PREFIX = "BT__"
-
+IDENTIFIER_PREFIX = "ID__"
 # def __init__(self, identifier, row, value):
 #     super().__init__(NAMESPACE_PREFIX + identifier, row, value)
 
-# fixme nested comments in parser
-
 LBP = {
-    "LiteralToken": 1,
-    "NamespaceScopeToken": 1,
+    "LiteralToken": 2,
+    "NamespaceScopeToken": 2,
     "EOFToken": -1,
-    "BaseTypeToken": 1,
-    "IdentifierToken": 1
+    # "IdentifierToken": 1
     }
 
+def isBaseTypeToken(data):
+    return data in ["bool", "byte", "i8", "i16", "i32", "i64", "double", "string", "binary", "slist"]
+
+HEADER_RBP = 5
+DEFINITION_RBP = 0
+
+err_message_not_same_type = "err: wrong type"
+err_message_no_optional_t = "err: no optional token"
 ''' token classes '''
 
 
@@ -45,6 +50,7 @@ class Token(object):
         sys.exit()
 
 
+"""unused classes"""
 class ColonToken(Token):
     pass
 
@@ -133,19 +139,14 @@ class IntConstantToken(Token):
     pass
 
 
+"""used classes"""
+
+
 class BaseTypeToken(Token):
 
     def __init__(self, identifier, row, value):
         super().__init__(BASETYPE_PREFIX + identifier, row, value)
 
-    def led(self, left):
-        print("left", left)
-        return "left"
-
-IDENTIFIER_PREFIX = "ID__"
-
-def isBaseTypeToken(data):
-    return data in ["bool", "byte", "i8", "i16", "i32", "i64", "double", "string", "binary", "slist"]
 
 class IdentifierToken(Token):
 
@@ -341,10 +342,6 @@ class EOFToken(Token):
 """other"""
 
 
-err_message_not_same_type = "err: wrong type"
-err_message_no_optional_t = "err: no optional token"
-
-
 def optional_match(expected_token):
     global token
 
@@ -477,6 +474,11 @@ def get_head_ast():
     return ret
 
 
+def get_definition_ast():
+    print_red("entered definition part")
+    return ["todo definition part"]
+
+
 def expression(rbp=0):
     """
     main driver
@@ -491,8 +493,8 @@ def expression(rbp=0):
     token = get_next_token()
     left = t.nud()
 
-    print("pre  while token", token, token.lbp)
-    print("rbp", rbp)
+    # print("pre  while token", token, token.lbp)
+    # print("rbp", rbp)
 
     try:
         temp = rbp < token.lbp
@@ -503,13 +505,12 @@ def expression(rbp=0):
         import sys
         sys.exit()
 
-
     while rbp < token.lbp:
         t = token
         token = get_next_token()
         left = t.led(left)
 
-        print("post while token", token)
+        # print("post while token", token)
 
         try:
             temp = rbp < token.lbp
@@ -526,11 +527,19 @@ def expression(rbp=0):
 """other functions"""
 
 
-def get_definition_ast():
-    return ["todo"]
-
-
 if __name__ == '__main__':
+    # Document
+    #  HeaderManager
+    #   Header
+    #    Include
+    #     "include"
+    #     Literal
+    #      "incl"
+    #   HeaderManager
+    #    end of header instructions
+    #  DefinitionManager
+    #   tdo definition part
+
     """load source code
     """
 
