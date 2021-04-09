@@ -1,14 +1,2 @@
-namespace c_glib TTest
-namespace cpp thrift.test
-namespace delphi Thrift.Test
-namespace go thrifttest
-namespace java thrift.test
-namespace js ThriftTest
-namespace lua ThriftTest
-namespace netstd ThriftTest
-namespace perl ThriftTest
-namespace php ThriftTest
-namespace py ThriftTest
-namespace py.twisted ThriftTest
-namespace rb Thrift.Test
-namespace st ThriftTest
+include "temp"
+include "t2"

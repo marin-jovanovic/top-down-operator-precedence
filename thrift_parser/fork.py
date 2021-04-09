@@ -151,9 +151,6 @@ class UpperEToken(Token):
     pass
 
 
-
-
-
 """used classes"""
 
 
@@ -163,7 +160,8 @@ class BaseTypeToken(Token):
         super().__init__(BASETYPE_PREFIX + identifier, row, value)
 
     def led(self, left):
-        return self.value
+        pass
+        # return self.value
 
 class IdentifierToken(Token):
 
@@ -171,99 +169,100 @@ class IdentifierToken(Token):
         super().__init__(IDENTIFIER_PREFIX + identifier, row, value)
 
     def led(self, left):
-
+        pass
         # print("left", left)
 
 
-
-        if left == "const":
-            identifier = match(IdentifierToken)
-
-            equal = match(EqualToken)
-
-            if not optional_match(PlusToken) == err_message_no_optional_t:
-
-                return ["Definition", [
-                    "Const",
-                    ["\"const\"", "FieldType", ["Identifier", [self.value]],
-                     "Identifier", [identifier],
-                     equal, "ConstValue",
-                     ["IntConstant", ["+", match(DigitToken)]], "ListSeparator",
-                     [optional_match(ListSeparatorToken)]]
-                ], "DefinitionManager", expression()]
-
-            elif not optional_match(MinusToken) == err_message_no_optional_t:
-
-                return ["Definition", [
-                    "Const",
-                    ["\"const\"", "FieldType", ["Identifier", [self.value]],
-                     "Identifier", [identifier],
-                     equal, "ConstValue",
-                     ["IntConstant", ["-", match(DigitToken)]], "ListSeparator",
-                     [optional_match(ListSeparatorToken)]]
-                ], "DefinitionManager", expression()]
-
-            # constValue
-
-            return ["Definition", [
-                "Const",
-                ["\"const\"", "FieldType", ["Identifier", [self.value]],
-                 "Identifier", [identifier],
-                 equal, "ConstValue", [], "ListSeparator", []]
-            ], "DefinitionManager", expression()]
-
-        elif left == "service":
-
-            return ["Definition",
-                    ["Service", ["\"service\"", "Identifier", [self.identifier],
-                                 expression(),
-                                 match(LeftCurlyBracketToken),
-                                 "FunctionManager", expression(),
-                                 match(RightCurlyBracketToken)]],
-                    "DefinitionManager",
-                    expression()
-                    ]
-
-        elif left == "enum":
-
-            return ["Definition",
-                    ["Enum", ["\"enum\"",
-                              "Identifier",
-                              [self.value],
-                              match(LeftCurlyBracketToken),
-                              "Identifier",
-                              match(IdentifierToken)]
-                     ],
-                    "DefinitionManager",
-                    expression()
-                    ]
-
-        elif isBaseTypeToken(left):
-            print("left is base type token")
-            # self.lbp = 5
-
-
-
-        else:
-            print(left)
-
-            print("IdentifierToken led err")
-            import sys
-            sys.exit()
+        #
+        # if left == "const":
+        #     identifier = match(IdentifierToken)
+        #
+        #     equal = match(EqualToken)
+        #
+        #     if not optional_match(PlusToken) == err_message_no_optional_t:
+        #
+        #         return ["Definition", [
+        #             "Const",
+        #             ["\"const\"", "FieldType", ["Identifier", [self.value]],
+        #              "Identifier", [identifier],
+        #              equal, "ConstValue",
+        #              ["IntConstant", ["+", match(DigitToken)]], "ListSeparator",
+        #              [optional_match(ListSeparatorToken)]]
+        #         ], "DefinitionManager", expression()]
+        #
+        #     elif not optional_match(MinusToken) == err_message_no_optional_t:
+        #
+        #         return ["Definition", [
+        #             "Const",
+        #             ["\"const\"", "FieldType", ["Identifier", [self.value]],
+        #              "Identifier", [identifier],
+        #              equal, "ConstValue",
+        #              ["IntConstant", ["-", match(DigitToken)]], "ListSeparator",
+        #              [optional_match(ListSeparatorToken)]]
+        #         ], "DefinitionManager", expression()]
+        #
+        #     # constValue
+        #
+        #     return ["Definition", [
+        #         "Const",
+        #         ["\"const\"", "FieldType", ["Identifier", [self.value]],
+        #          "Identifier", [identifier],
+        #          equal, "ConstValue", [], "ListSeparator", []]
+        #     ], "DefinitionManager", expression()]
+        #
+        # elif left == "service":
+        #
+        #     return ["Definition",
+        #             ["Service", ["\"service\"", "Identifier", [self.identifier],
+        #                          expression(),
+        #                          match(LeftCurlyBracketToken),
+        #                          "FunctionManager", expression(),
+        #                          match(RightCurlyBracketToken)]],
+        #             "DefinitionManager",
+        #             expression()
+        #             ]
+        #
+        # elif left == "enum":
+        #
+        #     return ["Definition",
+        #             ["Enum", ["\"enum\"",
+        #                       "Identifier",
+        #                       [self.value],
+        #                       match(LeftCurlyBracketToken),
+        #                       "Identifier",
+        #                       match(IdentifierToken)]
+        #              ],
+        #             "DefinitionManager",
+        #             expression()
+        #             ]
+        #
+        # elif isBaseTypeToken(left):
+        #     print("left is base type token")
+        #     # self.lbp = 5
+        #
+        #
+        #
+        # else:
+        #     print(left)
+        #
+        #     print("IdentifierToken led err")
+        #     import sys
+        #     sys.exit()
 
     def nud(self):
-        print(self)
-
-        return [
-            "nud identifier", match(LeftCurlyBracketToken), "check todo", match(RightCurlyBracketToken),
-
-        "caption manager",
-
-            expression(),
-
-            "caption manager"
-
-        ]
+        pass
+        # print(self)
+        #
+        # return [
+        #     "nud identifier", match(LeftCurlyBracketToken), "check todo", match(RightCurlyBracketToken),
+        #
+        # "caption manager",
+        #
+        #     expression(),
+        #
+        #     "caption manager"
+        #
+        # ]
 
 
 class NamespaceScopeToken(Token):
@@ -271,24 +270,25 @@ class NamespaceScopeToken(Token):
         super().__init__(NAMESPACE_PREFIX + identifier, row, value)
 
     def led(self, left):
-
-        if left == "namespace":
-
-            return ["Header",
-                    ["Namespace", ["\"namespace\"", "NamespaceScope",
-                                   [self.value], "Identifier",
-                                   [match(IdentifierToken)]]],
-                    "HeaderManager",
-                    expression(HEADER_RBP),
-                    "definition part",
-                    expression()
-                    ]
-
-        else:
-
-            print("namespacescope led err")
-            import sys
-            sys.exit()
+        pass
+        #
+        # if left == "namespace":
+        #
+        #     return ["Header",
+        #             ["Namespace", ["\"namespace\"", "NamespaceScope",
+        #                            [self.value], "Identifier",
+        #                            [match(IdentifierToken)]]],
+        #             "HeaderManager",
+        #             expression(HEADER_RBP),
+        #             "definition part",
+        #             expression()
+        #             ]
+        #
+        # else:
+        #
+        #     print("namespacescope led err")
+        #     import sys
+        #     sys.exit()
 
 """
 starting keywords for DefinitionManager
@@ -303,74 +303,86 @@ class LiteralToken(Token):
 
 
     def led(self, left):
-        print(self.__class__.__name__, "-- led --", left, "+++", self.value)
+        print(self.__class__.__name__, "-- led --", left, "++", self.value)
 
         if left == "include":
-
-            # print(token)
-
-            # check if next token is def starter
-            if token.value in DEFINITION_STARTERS:
-                # start with definitions
-                print_blue("definition starter")
-
-                return ["Header",
-                             ["Include", ["\"include\"", "Literal", [self.value]]],
-                        "HeaderManager",
-                             ["$"],
-                        "DefinitionManager",
-                            expression(HEADER_RBP)
-                        ]
-
-            else:
-                print_blue("not definition starter")
-                return ["Header",
-                        ["Include", ["\"include\"", "Literal", [self.value]]],
-                        "HeaderManager",
-                        expression(HEADER_RBP)
-                        ]
+            # print("left ids include")
+            return [left, "Literal", [self.value]]
 
 
-        elif left == "cpp_include":
+        pass
 
-
-            if token.value in DEFINITION_STARTERS:
-                # start with definitions
-
-                return ["Header",
-                    ["CppInclude",
-                     ["\"cpp_include\"", "Literal", [self.value]]],
-                    "HeaderManager",
-                    ["$"],
-                        "DefinitionManager",
-                        expression(HEADER_RBP)
-                    ]
-
-            else:
-                return ["Header",
-                    ["CppInclude",
-                     ["\"cpp_include\"", "Literal", [self.value]]],
-                    "HeaderManager",
-                    expression(HEADER_RBP)
-                    ]
-
-        else:
-            print("err led literal ")
-            import sys
-            sys.exit()
+        # print(self.__class__.__name__, "-- led --", left, "+++", self.value)
+        #
+        # if left == "include":
+        #
+        #     # print(token)
+        #
+        #     # check if next token is def starter
+        #     if token.value in DEFINITION_STARTERS:
+        #         # start with definitions
+        #         print_blue("definition starter")
+        #
+        #         return ["Header",
+        #                      ["Include", ["\"include\"", "Literal", [self.value]]],
+        #                 "HeaderManager",
+        #                      ["$"],
+        #                 "DefinitionManager",
+        #                     expression(HEADER_RBP)
+        #                 ]
+        #
+        #     else:
+        #         print_blue("not definition starter")
+        #         return ["Header",
+        #                 ["Include", ["\"include\"", "Literal", [self.value]]],
+        #                 "HeaderManager",
+        #                 expression(HEADER_RBP)
+        #                 ]
+        #
+        #
+        # elif left == "cpp_include":
+        #
+        #
+        #     if token.value in DEFINITION_STARTERS:
+        #         # start with definitions
+        #
+        #         return ["Header",
+        #             ["CppInclude",
+        #              ["\"cpp_include\"", "Literal", [self.value]]],
+        #             "HeaderManager",
+        #             ["$"],
+        #                 "DefinitionManager",
+        #                 expression(HEADER_RBP)
+        #             ]
+        #
+        #     else:
+        #         return ["Header",
+        #             ["CppInclude",
+        #              ["\"cpp_include\"", "Literal", [self.value]]],
+        #             "HeaderManager",
+        #             expression(HEADER_RBP)
+        #             ]
+        #
+        # else:
+        #     print("err led literal ")
+        #     import sys
+        #     sys.exit()
 
     def nud(self):
-        print(self.__class__.__name__, "-- nud --", self.value)
-        # print("ffff")
-        # print(token)
+        pass
 
-        if isinstance(token, EOFToken):
-            print("end of file")
-            return ["eof confirm"]
-
-
-        import sys
-        sys.exit()
+        #
+        # print(self.__class__.__name__, "-- nud --", self.value)
+        # # print("ffff")
+        # # print(token)
+        #
+        # if isinstance(token, EOFToken):
+        #     print("end of file")
+        #     return ["eof confirm"]
+        #
+        #
+        # import sys
+        # sys.exit()
 
 
 class KeywordToken(Token):
@@ -379,11 +391,17 @@ class KeywordToken(Token):
         super().__init__(KEYWORDS_PREFIX + identifier, row, value)
 
     def led(self, left):
-        print(self.__class__.__name__, "-- led --", left, "+++", self.value)
+        print(self.__class__.__name__, "-- led --", left, "++", self.value)
 
-        print("left todo", left)
-        import sys
-        sys.exit()
+        return self.value
+
+        pass
+
+        # print(self.__class__.__name__, "-- led --", left, "+++", self.value)
+        #
+        # print("left todo", left)
+        # import sys
+        # sys.exit()
 
     def nud(self):
         print(self.__class__.__name__, "-- nud --", self.value)
@@ -391,44 +409,51 @@ class KeywordToken(Token):
         if self.value == "include":
             return self.value
 
-        elif self.value == "cpp_include":
-            return self.value
+        pass
 
-        elif self.value == "namespace":
-            return self.value
-
-        print_red("--- definition part ---")
-
-        """definition part"""
-
-        if self.value == "const":
-            return self.value
-
-        elif self.value == "typedef":
-            return self.value
-
-        elif self.value == "enum":
-            return self.value
-
-        elif self.value == "senum":
-            return self.value
-
-        elif self.value == "struct":
-            return self.value
-
-        elif self.value == "union":
-            return self.value
-
-        elif self.value == "exception":
-            return self.value
-
-        elif self.value == "service":
-            return self.value
-
-        else:
-            print("unexpected token in keyword token led")
-            import sys
-            sys.exit()
+        # print(self.__class__.__name__, "-- nud --", self.value)
+        #
+        # if self.value == "include":
+        #     return self.value
+        #
+        # elif self.value == "cpp_include":
+        #     return self.value
+        #
+        # elif self.value == "namespace":
+        #     return self.value
+        #
+        # print_red("--- definition part ---")
+        #
+        # """definition part"""
+        #
+        # if self.value == "const":
+        #     return self.value
+        #
+        # elif self.value == "typedef":
+        #     return self.value
+        #
+        # elif self.value == "enum":
+        #     return self.value
+        #
+        # elif self.value == "senum":
+        #     return self.value
+        #
+        # elif self.value == "struct":
+        #     return self.value
+        #
+        # elif self.value == "union":
+        #     return self.value
+        #
+        # elif self.value == "exception":
+        #     return self.value
+        #
+        # elif self.value == "service":
+        #     return self.value
+        #
+        # else:
+        #     print("unexpected token in keyword token led")
+        #     import sys
+        #     sys.exit()
 
 
 class EOFToken(Token):
