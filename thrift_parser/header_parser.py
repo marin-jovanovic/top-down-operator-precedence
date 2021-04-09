@@ -251,9 +251,6 @@ class IdentifierToken(Token):
     def nud(self):
         print(self)
 
-        # import sys
-        # sys.exit()
-
         return [
             "nud identifier", match(LeftCurlyBracketToken), "check todo", match(RightCurlyBracketToken),
 
@@ -283,9 +280,6 @@ class NamespaceScopeToken(Token):
                     "definition part",
                     expression()
                     ]
-
-        # ast = ["Document", ["HeaderManager", get_head_ast()],
-        #        ["DefinitionManager", get_definition_ast()]]
 
         else:
 
@@ -372,16 +366,21 @@ class LiteralToken(Token):
 
 
 class KeywordToken(Token):
+    # include "incl"
+    # include "incl"
 
     def __init__(self, identifier, row, value):
         super().__init__(KEYWORDS_PREFIX + identifier, row, value)
 
     def led(self, left):
-        print("left", left)
+        print(self.__class__.__name__, "led")
+
+        print("left todo", left)
         import sys
         sys.exit()
 
     def nud(self):
+        print(self.__class__.__name__, "-- nud --", token)
 
         if self.value == "include":
             return self.value
@@ -563,7 +562,14 @@ def get_head_ast():
     global tokens
     global token
     token = get_next_token()
-    print("+++ token +++\n" + str(token) + "\n")
+    print_red("token")
+    if match(EOFToken):
+        print("matched eof")
+        return ["HeaderManager", ["$"], "DefinitionManager", ["$"]]
+
+
+    print(token)
+    # print("+++ token +++\n" + str(token) + "\n")
 
     ret = expression()
 
@@ -584,8 +590,8 @@ def expression(rbp=0):
     token = get_next_token()
     left = t.nud()
 
-    print("pre  while token", token, token.lbp)
-    print("rbp", rbp)
+    # print("pre  while token", token, token.lbp)
+    # print("rbp", rbp)
 
     try:
         temp = rbp < token.lbp
@@ -601,7 +607,7 @@ def expression(rbp=0):
         token = get_next_token()
         left = t.led(left)
 
-        print("post while token", token)
+        # print("post while token", token)
 
         try:
             temp = rbp < token.lbp
@@ -651,7 +657,7 @@ if __name__ == '__main__':
     # ast = ["Document", ["HeaderManager", get_head_ast()],
     #        ["DefinitionManager", get_definition_ast()]]
     #
-    print("+++ ast +++")
+    print("--- ast ---")
     # print(ast)
     ast_printable = fn(ast)
 
@@ -659,6 +665,8 @@ if __name__ == '__main__':
 
     is_ok = True
     [print(i) for i in ast_printable]
+
+    print("--- end of ast ---")
     print()
 
     t = [i for i in open(result).read().split("\n")]
@@ -673,4 +681,4 @@ if __name__ == '__main__':
             is_ok = False
             print("NOT SAME")
 
-    print(is_ok)
+    print_blue(str(is_ok))
