@@ -597,18 +597,7 @@ def match(tok=None):
     return value
 
 
-def get_head_ast(enabled_log=False):
-    if enabled_log:
-        print("\033[92m+++ PARSER +++\033[0m")
 
-    global token
-
-    token = get_next_token()
-
-    if isinstance(token, EOFToken):
-        return ["HeaderManager", ["$"], "DefinitionManager", ["$"]]
-
-    return expression()
 
 
 def expression(rbp=0):
@@ -660,6 +649,21 @@ def expression(rbp=0):
 
 
 """other functions"""
+def get_head_ast(enabled_log=False):
+    if enabled_log:
+        print("\033[92m+++ PARSER +++\033[0m")
+
+    global token
+
+    token = get_next_token()
+    print(token)
+
+
+    if isinstance(token, EOFToken):
+        print_red("eof")
+        return ["HeaderManager", ["$"], "DefinitionManager", ["$"]]
+
+    return expression()
 
 def run_tests():
     import os
@@ -667,54 +671,77 @@ def run_tests():
 
     test_prefix = "../tests/"
 
-    out = ""
-    for i in os.listdir(test_prefix):
-        if i.endswith(".in"):
-            ast = driver(True)
-            print(ast)
+    print(os.listdir(test_prefix))
 
-        print_red(80 * "-")
+    for inp, out in zip(*[iter(os.listdir(test_prefix))] * 2):
+        print(inp, out)
 
-        import sys
-        sys.exit()
+        if inp.endswith(".in"):
+            ast = driver(test_prefix + inp, True)
 
-
-    import sys
-    sys.exit()
-
-    #
-    #
-    #
-    # t = [i for i in open(result).read().split("\n")]
-    # print(ast_printable)
-    #
-    # print(t)
-    #
-    # for i, token in enumerate((open(result).read().split("\n"))[:-1]):
-    #     if token == ast_printable[i]:
-    #         continue
-    #     else:
-    #         is_ok = False
-    #         print("NOT SAME")
-    #
-    # print_blue(str(is_ok))
+        if out.endswith(".out"):
+            test_lines = open(test_prefix + out).read().split("\n")[:-1]
 
 
-def driver(enable_log=False):
-    test_prefix = "../tests/"
-    test_name = "header"
+
+        ast_printable = fn(ast)
+
+        if ast_printable == test_lines:
+            print_red("correct")
+
+        else:
+            print_red("error")
+            print("ast", ast)
+            print("a p", ast_printable)
+            print("out", test_lines)
+            # max width of lines in correct_output_line
+            max_length = 0
+            for correct_output_line in test_lines:
+                if len(correct_output_line) > max_length:
+                    max_length = len(correct_output_line)
+
+            print("\n" + str("    ").rjust(2) + "left is correct")
+            counter = 0
+            for correct_output_line in test_lines:
+
+                temp_len = max_length - len(correct_output_line)
+
+                try:
+                    print(str(counter).rjust(2) + "  " + correct_output_line +
+                          (temp_len + 2) * " " + "| " + ast_printable[
+                              counter])
+                    if correct_output_line != ast_printable[counter]:
+                        print("error occured in previous line")
+
+                except IndexError:
+                    print("index error")
+                    break
+                counter += 1
+            import sys
+            sys.exit()
+            print()
+
+        print(80 * "-")
+
+
+
+
+
+
+def driver(file_path, enable_log=False):
     """load source code
     """
     if enable_log:
-        print("opening", test_name)
+        print("opening", file_path)
 
-    source_code_path = test_prefix + test_name + ".in"
-    result = test_prefix + test_name + ".out"
+    from os import path
+    print(path.exists(file_path))
 
-    # if enable_log:
+    # source
+    source_code_path = file_path
+
     print("--- source code ---")
 
-    # if enable_log:
     print(open(source_code_path).read())
 
     """lexer
@@ -725,31 +752,14 @@ def driver(enable_log=False):
 
     if enable_log:
         print_blue("--- tokens ---")
-    if enable_log:
         [print(i) for i in tokens]
         print()
 
     """parser
     """
-    token_pointer = 0
 
     ast = ["Documentation", get_head_ast()]
 
-    # ast = ["Document", ["HeaderManager", get_head_ast()],
-    #        ["DefinitionManager", get_definition_ast()]]
-    #
-    if enable_log:
-        print("--- ast ---")
-    # print(ast)
-    ast_printable = fn(ast)
-
-    # check with .out file
-
-    if enable_log:
-        [print(i) for i in ast_printable]
-
-        print("--- end of ast ---")
-        print()
 
     return ast
 
