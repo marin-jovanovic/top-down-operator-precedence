@@ -1,43 +1,28 @@
 import re
 
 from drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
-from thrift_parser.tools import print_blue, print_red, fn
+from thrift_parser.tools import print_blue, print_red, fn, NAMESPACE_PREFIX, \
+    BASETYPE_PREFIX, IDENTIFIER_PREFIX, LBP, HEADER_RBP, \
+    err_message_no_optional_t, printerr
 
-NAMESPACE_PREFIX = "NS__"
-BASETYPE_PREFIX = "BT__"
-IDENTIFIER_PREFIX = "ID__"
+
 # def __init__(self, identifier, row, value):
 #     super().__init__(NAMESPACE_PREFIX + identifier, row, value)
 
-ENABLE_LOG = False
-
-LBP = {
-    "Literal": 1,
-    "NamespaceScope": 1,
-    "EOF": -1,
-    "Identifier": 1,
-    "BaseType": 1,
-    "Keyword": 1
-    }
+IS_PRINTING_ENABLED = False
 
 def isBaseTypeToken(data):
-    return data in ["bool", "byte", "i8", "i16", "i32", "i64", "double", "string", "binary", "slist"]
-
-HEADER_RBP = 0
-DEFINITION_RBP = 0
-
-err_message_not_same_type = "err: wrong type"
-err_message_no_optional_t = "err: no optional token"
+    return data in ["bool", "byte", "i8", "i16", "i32", "i64", "double",
+                    "string", "binary", "slist"]
 
 
-DEFINITION_STARTER_FLAG = False
 ''' token classes '''
 
 
 class Token(object):
 
     def __init__(self, identifier, row, value):
-        self.identifier = identifier
+        self.identifier = self.__class__.__name__
         self.row = row
         self.value = value
 
@@ -49,7 +34,7 @@ class Token(object):
                                             self.value)
 
     def nud(self):
-        print("todo nud for", self.__class__.__name__)
+        print("todo nud for", self.__class__.__name__, token)
         import sys
         sys.exit()
 
@@ -60,6 +45,8 @@ class Token(object):
 
 
 """unused classes"""
+
+
 class ColonToken(Token):
     pass
 
@@ -78,6 +65,7 @@ class EqualToken(Token):
 
 class FieldReqToken(Token):
     pass
+
 
 class IntConstantToken(Token):
     pass
@@ -151,23 +139,23 @@ class UpperEToken(Token):
 
 
 class BaseTypeToken(Token):
+    pass
+    # def __init__(self, identifier, row, value):
+    #     super().__init__(BASETYPE_PREFIX + identifier, row, value)
 
-    def __init__(self, identifier, row, value):
-        super().__init__(BASETYPE_PREFIX + identifier, row, value)
+    # def led(self, left):
+    #     pass
+    #     # return self.value
 
-    def led(self, left):
-        pass
-        # return self.value
 
 class IdentifierToken(Token):
+    pass
+    # def __init__(self, identifier, row, value):
+    #     super().__init__(IDENTIFIER_PREFIX + identifier, row, value)
 
-    def __init__(self, identifier, row, value):
-        super().__init__(IDENTIFIER_PREFIX + identifier, row, value)
-
-    def led(self, left):
-        pass
+    # def led(self, left):
+    #     pass
         # print("left", left)
-
 
         #
         # if left == "const":
@@ -245,72 +233,85 @@ class IdentifierToken(Token):
         #     import sys
         #     sys.exit()
 
-    def nud(self):
-        pass
-        # print(self)
-        #
-        # return [
-        #     "nud identifier", match(LeftCurlyBracketToken), "check todo", match(RightCurlyBracketToken),
-        #
-        # "caption manager",
-        #
-        #     expression(),
-        #
-        #     "caption manager"
-        #
-        # ]
+    # def nud(self):
+    #     # pass
+    #     # print(self)
+    #
+    #     return
+    #
+    #     # return [
+    #     #     "nud identifier", match(LeftCurlyBracketToken), "check todo", match(RightCurlyBracketToken),
+    #     #
+    #     # "caption manager",
+    #     #
+    #     #     expression(),
+    #     #
+    #     #     "caption manager"
+    #     #
+    #     # ]
 
 
 class NamespaceScopeToken(Token):
-    def __init__(self, identifier, row, value):
-        super().__init__(NAMESPACE_PREFIX + identifier, row, value)
+
+    # def __init__(self, identifier, row, value):
+    #     super().__init__(NAMESPACE_PREFIX + identifier, row, value)
 
     def led(self, left):
-        pass
-        #
-        # if left == "namespace":
-        #
-        #     return ["Header",
-        #             ["Namespace", ["\"namespace\"", "NamespaceScope",
-        #                            [self.value], "Identifier",
-        #                            [match(IdentifierToken)]]],
-        #             "HeaderManager",
-        #             expression(HEADER_RBP),
-        #             "definition part",
-        #             expression()
-        #             ]
-        #
-        # else:
-        #
-        #     print("namespacescope led err")
-        #     import sys
-        #     sys.exit()
 
-"""
-starting keywords for DefinitionManager
-"""
-DEFINITION_STARTERS = ["const", "typedef", "enum", "senum", "struct", "union",
-                       "exception", "service"]
+        if left == "namespace":
+
+            return ["Header",
+                    ["Namespace",
+                     ["\"namespace\"",
+                      "NamespaceScope",
+                      [self.value],
+                      "Identifier",
+                      [match(IdentifierToken)]
+                     ]
+                    ],
+                    "HeaderManager",
+                    expression(HEADER_RBP)
+                    ]
+
+        else:
+            printerr("no match for namespace")
 
 
-def printerr():
-    print_red("err")
-    import sys
-    sys.exit()
+is_definition_init = False
 
 
 class LiteralToken(Token):
-    #
-# enum i__dentifier { }
-# typedef bool varijabla
-
 
     def led(self, left):
-        print(self.__class__.__name__, "-- led --", left, "++", self.value)
+        if IS_PRINTING_ENABLED:
+            print(self.__class__.__name__, "-- led --", left, "++", self.value)
 
         if left == "include":
 
-            return ["Header", ["Include", [left, "Literal", [self.value]]], "HeaderManager", expression(HEADER_RBP)]
+            return ["Header",
+                     ["Include",
+                      ["\"include\"",
+                       "Literal",
+                       [self.value]
+                      ]
+                     ],
+                    "HeaderManager",
+                    expression(HEADER_RBP)
+                   ]
+
+        elif left == "cpp_include":
+
+            return ["Header",
+                     ["CppInclude",
+                      ["\"cpp_include\"",
+                       "Literal",
+                       [self.value]
+                      ]
+                     ],
+                    "HeaderManager",
+                    expression(HEADER_RBP)
+                   ]
+
 
         else:
             printerr()
@@ -373,42 +374,36 @@ class LiteralToken(Token):
         #     sys.exit()
 
     def nud(self):
-        pass
 
-        #
-        # print(self.__class__.__name__, "-- nud --", self.value)
-        # # print("ffff")
-        # # print(token)
-        #
-        # if isinstance(token, EOFToken):
-        #     print("end of file")
-        #     return ["eof confirm"]
-        #
-        #
-        # import sys
-        # sys.exit()
+        return ["end of header instructions"]
 
 
 class KeywordToken(Token):
 
-    def __init__(self, identifier, row, value):
-        super().__init__(KEYWORDS_PREFIX + identifier, row, value)
+    # def __init__(self, identifier, row, value):
+    #     super().__init__(KEYWORDS_PREFIX + identifier, row, value)
 
     def led(self, left):
-        print(self.__class__.__name__, "-- led --", left, "++", self.value)
+        if IS_PRINTING_ENABLED:
+            print(self.__class__.__name__, "-- led --", left, "++", self.value)
 
         return self.value
 
     def nud(self):
-        print(self.__class__.__name__, "-- nud --", self.value)
+        if IS_PRINTING_ENABLED:
+            print(self.__class__.__name__, "-- nud --", self.value)
 
         if self.value == "include":
             return self.value
 
+        elif self.value == "cpp_include":
+            return self.value
+        elif self.value == "namespace":
+            return self.value
         else:
-            printerr()
+            printerr("nud keyword")
 
-        pass
+        # pass
 
         # print(self.__class__.__name__, "-- nud --", self.value)
         #
@@ -459,12 +454,13 @@ class EOFToken(Token):
 
     # @staticmethod
     def nud(self):
-        return ["$ end of header instructions"]
+        return ["end of definition instructions"]
 
     def __str__(self):
         return "EOF token"
 
-"""other"""
+
+"""unused"""
 
 
 def optional_match(expected_token):
@@ -478,14 +474,27 @@ def optional_match(expected_token):
         token = get_next_token()
 
     return value
-
-
-'''lexer'''
-
-
 # def regex_cropper(regex, string):
 #     return string[re.match(regex, string).end():] if
 #     re.match(regex, string) else string
+def match_multiple(expected_tokens=None):
+    global token
+
+    print(expected_tokens)
+
+    if expected_tokens and type(token) in expected_tokens:
+        print("match for ", token.value, "ok")
+        print("match at index ", expected_tokens.index(type(token)))
+        value = token.value
+
+    else:
+        value = "err: skip"
+
+    token = get_next_token()
+    return value
+
+
+'''lexer'''
 
 
 def get_tokens(source_code_path, enabled_log=False):
@@ -499,10 +508,12 @@ def get_tokens(source_code_path, enabled_log=False):
     #  multiline comment starts with * ?
     # todo connected lines
 
-    for line in open(source_code_path).read().split("\n"):
-        row_number += 1
+    for row_number, line in enumerate(open(source_code_path).read().split("\n")):
+        # print(row_number)
+        # row_number += 1
 
-        print(row_number, line.split(" "))
+        if enabled_log:
+            print(row_number + 1, line.split(" "))
 
         for t in line.split(" "):
 
@@ -514,12 +525,13 @@ def get_tokens(source_code_path, enabled_log=False):
 
             for k, v in TOKENS.items():
                 if re.match(v, t):
-                    exec("output.append(" + k + "Token(t, row_number, t))")
+                    exec("output.append(" + k + "Token(t, row_number + 1, t))")
                     is_matched = True
                     break
 
             if not is_matched:
-                print("no match")
+                if enabled_log:
+                    print("no match")
 
     if enabled_log:
         print("lexing done")
@@ -541,32 +553,18 @@ def get_next_token():
 
     try:
         curr_token = tokens[token_pointer]
-    except:
-        print("no more tokens")
+    except IndexError:
+
+        if IS_PRINTING_ENABLED:
+            print("no more tokens")
         return EOFToken("EOF", -1, "EOF")
 
     token_pointer += 1
     return curr_token
 
+""""""
 
-def match_multiple(expected_tokens=None):
-    global token
-
-    print(expected_tokens)
-
-    if expected_tokens and type(token) in expected_tokens:
-        print("match for ", token.value, "ok")
-        print("match at index ", expected_tokens.index(type(token)))
-        value = token.value
-
-    else:
-        value = "err: skip"
-
-    token = get_next_token()
-    return value
-
-
-def match(tok=None):
+def match(tok):
     """
     checks if next token is expected token
 
@@ -574,15 +572,6 @@ def match(tok=None):
     :return: void
     """
     global token
-
-    if tok:
-        print("flag 1")
-
-    if isinstance(token, tok):
-        print('flag 2')
-
-    if isinstance(token, type(tok)):
-        print("flag 3")
 
     if tok and isinstance(token, tok):
         # if tok and isinstance(tok, type(token)):
@@ -597,9 +586,6 @@ def match(tok=None):
     return value
 
 
-
-
-
 def expression(rbp=0):
     """
     main driver
@@ -611,13 +597,13 @@ def expression(rbp=0):
     """
     global token
 
-    left = token.nud()
-    token = get_next_token()
-
-    # t = token
+    # left = token.nud()
     # token = get_next_token()
-    # left = t.nud()
-
+    #
+    t = token
+    token = get_next_token()
+    left = t.nud()
+    #
     try:
         rbp < token.lbp
     except TypeError:
@@ -628,13 +614,17 @@ def expression(rbp=0):
         sys.exit()
 
     while rbp < token.lbp:
-        print("curr tree", left)
+        if IS_PRINTING_ENABLED:
+            print("curr tree", left)
         # t = token
         # token = get_next_token()
         # left = t.led(left)
 
-        left = token.led(left)
+        t = token
         token = get_next_token()
+        left = t.nud()
+        # left = token.led(left)
+        # token = get_next_token()
 
         try:
             rbp < token.lbp
@@ -649,52 +639,101 @@ def expression(rbp=0):
 
 
 """other functions"""
-def get_head_ast(enabled_log=False):
-    if enabled_log:
+
+
+def driver(file_path):
+    """load source code
+    """
+    if IS_PRINTING_ENABLED:
+        print("opening", file_path)
+
+    # print(path.exists(file_path))
+
+    # source
+    source_code_path = file_path
+
+    if IS_PRINTING_ENABLED:
+        print("--- source code ---")
+        print(open(source_code_path).read())
+        print("--- end ---")
+
+    """lexer"""
+    global tokens
+    global token_pointer
+
+    token_pointer = 0
+    tokens = get_tokens(source_code_path)
+
+    if IS_PRINTING_ENABLED:
+        print()
+        print_blue("--- tokens ---")
+        [print(i) for i in tokens]
+        print("--- end ---")
+        print()
+
+    """parser"""
+
+    if IS_PRINTING_ENABLED:
         print("\033[92m+++ PARSER +++\033[0m")
 
     global token
-
     token = get_next_token()
-    print(token)
 
+    if IS_PRINTING_ENABLED:
+        print(token)
 
     if isinstance(token, EOFToken):
-        print_red("eof")
-        return ["HeaderManager", ["$"], "DefinitionManager", ["$"]]
+        if IS_PRINTING_ENABLED:
+            print_red("eof")
+        return ["Document", ["HeaderManager", ["$"], "DefinitionManager", ["$"]]]
 
-    return expression()
+    return ["Document", ["HeaderManager", expression(), "DefinitionManager", expression()]]
+
 
 def run_tests():
     import os
-    # global test_prefix
 
     test_prefix = "../tests/"
 
-    print(os.listdir(test_prefix))
+    # print(os.listdir(test_prefix))
 
     for inp, out in zip(*[iter(os.listdir(test_prefix))] * 2):
         print(inp, out)
 
         if inp.endswith(".in"):
-            ast = driver(test_prefix + inp, True)
+            ast = driver(test_prefix + inp)
+        else:
+            print("err on load")
+            import sys
+            sys.exit()
 
         if out.endswith(".out"):
             test_lines = open(test_prefix + out).read().split("\n")[:-1]
+        else:
+            print("err on load")
+            import sys
+            sys.exit()
 
-
-
-        ast_printable = fn(ast)
+        ast_printable = fn(ast, 0, [])
 
         if ast_printable == test_lines:
             print_red("correct")
 
+
         else:
+            print(80 * "-")
+            global IS_PRINTING_ENABLED
+            IS_PRINTING_ENABLED = True
+            ast = driver(test_prefix + inp)
+            ast_printable = fn(ast, 0, [])
+
+
             print_red("error")
             print("ast", ast)
             print("a p", ast_printable)
             print("out", test_lines)
             # max width of lines in correct_output_line
+            [print(i) for i in ast_printable]
             max_length = 0
             for correct_output_line in test_lines:
                 if len(correct_output_line) > max_length:
@@ -717,53 +756,19 @@ def run_tests():
                     print("index error")
                     break
                 counter += 1
-            import sys
-            sys.exit()
-            print()
+
+            print(inp)
+
+            input("press for continue")
 
         print(80 * "-")
 
 
-
-
-
-
-def driver(file_path, enable_log=False):
-    """load source code
-    """
-    if enable_log:
-        print("opening", file_path)
-
-    from os import path
-    print(path.exists(file_path))
-
-    # source
-    source_code_path = file_path
-
-    print("--- source code ---")
-
-    print(open(source_code_path).read())
-
-    """lexer
-    """
-    tokens = get_tokens(source_code_path)
-    if enable_log:
-        print()
-
-    if enable_log:
-        print_blue("--- tokens ---")
-        [print(i) for i in tokens]
-        print()
-
-    """parser
-    """
-
-    ast = ["Documentation", get_head_ast()]
-
-
-    return ast
-
-
 if __name__ == '__main__':
+    # run_tests()
 
-    run_tests()
+    IS_PRINTING_ENABLED = True
+    test_prefix = "../tests/"
+
+    ast = driver(test_prefix + "002 include.in")
+    ast_printable = fn(ast, 0, [])

@@ -72,8 +72,6 @@ RightAngleBracket
 	>
 Equal 
 	=
-Underscore 
-	_
 Colon 
 	:
 Plus 
@@ -94,7 +92,6 @@ ListSeparator
 FieldReq
 	required
 	optional
-
 BaseType
 	bool
 	byte
@@ -115,6 +112,8 @@ Identifier
 	([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_)*
 STIdentifier 
 	([a-zA-Z]|_)([a-zA-Z]|[0-9]|\.|_|-)*
+Underscore 
+	_
 Letter 
 	[a-zA-Z]
 Digit 
