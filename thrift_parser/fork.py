@@ -9,6 +9,8 @@ IDENTIFIER_PREFIX = "ID__"
 # def __init__(self, identifier, row, value):
 #     super().__init__(NAMESPACE_PREFIX + identifier, row, value)
 
+ENABLE_LOG = False
+
 LBP = {
     "Literal": 1,
     "NamespaceScope": 1,
@@ -21,7 +23,7 @@ LBP = {
 def isBaseTypeToken(data):
     return data in ["bool", "byte", "i8", "i16", "i32", "i64", "double", "string", "binary", "slist"]
 
-HEADER_RBP = 5
+HEADER_RBP = 0
 DEFINITION_RBP = 0
 
 err_message_not_same_type = "err: wrong type"
@@ -38,12 +40,6 @@ class Token(object):
         self.identifier = identifier
         self.row = row
         self.value = value
-        # t = self.__class__.__name__
-        # print(t)
-        # print(t[:-5])
-        # import sys
-        # sys.exit()
-        # print(self.__class__.__name__)
 
         # token has length of 5
         self.lbp = LBP.get(self.__class__.__name__[:-5])
@@ -296,6 +292,13 @@ starting keywords for DefinitionManager
 DEFINITION_STARTERS = ["const", "typedef", "enum", "senum", "struct", "union",
                        "exception", "service"]
 
+
+def printerr():
+    print_red("err")
+    import sys
+    sys.exit()
+
+
 class LiteralToken(Token):
     #
 # enum i__dentifier { }
@@ -306,11 +309,12 @@ class LiteralToken(Token):
         print(self.__class__.__name__, "-- led --", left, "++", self.value)
 
         if left == "include":
-            # print("left ids include")
-            return [left, "Literal", [self.value]]
 
+            return ["Header", ["Include", [left, "Literal", [self.value]]], "HeaderManager", expression(HEADER_RBP)]
 
-        pass
+        else:
+            printerr()
+        # pass
 
         # print(self.__class__.__name__, "-- led --", left, "+++", self.value)
         #
@@ -395,19 +399,14 @@ class KeywordToken(Token):
 
         return self.value
 
-        pass
-
-        # print(self.__class__.__name__, "-- led --", left, "+++", self.value)
-        #
-        # print("left todo", left)
-        # import sys
-        # sys.exit()
-
     def nud(self):
         print(self.__class__.__name__, "-- nud --", self.value)
 
         if self.value == "include":
             return self.value
+
+        else:
+            printerr()
 
         pass
 
@@ -489,8 +488,9 @@ def optional_match(expected_token):
 #     re.match(regex, string) else string
 
 
-def get_tokens(source_code_path):
-    print("\033[92m+++ LEXER +++\033[0m")
+def get_tokens(source_code_path, enabled_log=False):
+    if enabled_log:
+        print("\033[92m+++ LEXER +++\033[0m")
 
     output = []
     row_number = 0
@@ -521,7 +521,8 @@ def get_tokens(source_code_path):
             if not is_matched:
                 print("no match")
 
-    print("lexing done")
+    if enabled_log:
+        print("lexing done")
 
     return output
 
@@ -596,8 +597,9 @@ def match(tok=None):
     return value
 
 
-def get_head_ast():
-    print("\033[92m+++ PARSER +++\033[0m")
+def get_head_ast(enabled_log=False):
+    if enabled_log:
+        print("\033[92m+++ PARSER +++\033[0m")
 
     global token
 
@@ -659,30 +661,73 @@ def expression(rbp=0):
 
 """other functions"""
 
-
-if __name__ == '__main__':
-    """load source code
-    """
+def run_tests():
+    import os
+    # global test_prefix
 
     test_prefix = "../tests/"
-    test_name = "typedef"
 
-    print("opening", test_name)
+    out = ""
+    for i in os.listdir(test_prefix):
+        if i.endswith(".in"):
+            ast = driver(True)
+            print(ast)
+
+        print_red(80 * "-")
+
+        import sys
+        sys.exit()
+
+
+    import sys
+    sys.exit()
+
+    #
+    #
+    #
+    # t = [i for i in open(result).read().split("\n")]
+    # print(ast_printable)
+    #
+    # print(t)
+    #
+    # for i, token in enumerate((open(result).read().split("\n"))[:-1]):
+    #     if token == ast_printable[i]:
+    #         continue
+    #     else:
+    #         is_ok = False
+    #         print("NOT SAME")
+    #
+    # print_blue(str(is_ok))
+
+
+def driver(enable_log=False):
+    test_prefix = "../tests/"
+    test_name = "header"
+    """load source code
+    """
+    if enable_log:
+        print("opening", test_name)
 
     source_code_path = test_prefix + test_name + ".in"
     result = test_prefix + test_name + ".out"
 
-    print_blue("--- source code ---")
+    # if enable_log:
+    print("--- source code ---")
+
+    # if enable_log:
     print(open(source_code_path).read())
 
     """lexer
     """
     tokens = get_tokens(source_code_path)
-    print()
+    if enable_log:
+        print()
 
-    print_blue("--- tokens ---")
-    [print(i) for i in tokens]
-    print()
+    if enable_log:
+        print_blue("--- tokens ---")
+    if enable_log:
+        [print(i) for i in tokens]
+        print()
 
     """parser
     """
@@ -693,28 +738,22 @@ if __name__ == '__main__':
     # ast = ["Document", ["HeaderManager", get_head_ast()],
     #        ["DefinitionManager", get_definition_ast()]]
     #
-    print("--- ast ---")
+    if enable_log:
+        print("--- ast ---")
     # print(ast)
     ast_printable = fn(ast)
 
     # check with .out file
 
-    is_ok = True
-    [print(i) for i in ast_printable]
+    if enable_log:
+        [print(i) for i in ast_printable]
 
-    print("--- end of ast ---")
-    print()
+        print("--- end of ast ---")
+        print()
 
-    t = [i for i in open(result).read().split("\n")]
-    print(ast_printable)
+    return ast
 
-    print(t)
 
-    for i, token in enumerate((open(result).read().split("\n"))[:-1]):
-        if token == ast_printable[i]:
-            continue
-        else:
-            is_ok = False
-            print("NOT SAME")
+if __name__ == '__main__':
 
-    print_blue(str(is_ok))
+    run_tests()
