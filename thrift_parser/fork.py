@@ -10,6 +10,9 @@ from thrift_parser.tools import print_blue, print_red, fn, NAMESPACE_PREFIX, \
 #     super().__init__(NAMESPACE_PREFIX + identifier, row, value)
 
 IS_PRINTING_ENABLED = False
+# when header definition is passed this flag is activated
+DEFINITION_FLAG = False
+
 
 def isBaseTypeToken(data):
     return data in ["bool", "byte", "i8", "i16", "i32", "i64", "double",
@@ -148,8 +151,34 @@ class BaseTypeToken(Token):
     #     # return self.value
 
 
+def isNamespaceScopeToken(data):
+    return data in ['*','c_glib','cpp','delphi','haxe','go','java','js','lua','netstd','perl','php','py','py.twisted','rb','st','xsd']
+
+
 class IdentifierToken(Token):
-    pass
+
+    def nud(self):
+        # print_red("temp")
+        # print("nud id")
+        #
+        # print(self.value)
+        # print(token)
+        # print(".....")
+        #
+        # global tokens
+        # global token_pointer
+        # [print(i) for i in tokens]
+        # print(".....")
+        # print(token_pointer)
+        #
+        # print(tokens)
+
+        # p = tokens[token_pointer]
+        # print(p)
+
+        return self.value
+
+    # pass
     # def __init__(self, identifier, row, value):
     #     super().__init__(IDENTIFIER_PREFIX + identifier, row, value)
 
@@ -250,6 +279,36 @@ class IdentifierToken(Token):
     #     #
     #     # ]
 
+    def led(self, left):
+        if IS_PRINTING_ENABLED:
+            print("led identifier")
+            print("left", left)
+            print("self", self.value)
+            print(".................")
+
+        global token
+        token = get_next_token()
+
+        if left[0] == "namespace" and isNamespaceScopeToken(left[1]):
+
+            return ["Header",
+                    ["Namespace",
+                     ["\"namespace\"",
+                      "NamespaceScope",
+                      [left[1]],
+                      "Identifier",
+                      [self.value]
+                      ]
+                     ],
+                    "HeaderManager",
+                    expression()
+                    ]
+
+        else:
+            print("err nud identifier token")
+            import sys
+            sys.exit()
+
 
 class NamespaceScopeToken(Token):
 
@@ -260,13 +319,31 @@ class NamespaceScopeToken(Token):
 
         if left == "namespace":
 
+            return [left, self.value]
+
+
+            print("self value", self.value)
+
+            t = ""
+
+            global tokens, token_pointer
+            if isinstance(tokens[token_pointer], IdentifierToken):
+                print("instance of identifier tokens")
+
+                t = tokens[token_pointer]
+
+            print("tp", tokens[token_pointer])
+            # print("tp+", tokens[token_pointer + 1])
+            get_next_token()
+            # token_pointer += 1
+
             return ["Header",
                     ["Namespace",
                      ["\"namespace\"",
                       "NamespaceScope",
                       [self.value],
                       "Identifier",
-                      [match(IdentifierToken)]
+                      [t]
                      ]
                     ],
                     "HeaderManager",
@@ -454,7 +531,15 @@ class EOFToken(Token):
 
     # @staticmethod
     def nud(self):
-        return ["end of definition instructions"]
+
+        # todo check if eof and switch
+
+        if DEFINITION_FLAG:
+            return ["end of definition instructions"]
+
+        else:
+
+            return ["end of header instructions"]
 
     def __str__(self):
         return "EOF token"
@@ -562,7 +647,6 @@ def get_next_token():
     token_pointer += 1
     return curr_token
 
-""""""
 
 def match(tok):
     """
@@ -597,13 +681,20 @@ def expression(rbp=0):
     """
     global token
 
-    # left = token.nud()
-    # token = get_next_token()
-    #
-    t = token
+    if IS_PRINTING_ENABLED:
+        print("expression curr", token)
+
+    left = token.nud()
     token = get_next_token()
-    left = t.nud()
-    #
+
+    if IS_PRINTING_ENABLED:
+        print("expression curr after", token)
+
+
+    # t = token
+    # token = get_next_token()
+    # left = t.nud()
+
     try:
         rbp < token.lbp
     except TypeError:
@@ -616,15 +707,13 @@ def expression(rbp=0):
     while rbp < token.lbp:
         if IS_PRINTING_ENABLED:
             print("curr tree", left)
+
         # t = token
         # token = get_next_token()
-        # left = t.led(left)
+        # left = t.nud()
 
-        t = token
+        left = token.led(left)
         token = get_next_token()
-        left = t.nud()
-        # left = token.led(left)
-        # token = get_next_token()
 
         try:
             rbp < token.lbp
@@ -644,10 +733,11 @@ def expression(rbp=0):
 def driver(file_path):
     """load source code
     """
+    global DEFINITION_FLAG
+    DEFINITION_FLAG = False
+
     if IS_PRINTING_ENABLED:
         print("opening", file_path)
-
-    # print(path.exists(file_path))
 
     # source
     source_code_path = file_path
@@ -666,7 +756,7 @@ def driver(file_path):
 
     if IS_PRINTING_ENABLED:
         print()
-        print_blue("--- tokens ---")
+        print("--- tokens ---")
         [print(i) for i in tokens]
         print("--- end ---")
         print()
@@ -684,10 +774,17 @@ def driver(file_path):
 
     if isinstance(token, EOFToken):
         if IS_PRINTING_ENABLED:
-            print_red("eof")
+            print_red("EOF")
         return ["Document", ["HeaderManager", ["$"], "DefinitionManager", ["$"]]]
 
-    return ["Document", ["HeaderManager", expression(), "DefinitionManager", expression()]]
+    header = expression()
+
+    # global DEFINITION_FLAG
+    DEFINITION_FLAG = True
+
+    definition = expression()
+
+    return ["Document", ["HeaderManager", header, "DefinitionManager", definition]]
 
 
 def run_tests():
@@ -719,19 +816,24 @@ def run_tests():
         if ast_printable == test_lines:
             print_red("correct")
 
-
         else:
+            print("a o", ast_printable)
+            print("tes", test_lines)
+            print(ast_printable == test_lines)
             print(80 * "-")
             global IS_PRINTING_ENABLED
             IS_PRINTING_ENABLED = True
             ast = driver(test_prefix + inp)
             ast_printable = fn(ast, 0, [])
 
-
             print_red("error")
             print("ast", ast)
             print("a p", ast_printable)
             print("out", test_lines)
+
+            print_red("............................")
+            print(ast_printable == test_lines)
+
             # max width of lines in correct_output_line
             [print(i) for i in ast_printable]
             max_length = 0
@@ -765,10 +867,12 @@ def run_tests():
 
 
 if __name__ == '__main__':
-    # run_tests()
-
-    IS_PRINTING_ENABLED = True
-    test_prefix = "../tests/"
-
-    ast = driver(test_prefix + "002 include.in")
-    ast_printable = fn(ast, 0, [])
+    run_tests()
+    #
+    # IS_PRINTING_ENABLED = True
+    # test_prefix = "../tests/"
+    #
+    # ast = driver(test_prefix + "004 namespace.in")
+    # ast_printable = fn(ast, 0, [])
+    #
+    # [print(i) for i in ast_printable]

@@ -31,12 +31,12 @@ Document
          "cp0"
       HeaderManager
        Header
-        Include
-         "include"
-         Literal
+        Namespace
+         "namespace"
+         NamespaceScope
           cpp
          Identifier
-         id0
+          id0
        HeaderManager
         Header
          CppInclude
@@ -45,13 +45,13 @@ Document
            "cp1"
         HeaderManager
          Header
-          Include
-           "include"
-           Literal
+          Namespace
+           "namespace"
+           NamespaceScope
             c_glib
            Identifier
-           id1
+            id1
          HeaderManager
           end of header instructions
  DefinitionManager
- todo
+  end of definition instructions
