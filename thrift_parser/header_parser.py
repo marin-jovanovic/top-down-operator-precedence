@@ -5,7 +5,6 @@ from thrift_parser.tools import print_blue, print_red, fn, NAMESPACE_PREFIX, \
     BASETYPE_PREFIX, IDENTIFIER_PREFIX, LBP, HEADER_RBP, \
     err_message_no_optional_t, printerr
 
-
 # def __init__(self, identifier, row, value):
 #     super().__init__(NAMESPACE_PREFIX + identifier, row, value)
 
@@ -152,29 +151,14 @@ class BaseTypeToken(Token):
 
 
 def isNamespaceScopeToken(data):
-    return data in ['*','c_glib','cpp','delphi','haxe','go','java','js','lua','netstd','perl','php','py','py.twisted','rb','st','xsd']
+    return data in ['*', 'c_glib', 'cpp', 'delphi', 'haxe', 'go', 'java', 'js',
+                    'lua', 'netstd', 'perl', 'php', 'py', 'py.twisted', 'rb',
+                    'st', 'xsd']
 
 
 class IdentifierToken(Token):
 
     def nud(self):
-        # print_red("temp")
-        # print("nud id")
-        #
-        # print(self.value)
-        # print(token)
-        # print(".....")
-        #
-        # global tokens
-        # global token_pointer
-        # [print(i) for i in tokens]
-        # print(".....")
-        # print(token_pointer)
-        #
-        # print(tokens)
-
-        # p = tokens[token_pointer]
-        # print(p)
 
         return self.value
 
@@ -184,83 +168,83 @@ class IdentifierToken(Token):
 
     # def led(self, left):
     #     pass
-        # print("left", left)
+    # print("left", left)
 
-        #
-        # if left == "const":
-        #     identifier = match(IdentifierToken)
-        #
-        #     equal = match(EqualToken)
-        #
-        #     if not optional_match(PlusToken) == err_message_no_optional_t:
-        #
-        #         return ["Definition", [
-        #             "Const",
-        #             ["\"const\"", "FieldType", ["Identifier", [self.value]],
-        #              "Identifier", [identifier],
-        #              equal, "ConstValue",
-        #              ["IntConstant", ["+", match(DigitToken)]], "ListSeparator",
-        #              [optional_match(ListSeparatorToken)]]
-        #         ], "DefinitionManager", expression()]
-        #
-        #     elif not optional_match(MinusToken) == err_message_no_optional_t:
-        #
-        #         return ["Definition", [
-        #             "Const",
-        #             ["\"const\"", "FieldType", ["Identifier", [self.value]],
-        #              "Identifier", [identifier],
-        #              equal, "ConstValue",
-        #              ["IntConstant", ["-", match(DigitToken)]], "ListSeparator",
-        #              [optional_match(ListSeparatorToken)]]
-        #         ], "DefinitionManager", expression()]
-        #
-        #     # constValue
-        #
-        #     return ["Definition", [
-        #         "Const",
-        #         ["\"const\"", "FieldType", ["Identifier", [self.value]],
-        #          "Identifier", [identifier],
-        #          equal, "ConstValue", [], "ListSeparator", []]
-        #     ], "DefinitionManager", expression()]
-        #
-        # elif left == "service":
-        #
-        #     return ["Definition",
-        #             ["Service", ["\"service\"", "Identifier", [self.identifier],
-        #                          expression(),
-        #                          match(LeftCurlyBracketToken),
-        #                          "FunctionManager", expression(),
-        #                          match(RightCurlyBracketToken)]],
-        #             "DefinitionManager",
-        #             expression()
-        #             ]
-        #
-        # elif left == "enum":
-        #
-        #     return ["Definition",
-        #             ["Enum", ["\"enum\"",
-        #                       "Identifier",
-        #                       [self.value],
-        #                       match(LeftCurlyBracketToken),
-        #                       "Identifier",
-        #                       match(IdentifierToken)]
-        #              ],
-        #             "DefinitionManager",
-        #             expression()
-        #             ]
-        #
-        # elif isBaseTypeToken(left):
-        #     print("left is base type token")
-        #     # self.lbp = 5
-        #
-        #
-        #
-        # else:
-        #     print(left)
-        #
-        #     print("IdentifierToken led err")
-        #     import sys
-        #     sys.exit()
+    #
+    # if left == "const":
+    #     identifier = match(IdentifierToken)
+    #
+    #     equal = match(EqualToken)
+    #
+    #     if not optional_match(PlusToken) == err_message_no_optional_t:
+    #
+    #         return ["Definition", [
+    #             "Const",
+    #             ["\"const\"", "FieldType", ["Identifier", [self.value]],
+    #              "Identifier", [identifier],
+    #              equal, "ConstValue",
+    #              ["IntConstant", ["+", match(DigitToken)]], "ListSeparator",
+    #              [optional_match(ListSeparatorToken)]]
+    #         ], "DefinitionManager", expression()]
+    #
+    #     elif not optional_match(MinusToken) == err_message_no_optional_t:
+    #
+    #         return ["Definition", [
+    #             "Const",
+    #             ["\"const\"", "FieldType", ["Identifier", [self.value]],
+    #              "Identifier", [identifier],
+    #              equal, "ConstValue",
+    #              ["IntConstant", ["-", match(DigitToken)]], "ListSeparator",
+    #              [optional_match(ListSeparatorToken)]]
+    #         ], "DefinitionManager", expression()]
+    #
+    #     # constValue
+    #
+    #     return ["Definition", [
+    #         "Const",
+    #         ["\"const\"", "FieldType", ["Identifier", [self.value]],
+    #          "Identifier", [identifier],
+    #          equal, "ConstValue", [], "ListSeparator", []]
+    #     ], "DefinitionManager", expression()]
+    #
+    # elif left == "service":
+    #
+    #     return ["Definition",
+    #             ["Service", ["\"service\"", "Identifier", [self.identifier],
+    #                          expression(),
+    #                          match(LeftCurlyBracketToken),
+    #                          "FunctionManager", expression(),
+    #                          match(RightCurlyBracketToken)]],
+    #             "DefinitionManager",
+    #             expression()
+    #             ]
+    #
+    # elif left == "enum":
+    #
+    #     return ["Definition",
+    #             ["Enum", ["\"enum\"",
+    #                       "Identifier",
+    #                       [self.value],
+    #                       match(LeftCurlyBracketToken),
+    #                       "Identifier",
+    #                       match(IdentifierToken)]
+    #              ],
+    #             "DefinitionManager",
+    #             expression()
+    #             ]
+    #
+    # elif isBaseTypeToken(left):
+    #     print("left is base type token")
+    #     # self.lbp = 5
+    #
+    #
+    #
+    # else:
+    #     print(left)
+    #
+    #     print("IdentifierToken led err")
+    #     import sys
+    #     sys.exit()
 
     # def nud(self):
     #     # pass
@@ -321,7 +305,6 @@ class NamespaceScopeToken(Token):
 
             return [left, self.value]
 
-
             print("self value", self.value)
 
             t = ""
@@ -344,8 +327,8 @@ class NamespaceScopeToken(Token):
                       [self.value],
                       "Identifier",
                       [t]
-                     ]
-                    ],
+                      ]
+                     ],
                     "HeaderManager",
                     expression(HEADER_RBP)
                     ]
@@ -366,28 +349,28 @@ class LiteralToken(Token):
         if left == "include":
 
             return ["Header",
-                     ["Include",
-                      ["\"include\"",
-                       "Literal",
-                       [self.value]
+                    ["Include",
+                     ["\"include\"",
+                      "Literal",
+                      [self.value]
                       ]
                      ],
                     "HeaderManager",
                     expression(HEADER_RBP)
-                   ]
+                    ]
 
         elif left == "cpp_include":
 
             return ["Header",
-                     ["CppInclude",
-                      ["\"cpp_include\"",
-                       "Literal",
-                       [self.value]
+                    ["CppInclude",
+                     ["\"cpp_include\"",
+                      "Literal",
+                      [self.value]
                       ]
                      ],
                     "HeaderManager",
                     expression(HEADER_RBP)
-                   ]
+                    ]
 
 
         else:
@@ -559,6 +542,8 @@ def optional_match(expected_token):
         token = get_next_token()
 
     return value
+
+
 # def regex_cropper(regex, string):
 #     return string[re.match(regex, string).end():] if
 #     re.match(regex, string) else string
@@ -593,7 +578,8 @@ def get_tokens(source_code_path, enabled_log=False):
     #  multiline comment starts with * ?
     # todo connected lines
 
-    for row_number, line in enumerate(open(source_code_path).read().split("\n")):
+    for row_number, line in enumerate(
+        open(source_code_path).read().split("\n")):
         # print(row_number)
         # row_number += 1
 
@@ -690,7 +676,6 @@ def expression(rbp=0):
     if IS_PRINTING_ENABLED:
         print("expression curr after", token)
 
-
     # t = token
     # token = get_next_token()
     # left = t.nud()
@@ -775,24 +760,23 @@ def driver(file_path):
     if isinstance(token, EOFToken):
         if IS_PRINTING_ENABLED:
             print_red("EOF")
-        return ["Document", ["HeaderManager", ["$"], "DefinitionManager", ["$"]]]
+        return ["Document",
+                ["HeaderManager", ["$"], "DefinitionManager", ["$"]]]
 
     header = expression()
 
-    # global DEFINITION_FLAG
     DEFINITION_FLAG = True
 
     definition = expression()
 
-    return ["Document", ["HeaderManager", header, "DefinitionManager", definition]]
+    return ["Document",
+            ["HeaderManager", header, "DefinitionManager", definition]]
 
 
 def run_tests():
     import os
 
     test_prefix = "../tests/"
-
-    # print(os.listdir(test_prefix))
 
     for inp, out in zip(*[iter(os.listdir(test_prefix))] * 2):
         print(inp, out)
@@ -866,7 +850,7 @@ def run_tests():
         print(80 * "-")
 
 
-if __name__ == '__main__':
+def main():
     run_tests()
     #
     # IS_PRINTING_ENABLED = True
@@ -876,3 +860,7 @@ if __name__ == '__main__':
     # ast_printable = fn(ast, 0, [])
     #
     # [print(i) for i in ast_printable]
+
+
+if __name__ == '__main__':
+    main()

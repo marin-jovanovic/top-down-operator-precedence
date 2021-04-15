@@ -1,0 +1,23 @@
+Document
+ HeaderManager
+  Header
+   CppInclude
+    "cpp_include"
+    Literal
+     "t_1"
+  HeaderManager
+   Header
+    CppInclude
+     "cpp_include"
+     Literal
+      "t_2"
+   HeaderManager
+    Header
+     CppInclude
+      "cpp_include"
+      Literal
+       "t_3"
+    HeaderManager
+     end of header instructions
+ DefinitionManager
+  end of definition instructions

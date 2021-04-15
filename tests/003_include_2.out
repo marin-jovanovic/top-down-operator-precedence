@@ -1,0 +1,23 @@
+Document
+ HeaderManager
+  Header
+   Include
+    "include"
+    Literal
+     "t_include_1"
+  HeaderManager
+   Header
+    Include
+     "include"
+     Literal
+      "t_include_2"
+   HeaderManager
+    Header
+     Include
+      "include"
+      Literal
+       "t_include_3"
+    HeaderManager
+     end of header instructions
+ DefinitionManager
+  end of definition instructions

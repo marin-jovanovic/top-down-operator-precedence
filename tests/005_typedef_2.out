@@ -4,14 +4,20 @@ Document
    Include
     "include"
     Literal
-     "t_include_"
+     "temp"
   HeaderManager
    Header
-    CppInclude
-     "cpp_include"
+    Include
+     "include"
      Literal
-      "cpp_include_"
+      "t2"
    HeaderManager
-    end of header instructions
+    Header
+     Include
+      "include"
+      Literal
+       "t3"
+    HeaderManager
+     end of header instructions
  DefinitionManager
   end of definition instructions

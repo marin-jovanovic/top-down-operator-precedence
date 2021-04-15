@@ -1,0 +1,29 @@
+Document
+ HeaderManager
+  Header
+   Namespace
+    "namespace"
+    NamespaceScope
+     c_glib
+    Identifier
+     _test
+  HeaderManager
+   Header
+    Namespace
+     "namespace"
+     NamespaceScope
+      c_glib
+     Identifier
+      test_2
+   HeaderManager
+    Header
+     Namespace
+      "namespace"
+      NamespaceScope
+       c_glib
+      Identifier
+       _test_3
+    HeaderManager
+     end of header instructions
+ DefinitionManager
+  end of definition instructions
