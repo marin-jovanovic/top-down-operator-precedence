@@ -1,6 +1,6 @@
 import re
 
-from drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
+from apache_trift.drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
 
 # fixme nested comments in parser
 
@@ -8,6 +8,8 @@ from drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
 ###########
 # token classes
 ###########
+
+# todo space counter
 
 SPACE_COUNTER = 0
 PRINTER = []
@@ -31,6 +33,120 @@ class Token(object):
         return self.identifier + " " + str(self.row) + " " + self.value
 
 
+class ListTypeToken(Token):
+    pass
+
+
+class SetTypeToken(Token):
+    pass
+
+
+class MapTypeToken(Token):
+    pass
+
+
+class ContainerTypeToken(Token):
+    pass
+
+
+class DefinitionTypeToken(Token):
+    pass
+
+
+class FieldTypeToken(Token):
+    pass
+
+
+class ThrowsToken(Token):
+    pass
+
+
+class FunctionTypeToken(Token):
+    pass
+
+
+class XsdAttrsToken(Token):
+    pass
+
+
+class FunctionToken(Token):
+    pass
+
+
+class XsdFieldOptionsToken(Token):
+    pass
+
+
+class FieldIDToken(Token):
+    pass
+
+
+class FieldToken(Token):
+    pass
+
+
+class ServiceToken(Token):
+    pass
+
+
+class ExceptionToken(Token):
+    pass
+
+
+class UnionToken(Token):
+    pass
+
+
+class SenumToken(Token):
+    pass
+
+
+class DefinitionToken(Token):
+    pass
+
+
+class EnumToken(Token):
+    pass
+
+
+class TypedefToken(Token):
+    pass
+
+
+class ConstToken(Token):
+    pass
+
+
+class StructToken(Token):
+    pass
+
+
+class NamespaceToken(Token):
+    pass
+
+
+class IncludeToken(Token):
+    pass
+
+
+class HeaderToken(Token):
+    pass
+
+
+class CppIncludeToken(Token):
+    pass
+
+
+class DocumentToken(Token):
+    pass
+
+
+
+
+class CppTypeToken(Token):
+    pass
+
+
 class BaseTypeToken(Token):
 
     def nud(self):
@@ -41,11 +157,27 @@ class CommaToken(Token):
     pass
 
 
+class DoubleConstantToken(Token):
+    pass
+
+
+class IntConstantToken(Token):
+    pass
+
+
 class ColonToken(Token):
     pass
 
 
-class ConstValueToken(object):
+class ConstListToken(Token):
+    pass
+
+
+class ConstMapToken(Token):
+    pass
+
+
+class ConstValueToken(Token):
     pass
 
 
@@ -76,7 +208,9 @@ class FieldReqToken(Token):
 
 
 class IdentifierToken(Token):
-    pass
+
+    def nud(self):
+        print("id")
 
 
 class LeftCurlyBracketToken(Token):
@@ -147,6 +281,10 @@ class UpperEToken(Token):
     pass
 
 
+is_first_header = True
+is_first_definition = True
+
+
 class KeywordToken(Token):
 
     def __init__(self, identifier, row, value):
@@ -154,8 +292,40 @@ class KeywordToken(Token):
 
     def nud(self):
         print("+++ KeywordToken +++")
+        global is_first_header
 
-        if self.value == "namespace":
+        if self.value == "include":
+            '''header'''
+
+            v1 = match(LiteralToken)
+
+            print(["include", v1])
+
+            if is_first_header:
+                is_first_header = False
+                return ["HeaderManager", ["Header", ["Include", ["\"include\"", "Literal", [v1]]],
+                                          "HeaderManager", expression()]]
+            else:
+                return ["Header", ["Include", ["\"include\"", "Literal", [v1]]],
+                        "HeaderManager", expression()]
+
+        elif self.value == "cpp_include":
+            '''header'''
+
+            v1 = match(LiteralToken)
+
+            print(["cpp_include", v1])
+
+            if is_first_header:
+                is_first_header = False
+                return ["HeaderManager", ["Header", ["CppInclude", ["\"cpp_include\"", "Literal", [v1]]],
+                                          "HeaderManager", expression()]]
+            else:
+                return ["Header", ["CppInclude", ["\"cpp_include\"", "Literal", [v1]]],
+                        "HeaderManager", expression()]
+
+        elif self.value == "namespace":
+            '''header'''
 
             v1 = match(NamespaceScopeToken)
             v2 = match(IdentifierToken)
@@ -163,32 +333,54 @@ class KeywordToken(Token):
             print(["namespace", v1, v2])
             print("next", token)
 
-            return [["HEADER", "namespace", v1, v2], expression()]
+            if is_first_header:
+                is_first_header = False
+                return ["HeaderManager",
+                        ["Header", ["Namespace", ["\"namespace\"", "NamespaceScope", [v1], "Identifier", [v2]]],
+                         "HeaderManager", expression()]]
+            else:
+                return ["Header", ["Namespace", ["\"namespace\"", "NamespaceScope", [v1], "Identifier", [v2]]],
+                        "HeaderManager", expression()]
 
-        elif self.value == "include":
+        elif self.value == "const":
+            '''definition'''
 
-            v1 = match(LiteralToken)
+            v1 = match_multiple([IdentifierToken, BaseTypeToken])
 
-            print(["include", v1])
+        elif self.value == "typedef":
+            '''definition'''
 
-            return [["HEADER", "include", v1], expression()]
+        elif self.value == "enum":
+            '''definition'''
 
-        elif self.value == "cpp_include":
+        elif self.value == "senum":
+            '''definition'''
 
-            v1 = match(LiteralToken)
+        elif self.value == "struct":
+            '''definition'''
 
-            print(["cpp_include", v1])
+        elif self.value == "union":
+            '''definition'''
 
-            return [["HEADER", "cpp_include", v1], expression()]
+        elif self.value == "exception":
+            '''definition'''
+
+        elif self.value == "service":
+            '''definition'''
 
         else:
-            import sys
-            sys.exit()
+            print("unexpected token")
+
+        # else:
+        #     '''definition'''
+        #
+        #     print("maybe definition?")
+        #
+        #     print("err ", token)
+        #     return ["empty: definition expected"]
 
 
-###########
-# lexer
-###########
+'''lexer'''
 
 
 def regex_cropper(regex, string):
@@ -207,7 +399,7 @@ def get_tokens(source_code_path):
     have_i_eaten = False
 
     while True:
-        print(source_code.replace("\n", "\\n"))
+        # print(source_code.replace("\n", "\\n"))
 
         if source_code == "":
             print("lexer; ok")
@@ -455,10 +647,117 @@ def get_tokens(source_code_path):
     return output
 
 
-###########
-# parser
-###########
+'''parser'''
 
+
+def starts_with(token):
+    if isinstance(token, DigitToken):
+        return DigitToken
+
+    elif isinstance(token, LetterToken):
+        return LetterToken
+
+    elif isinstance(token, ListSeparatorToken):
+        return ListSeparatorToken
+    elif isinstance(token, STIdentifierToken):
+        return STIdentifierToken
+    elif isinstance(token, IdentifierToken):
+        return IdentifierToken
+    elif isinstance(token, LiteralToken):
+        return LiteralToken
+    elif isinstance(token, ConstMapToken):
+        return "{"
+    elif isinstance(token, ConstListToken):
+        return "["
+    elif isinstance(token, DoubleConstantToken):
+        return ["+", "-", DigitToken, ".", "E", "e", None]
+    elif isinstance(token, IntConstantToken):
+        return ["+", "-", DigitToken]
+    elif isinstance(token, ConstValueToken):
+        return [starts_with(IntConstantToken),
+                starts_with(DoubleConstantToken),
+                starts_with(LiteralToken),
+                starts_with(IdentifierToken),
+                starts_with(ConstListToken),
+                starts_with(ConstMapToken)]
+    elif isinstance(token, CppTypeToken):
+        return "cpp_type"
+    elif isinstance(token, ListTypeToken):
+        return "list"
+    elif isinstance(token, SetTypeToken):
+        return "set"
+    elif isinstance(token, MapTypeToken):
+        return "map"
+    elif isinstance(token, ContainerTypeToken):
+        return [starts_with(MapTypeToken),
+                starts_with(SetTypeToken),
+                starts_with(ListTypeToken)]
+    elif isinstance(token, BaseTypeToken):
+        return BaseTypeToken
+    elif isinstance(token, DefinitionTypeToken):
+        return [starts_with(BaseTypeToken),
+                starts_with(ContainerTypeToken)]
+    elif isinstance(token, FieldTypeToken):
+        return [starts_with(IdentifierToken),
+                starts_with(BaseTypeToken),
+                starts_with(ContainerTypeToken)]
+    elif isinstance(token, ThrowsToken):
+        return "throws"
+    elif isinstance(token, FunctionTypeToken):
+        return [starts_with(FieldTypeToken),
+                "void"]
+    elif isinstance(token, FunctionToken):
+        return ["oneway", starts_with(FunctionTypeToken)]
+    elif isinstance(token, XsdAttrsToken):
+        return "xsd_attrs"
+    elif isinstance(token, XsdFieldOptionsToken):
+        return ["xsd_optional", "xsd_nillable", starts_with(XsdAttrsToken)]
+    elif isinstance(token, FieldReqToken):
+        return ["required", "optional"]
+    elif isinstance(token, FieldIDToken):
+        return starts_with(IntConstantToken)
+    elif isinstance(token, FieldToken):
+        return [starts_with(FieldIDToken),
+                starts_with(FieldReqToken),
+                starts_with(FieldTypeToken)]
+    elif isinstance(token, ServiceToken):
+        return "service"
+    elif isinstance(token, ExceptionToken):
+        return "exception"
+    elif isinstance(token, UnionToken):
+        return "union"
+    elif isinstance(token, StructToken):
+        return "struct"
+    elif isinstance(token, SenumToken):
+        return "senum"
+    elif isinstance(token, EnumToken):
+        return "enum"
+    elif isinstance(token, TypedefToken):
+        return "typedef"
+    elif isinstance(token, ConstToken):
+        return "const"
+    elif isinstance(token, DefinitionToken):
+        return [starts_with(ConstToken),
+                starts_with(TypedefToken),
+                starts_with(EnumToken),
+                starts_with(SenumToken),
+                starts_with(StructToken),
+                starts_with(UnionToken),
+                starts_with(ExceptionToken),
+                starts_with(ServiceToken)]
+    elif isinstance(token, NamespaceScopeToken):
+        return ['*', 'c_glib', 'cpp', 'delphi', 'haxe', 'go', 'java', 'js', 'lua', 'netstd', 'perl',
+                'php', 'py', 'py.twisted', 'rb', 'st', 'xsd']
+    elif isinstance(token, NamespaceToken):
+        return "namespace"
+    elif isinstance(token, CppIncludeToken):
+        return "namespace"
+    elif isinstance(token, IncludeToken):
+        return "namespace"
+    elif isinstance(token, HeaderToken):
+        return "namespace"
+    elif isinstance(token, DocumentToken):
+        return [starts_with(HeaderToken), starts_with(DefinitionToken)]
 
 def get_next_token():
     """
@@ -479,6 +778,32 @@ def get_next_token():
     return curr_token
 
 
+class Error(object):
+
+    def __init__(self, error_message):
+        self.error_message = error_message
+
+    def __str__(self):
+        return self.error_message
+
+
+def match_multiple(expected_tokens=None):
+    global token
+
+    print(expected_tokens)
+
+    if expected_tokens and type(token) in expected_tokens:
+        print("match for ", token.value, "ok")
+        print("match at index ", expected_tokens.index(type(token)))
+        value = token.value
+
+    else:
+        value = "err: skip"
+
+    token = get_next_token()
+    return value
+
+
 def match(tok=None):
     """
     checks if next token is expected token
@@ -488,7 +813,8 @@ def match(tok=None):
     """
     global token
 
-    if tok and tok != type(token):
+    if tok and isinstance(tok, type(token)):
+        # if tok and tok != type(token):
         value = "err: skip"
 
     else:
@@ -505,18 +831,14 @@ def get_ast():
     print()
 
     global tokens
-    print("+++ tokens +++")
-    [print(i) for i in tokens]
-    print()
-
     global token
     token = get_next_token()
     print("+++ token +++\n" + str(token) + "\n")
 
     ret = expression()
 
-    print("+++ output +++")
-    print("output:", ret)
+    # print("+++ output +++")
+    # print("output:", ret)
 
     return ret
 
@@ -532,6 +854,11 @@ def expression(rbp=0):
     t = token
     token = get_next_token()
     left = t.nud()
+
+    print(t)
+    print(token)
+    print(left)
+
     while rbp < token.lbp:
         t = token
         token = get_next_token()
@@ -539,16 +866,36 @@ def expression(rbp=0):
     return left
 
 
+def fn(items, level=0):
+    for item in items:
+        if isinstance(item, list):
+            fn(item, level + 1)
+        else:
+            indentation = " " * level
+            print('%s%s' % (indentation, item))
+
+
 if __name__ == '__main__':
+    source_code_path = "../../resources/thrift_source_code_samples/reduced.thrift"
+
+    print("+++ source +++")
+    [print(i[:-1]) for i in open(source_code_path).readlines()]
+    print()
+
     global tokens
-    tokens = get_tokens("../../resources/thrift_source_code_samples/reduced.thrift")
+    tokens = get_tokens(source_code_path)
+    print()
+
+    print("+++ tokens +++")
+    [print(i) for i in tokens]
+    print()
 
     global token
     global token_pointer
     token_pointer = 0
 
-    ast = get_ast()
+    ast = ["DOCUMENT", get_ast()]
 
     print("+++ ast +++")
     print(ast)
-    print()
+    fn(ast)

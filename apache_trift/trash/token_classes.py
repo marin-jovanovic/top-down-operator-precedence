@@ -1,6 +1,6 @@
 import re
 
-from drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
+from apache_trift.drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
 
 # fixme nested comments in parser
 
@@ -557,7 +557,8 @@ def expression(rbp=0):
 
 if __name__ == '__main__':
     global tokens
-    tokens = get_tokens("../resources/thrift_source_code_samples/simple.thrift")
+    tokens = get_tokens(
+        "../resources/thrift_source_code_samples/simple.thrift")
 
     global token
     global token_pointer

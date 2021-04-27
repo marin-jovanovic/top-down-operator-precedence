@@ -1,6 +1,6 @@
 import re
 
-from drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
+from apache_trift.drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
 
 # fixme nested comments in parser
 

@@ -44,7 +44,7 @@ DEFINITION_STARTERS = ["const", "typedef", "enum", "senum", "struct", "union",
                        "exception", "service"]
 # test_prefix = "../tests/"
 # test = "003 include2.in"
-def printerr(msg):
+def err_manager(msg):
     print_red(str(msg))
     import sys
     sys.exit()

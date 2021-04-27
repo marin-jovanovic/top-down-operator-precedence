@@ -1,7 +1,7 @@
 import re
 
-from drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
-from thrift_parser.tools import print_blue, print_red, fn
+from apache_trift.drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
+from apache_trift.thrift_parser.tools import print_blue, print_red, fn
 
 NAMESPACE_PREFIX = "NS__"
 BASETYPE_PREFIX = "BT__"

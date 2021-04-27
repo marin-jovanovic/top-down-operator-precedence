@@ -1,9 +1,8 @@
 import re
 
-from drivers.resource_constants import KEYWORDS_PREFIX, TOKENS
-from thrift_parser.tools import print_blue, print_red, fn, NAMESPACE_PREFIX, \
-    BASETYPE_PREFIX, IDENTIFIER_PREFIX, LBP, HEADER_RBP, \
-    err_message_no_optional_t, printerr
+from apache_trift.drivers.resource_constants import TOKENS
+from apache_trift.thrift_parser.tools import print_red, fn, LBP, HEADER_RBP, \
+    err_message_no_optional_t, err_manager
 
 # def __init__(self, identifier, row, value):
 #     super().__init__(NAMESPACE_PREFIX + identifier, row, value)
@@ -137,9 +136,6 @@ class UpperEToken(Token):
     pass
 
 
-"""used classes"""
-
-
 class BaseTypeToken(Token):
     pass
     # def __init__(self, identifier, row, value):
@@ -148,6 +144,9 @@ class BaseTypeToken(Token):
     # def led(self, left):
     #     pass
     #     # return self.value
+
+
+"""used classes"""
 
 
 def isNamespaceScopeToken(data):
@@ -289,15 +288,10 @@ class IdentifierToken(Token):
                     ]
 
         else:
-            print("err nud identifier token")
-            import sys
-            sys.exit()
+            err_manager("err nud identifier token")
 
 
 class NamespaceScopeToken(Token):
-
-    # def __init__(self, identifier, row, value):
-    #     super().__init__(NAMESPACE_PREFIX + identifier, row, value)
 
     def led(self, left):
 
@@ -305,36 +299,35 @@ class NamespaceScopeToken(Token):
 
             return [left, self.value]
 
-            print("self value", self.value)
-
-            t = ""
-
-            global tokens, token_pointer
-            if isinstance(tokens[token_pointer], IdentifierToken):
-                print("instance of identifier tokens")
-
-                t = tokens[token_pointer]
-
-            print("tp", tokens[token_pointer])
-            # print("tp+", tokens[token_pointer + 1])
-            get_next_token()
-            # token_pointer += 1
-
-            return ["Header",
-                    ["Namespace",
-                     ["\"namespace\"",
-                      "NamespaceScope",
-                      [self.value],
-                      "Identifier",
-                      [t]
-                      ]
-                     ],
-                    "HeaderManager",
-                    expression(HEADER_RBP)
-                    ]
+            # print("self value", self.value)
+            #
+            # t = ""
+            #
+            # global tokens, token_pointer
+            # if isinstance(tokens[token_pointer], IdentifierToken):
+            #     print("instance of identifier tokens")
+            #
+            #     t = tokens[token_pointer]
+            #
+            # print("tp", tokens[token_pointer])
+            #
+            # get_next_token()
+            #
+            # return ["Header",
+            #         ["Namespace",
+            #          ["\"namespace\"",
+            #           "NamespaceScope",
+            #           [self.value],
+            #           "Identifier",
+            #           [t]
+            #           ]
+            #          ],
+            #         "HeaderManager",
+            #         expression(HEADER_RBP)
+            #         ]
 
         else:
-            printerr("no match for namespace")
+            err_manager("no match for namespace")
 
 
 is_definition_init = False
@@ -343,6 +336,7 @@ is_definition_init = False
 class LiteralToken(Token):
 
     def led(self, left):
+
         if IS_PRINTING_ENABLED:
             print(self.__class__.__name__, "-- led --", left, "++", self.value)
 
@@ -374,7 +368,8 @@ class LiteralToken(Token):
 
 
         else:
-            printerr()
+            err_manager("literal")
+
         # pass
 
         # print(self.__class__.__name__, "-- led --", left, "+++", self.value)
@@ -440,16 +435,15 @@ class LiteralToken(Token):
 
 class KeywordToken(Token):
 
-    # def __init__(self, identifier, row, value):
-    #     super().__init__(KEYWORDS_PREFIX + identifier, row, value)
-
     def led(self, left):
+
         if IS_PRINTING_ENABLED:
             print(self.__class__.__name__, "-- led --", left, "++", self.value)
 
         return self.value
 
     def nud(self):
+
         if IS_PRINTING_ENABLED:
             print(self.__class__.__name__, "-- nud --", self.value)
 
@@ -458,10 +452,12 @@ class KeywordToken(Token):
 
         elif self.value == "cpp_include":
             return self.value
+
         elif self.value == "namespace":
             return self.value
+
         else:
-            printerr("nud keyword")
+            err_manager("nud keyword")
 
         # pass
 
@@ -547,6 +543,8 @@ def optional_match(expected_token):
 # def regex_cropper(regex, string):
 #     return string[re.match(regex, string).end():] if
 #     re.match(regex, string) else string
+
+
 def match_multiple(expected_tokens=None):
     global token
 
@@ -572,7 +570,6 @@ def get_tokens(source_code_path, enabled_log=False):
         print("\033[92m+++ LEXER +++\033[0m")
 
     output = []
-    row_number = 0
 
     # todo multiline comments and nested multiline comments,
     #  multiline comment starts with * ?
@@ -580,8 +577,6 @@ def get_tokens(source_code_path, enabled_log=False):
 
     for row_number, line in enumerate(
         open(source_code_path).read().split("\n")):
-        # print(row_number)
-        # row_number += 1
 
         if enabled_log:
             print(row_number + 1, line.split(" "))
