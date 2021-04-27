@@ -23,11 +23,10 @@ LBP = {
 }
 
 
+#  todo write parser
 def tokenize(program):
     for operator in program.split(" "):
-        if operator == "imeFunkcije":
-            yield FunctionToken("imeFunkcije")
-        elif operator.isnumeric():
+        if operator.isnumeric():
             yield literal_token(operator)
         elif operator == "+":
             yield operator_add_token()
@@ -51,22 +50,8 @@ def tokenize(program):
             yield operator_association_token()
         elif operator == ";":
             yield operator_end_of_line_token()
-        elif operator == "int":
-            yield operator_int_type_token()
-        elif operator == "class":
-            yield ClassDefinitionToken()
-        elif operator == "className":
-            yield ClassNameToken()
-        elif operator == "public":
-            yield VisibilityToken()
-        elif operator == "void":
-            yield ReturnTypeToken()
-        elif operator == "methodName":
-            yield MethodNameToken()
         elif operator in ["==", "<", ">", ">=", "<=", "!="]:
             yield EqualOperatorToken(operator)
-        elif operator[0].isalpha():
-            yield variable_token(operator)
         else:
             raise SyntaxError('unknown operator: %s', operator)
 
@@ -84,38 +69,6 @@ class ClassDefinitionToken:
         match(RightCurlyBracketToken)
 
         return ["class", "className", methods]
-
-    def led(self, left):
-        return
-
-
-class ClassNameToken:
-    def nud(self):
-        return
-
-    def led(self, left):
-        return
-
-
-class VisibilityToken:
-    def nud(self):
-        return
-
-    def led(self, left):
-        return
-
-
-class ReturnTypeToken:
-    def nud(self):
-        return
-
-    def led(self, left):
-        return
-
-
-class MethodNameToken:
-    def nud(self):
-        return
 
     def led(self, left):
         return
@@ -247,19 +200,11 @@ class EqualOperatorToken(object):
         return ["bool tester", ["LS", left], self.value, ["RS", right], ";"]
 
 
-class operator_int_type_token(object):
-    lbp = LBP.get("variable_type")
-
-    # def led(self, left):
-    #     return expression(self.lbp)
-
-
 class operator_end_of_line_token(object):
     lbp = LBP.get("end_of_line")
 
     def led(self, left):
         return ["EOL", left]
-        # return ["instruction block", left, expression()]
 
 
 class operator_association_token(object):
@@ -278,7 +223,6 @@ class operator_association_token(object):
 
         right = expression(self.lbp)
         print("resources", right)
-        # print("right", right)
 
         # expects ";"
         match(operator_end_of_line_token)
@@ -385,123 +329,13 @@ def formated_print(data, s_c=0):
 
 
 if __name__ == '__main__':
-    # test("1 + 1", ["+", 1, 1])
-    # test("3 * ( 2 + - 4 ) ^ 4", ['*', 3, ['^', ['+', 2, -4], 4]])
-    # test("1 - 1 + 1", ['+', ['-', 1, 1], 1])
-    # test("var + 3", ['+', 'var', 3])
-    # test("var + 3 + 3", ['+', ['+', 'var', 3], 3])
-    # test('3 * ( 2 + - 4 ) ^ var', ['*', 3, ['^', ['+', 2, -4], 'var']])
-    # test("x = 100 ;", ["instruction", ["LS", ["x"]], "=", ["RS", [100]], ";"])
-    # test("cijena = 1000 ;", ["instruction", ["LS", ["cijena"]], "=", ["RS", [1000]], ";"])
-    # test("cijena = 100 + 2 * 3 ;", ["instruction", ["LS", ["cijena"]], "=", ["RS", ["+", 100, ["*", 2, 3]]], ";"])
-    # test("int cijena = 1000 ;", ["instruction", ["LS", ["int", "cijena"]], "=", ["RS", [1000]], ";"])
-    # test("cijena <= 20 + 20", ['bool tester', ['LS', ['cijena']], '<=', ['RS', ['+', 20, 20]], ';'])
 
-    # formated_print(parse("1 + 2 * 3 / 7 + 1"))
-
-    # t = parse("x = 2 ; y = 3 ;")
-    # t = parse("- 1")
     t = parse("2 + 3 + 4 - 2 * ( - 2 + 3 )")
     print(t)
-    #
-    # formated_print(t)
-
-    # t = parse("class className { public void methodName ( ) { int x = 1 ; int y = 2 ; }")
 
     formated_print(t)
-
-    # formated_print("class className { public static void main ( String[] args ) { System.out.println ( Hello, World!)\n)
-
-    # parse("x = 2 ; new_line y = 3 ;")
-
-    # parse("( 1 )")
-    # parse("( )")
-    # parse("( 2 + 3 ) + 1")
-
-    # test("imeFunkcije ( cijena ) { cijena = 1000 ; }",
-    #      ["function", "(", ["args", ["cijena"]], ")", "{", ["body", ["instruction", ["LS", ["cijena"]], "=", ["RS", [1000]], ";"]], "}"])
-
-    # test("imeFunkcije ( ) { cijena = 1000 ; }",
-    #      [
-    #          "function",
-    #          "(",
-    #          ["args", []],
-    #          ")",
-    #          "{",
-    #          ["body", ["instruction", ["LS", ["cijena"]], "=", ["RS", [1000]], ";"]],
-    #          "}"
-    #      ]
-    # )
-
-    # test("imeFunkcije ( ) { cijena = 1000 ; int x = 3 ; }",
-    #      ["function",
-    #       "(",
-    #       ["args", []],
-    #       ")",
-    #       "{",
-    #       ["body",
-    #        ["instruction", ["LS", ["cijena"]], "=", ["RS", [1000]], ";"],
-    #        ["instruction", ["LS", ["int", "x"]], "=", ["RS", [3]], ";"]
-    #       ],
-    #       "}"
-    #       ])
 
     print(80 * "=")
     print("all tests passed")
     print(80 * "=")
 
-    # parse("1 + 1")
-    # parse('3 * ( 2 + - 4 ) ^ 4')
-    # parse("1 - 1 + 1")
-    # parse("var + 3")
-    # parse("var + 3 + 3")
-    # parse('3 * ( 2 + - 4 ) ^ var')
-    # parse("cijena = 1000 ;")
-    # parse("int cijena = 1000 ;")
-    # parse("int cijena = 1000 + 20 ;")
-    # parse("cijena = 1000 ;")
-    # print(parse("variable = value ;"))
-
-    """
-        izracunajCijenu() {
-            ako ( kolicina > 20 )
-                cijena = 1000 ;
-            inace
-                cijena = 1200 ;
-            novaCijena = cijena ;
-        }
-        
-        program 
-            izracunajCijenu
-            (
-            )
-            blokNaredbi
-                {
-                slijedNaredbi
-                    naredba
-                        ako
-                        (
-                        izraz
-                            kolicina 
-                            > 
-                            20
-                        )
-                        naredba
-                            cijena
-                            = 
-                            1000
-                            ;
-                        inace
-                        naredba
-                            cijena
-                            =
-                            1200
-                            ;
-                    naredba
-                        novacijena
-                        =
-                        cijena
-                        ;
-                }
-                
-    """
