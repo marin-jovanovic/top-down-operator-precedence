@@ -20,6 +20,8 @@ def isBaseTypeToken(data):
 ''' token classes '''
 
 
+
+
 class Token(object):
 
     def __init__(self, identifier, row, value):

@@ -1,0 +1,13 @@
+expression_set => expression_set expression
+expression_set => expression
+
+expression =>
+
+
+n_t = number | variable
+
+number = digit* | digit+\.digit
+
+
+big_number = (digit{3},)*
+digit = [0-9]

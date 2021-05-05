@@ -339,3 +339,11 @@ if __name__ == '__main__':
     print("all tests passed")
     print(80 * "=")
 
+    t = parse("2 + 3 + 4 = - 2 * ( - 2 + 3 )")
+    print(t)
+
+    formated_print(t)
+
+    print(80 * "=")
+    print("all tests passed")
+    print(80 * "=")
