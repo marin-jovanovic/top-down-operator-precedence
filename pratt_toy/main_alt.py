@@ -1,5 +1,3 @@
-import sys
-
 k = 0
 LBP = {
     "Power": 35 + k,
@@ -14,7 +12,7 @@ LBP = {
     "RightBracket": 0 + k,
     "Trigonometry": 0 + k,
 
-    "Assignment": 0,
+    "Assignment": 2,
 
     "Literal": -404,
     "Variable": -404,
@@ -29,7 +27,7 @@ RBP = {
     "Multiplication": -404,
     "Division": -404,
     "Power": -404,
-    "LeftBracket": -404,
+    "LeftBracket": 5,
     "RightBracket": -404,
     "Trigonometry": -404,
     "EOF": -404,
@@ -138,10 +136,8 @@ def expression(rbp=0):
 class TokenAssignment(Token):
 
     def led(self, left):
-        print(f"{self=}")
-        print(f"{left=}")
-
         return [self.value, left, expression()]
+
 
 class TokenLiteral(Token):
 
@@ -192,7 +188,7 @@ class TokenLeftBracket(Token):
     def nud(self):
         global token
 
-        expr = expression()
+        expr = expression(self.rbp)
 
         if not isinstance(token, TokenRightBracket):
             print("error right bracket")
@@ -206,7 +202,6 @@ class TokenLeftBracket(Token):
 
 
 class TokenRightBracket(Token):
-
     pass
 
 
@@ -214,6 +209,8 @@ class TokenTrigonometry(Token):
 
     def nud(self):
         global token
+
+        # return [self.value, expression()]
 
         if not isinstance(token, TokenLeftBracket):
             print("error left bracket")
@@ -249,7 +246,6 @@ class TokenEOF(Token):
 
 
 def formatted_print(data, s_c=0):
-
     if isinstance(data, (str, int)):
         print(s_c * 4 * " " + str(data))
 
@@ -265,6 +261,9 @@ TEST_COUNT = 0
 def test(test_input, expected_output):
     global lexer, token
     global TEST_COUNT, TEST_PASSED_COUNT
+
+    print(test_input)
+
     TEST_COUNT += 1
 
     lexer = lex_generator(test_input)
@@ -281,38 +280,70 @@ def test(test_input, expected_output):
 
         print("expect:", expected_output)
         print("got    ", ast)
+        formatted_print(ast)
         print("test failed")
 
 
 def main():
     global token, lexer
 
-    # test("1 + 2", ['+', '1', '2'])
-    # test("2 + 3 + 4", ['+', ['+', '2', '3'], '4'])
-    #
-    # test("2 + 3 * 5", ['+', '2', ['*', '3', '5']])
-    # test("2 + 3 * 4 * 5", ['+', '2', ['*', ['*', '3', '4'], '5']])
-    # test("2 * 3 + 4 * 5", ['+', ['*', '2', '3'], ['*', '4', '5']])
-    #
-    # test("1 / 2", ['/', '1', '2'])
-    # test("1 / 2 / 3 * 4", ['*', ['/', ['/', '1', '2'], '3'], '4'])
-    # test("1 + 2 / 2 * 4 + 5 / 3 + 6 * 4",
-    #      ['+', ['+', ['+', '1', ['*', ['/', '2', '2'], '4']], ['/', '5', '3']], ['*', '6', '4']])
-    #
-    # test("1 - 2", ['-', '1', '2'])
-    # test("1 - 2 - 3", ['-', ['-', '1', '2'], '3'])
-    #
-    # test("3 * ( 2 + - 4 ) ^ 4", ['*', '3', ['**', ['(', ['+', '2', ['-', '4']], ')'], '4']])
-    # test("2 + ( ( 3 ) + ( ( 2 - 4 ) + 3 ) ) + 1", ['+', ['+', '2', ['(', ['+', ['(', '3', ')'], ['(', ['+', ['(', ['-', '2', '4'], ')'], '3'], ')']], ')']], '1'])
-    #
-    # test("sin ( 1 ) + 2", ['+', ['sin', '(', '1', ')'], '2'])
-    # test("1 - cos ( 3 + 1 )", ['-', '1', ['cos', '(', ['+', '3', '1'], ')']])
-    #
-    # test("1 - cos ( alpha + beta + 2 )", ['-', '1', ['cos', '(', ['+', ['+', 'alpha', 'beta'], '2'], ')']])
+    test("1 + 2", ['+', '1', '2'])
+    test("2 + 3 + 4", ['+', ['+', '2', '3'], '4'])
+
+    test("2 + 3 * 5", ['+', '2', ['*', '3', '5']])
+    test("2 + 3 * 4 * 5", ['+', '2', ['*', ['*', '3', '4'], '5']])
+    test("2 * 3 + 4 * 5", ['+', ['*', '2', '3'], ['*', '4', '5']])
+
+    test("1 / 2", ['/', '1', '2'])
+    test("1 / 2 / 3 * 4", ['*', ['/', ['/', '1', '2'], '3'], '4'])
+    test("1 + 2 / 2 * 4 + 5 / 3 + 6 * 4",
+         ['+', ['+', ['+', '1', ['*', ['/', '2', '2'], '4']], ['/', '5', '3']],
+          ['*', '6', '4']])
+
+    test("1 - 2", ['-', '1', '2'])
+    test("1 - 2 - 3", ['-', ['-', '1', '2'], '3'])
+
+    test("3 * ( 2 + - 4 ) ^ 4",
+         ['*', '3', ['**', ['(', ['+', '2', ['-', '4']], ')'], '4']])
+    test("2 + ( ( 3 ) + ( ( 2 - 4 ) + 3 ) ) + 1", ['+', ['+', '2', ['(', ['+',
+                                                                          ['(',
+                                                                           '3',
+                                                                           ')'],
+                                                                          ['(',
+                                                                           ['+',
+                                                                            [
+                                                                                '(',
+                                                                                [
+                                                                                    '-',
+                                                                                    '2',
+                                                                                    '4'],
+                                                                                ')'],
+                                                                            '3'],
+                                                                           ')']],
+                                                                    ')']], '1'])
+
+    test("sin ( 1 ) + 2", ['+', ['sin', '(', '1', ')'], '2'])
+    test("1 - cos ( 3 + 1 )", ['-', '1', ['cos', '(', ['+', '3', '1'], ')']])
+
+    test("1 - cos ( alpha + beta + 2 )",
+         ['-', '1', ['cos', '(', ['+', ['+', 'alpha', 'beta'], '2'], ')']])
 
     test("1 - x != 5 + p", ['!=', ['-', '1', 'x'], ['+', '5', 'p']])
 
-    test("1 - x + 2 * cos ( 2 ) != 5 + { m - [ j ( 7 + l ) + f ] / h } + p", "")
+    test("( 2 )", ['(', '2', ')'])
+
+    test("[ j * ( 7 + l ) + f ]",
+         ['[', ['+', ['*', 'j', ['(', ['+', '7', 'l'], ')']], 'f'], ']'])
+
+    test("1 - x + 2 * cos ( 2 ) != 5 + { m - [ j * ( 7 + l ) + f ] / h } + p",
+         ['!=', ['+', ['-', '1', 'x'], ['*', '2', ['cos', '(', '2', ')']]],
+          ['+', ['+', '5', ['{', ['-', 'm', ['/', ['[', ['+', ['*', 'j', ['(',
+                                                                          ['+',
+                                                                           '7',
+                                                                           'l'],
+                                                                          ')']],
+                                                         'f'], ']'], 'h']],
+                            '}']], 'p']])
 
     print(TEST_PASSED_COUNT, "/", TEST_COUNT)
 
