@@ -1,16 +1,21 @@
 import sys
 
-
+k = 0
 LBP = {
-    "Power": 30,
-    "Division": 20,
-    "Multiplication": 20,
-    "Assignment": 15,
-    "Subtraction": 10,
-    "Addition": 10,
-    "LeftBracket": 0,
-    "RightBracket": 0,
-    "Trigonometry": 0,
+    "Power": 35 + k,
+
+    "Division": 25 + k,
+    "Multiplication": 25 + k,
+
+    "Subtraction": 15 + k,
+    "Addition": 15 + k,
+
+    "LeftBracket": 0 + k,
+    "RightBracket": 0 + k,
+    "Trigonometry": 0 + k,
+
+    "Assignment": 0,
+
     "Literal": -404,
     "Variable": -404,
     "EOF": -404,
@@ -19,6 +24,7 @@ LBP = {
 RBP = {
     "Addition": 100,
     "Subtraction": 100,
+
     "Literal": -404,
     "Multiplication": -404,
     "Division": -404,
@@ -132,6 +138,7 @@ def expression(rbp=0):
 class TokenAssignment(Token):
 
     def led(self, left):
+        print(f"{self=}")
         print(f"{left=}")
 
         return [self.value, left, expression()]
@@ -199,6 +206,7 @@ class TokenLeftBracket(Token):
 
 
 class TokenRightBracket(Token):
+
     pass
 
 
@@ -269,6 +277,8 @@ def test(test_input, expected_output):
         TEST_PASSED_COUNT += 1
         print("test passed")
     else:
+        print(f"{test_input=}")
+
         print("expect:", expected_output)
         print("got    ", ast)
         print("test failed")
@@ -300,7 +310,7 @@ def main():
     #
     # test("1 - cos ( alpha + beta + 2 )", ['-', '1', ['cos', '(', ['+', ['+', 'alpha', 'beta'], '2'], ')']])
 
-    test("1 - x != 5 + p", "")
+    test("1 - x != 5 + p", ['!=', ['-', '1', 'x'], ['+', '5', 'p']])
 
     test("1 - x + 2 * cos ( 2 ) != 5 + { m - [ j ( 7 + l ) + f ] / h } + p", "")
 
