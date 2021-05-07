@@ -1,62 +1,38 @@
 import sys
 
+
 LBP = {
-    "Literal": -404,
-    "Addition": 10,
-    "Subtraction": 10,
-    "Multiplication": 20,
-    "Division": 20,
     "Power": 30,
+    "Division": 20,
+    "Multiplication": 20,
+    "Assignment": 15,
+    "Subtraction": 10,
+    "Addition": 10,
     "LeftBracket": 0,
     "RightBracket": 0,
+    "Trigonometry": 0,
+    "Literal": -404,
+    "Variable": -404,
     "EOF": -404,
-
-    # "Addition": 3,
-    # "Subtraction": 3,
-    # "Literal": 0,
-    # "EOF": 0,
-    # "MAX": 100,
-    # "Multiply": 4,
-    # "Divide": 4,
-    # "Subtraction": 3
-    # "variable_type": 1,
-    # "variable": 1,
-    # "lparen": 0,
-    # "rparen": 0,  # not important
-    # "end_of_line": -1,
-    # "association": 2,
-    # "add": 3,
-    # "sub": 3,
-    # "mul": 4,
-    # "div": 4,
-    # "pow": 5,
-    # "equal": 2,
-    # "function name": 1,
-    # "left curly bracket": 0,
-    # "right curly bracket": 0
 }
 
 RBP = {
-    "Literal": -404,
     "Addition": 100,
     "Subtraction": 100,
+    "Literal": -404,
     "Multiplication": -404,
     "Division": -404,
     "Power": -404,
     "LeftBracket": -404,
     "RightBracket": -404,
+    "Trigonometry": -404,
     "EOF": -404,
-
-    # "Addition": 3,
-    # "Literal": None,
-    # "Multiply": 4,
-    # "EOF": None,
-    # "Divide": 4,
-    # "Subtraction": 3
+    "Variable": -404,
+    "Assignment": -404,
 }
 
 
-# todo assignment, boolean, power, variables
+# todo assignment, boolean
 
 
 def lex_generator(program):
@@ -86,9 +62,18 @@ def lex_generator(program):
         elif operator in [")", "}", "]"]:
             yield TokenRightBracket(operator)
 
+        elif operator in ["!=", "==", "<=", ">="]:
+            yield TokenAssignment(operator)
+
+        elif operator in ["sin", "cos", "tan"]:
+            yield TokenTrigonometry(operator)
+
         else:
-            print("lexer error")
-            sys.exit()
+            yield TokenVariable(operator)
+
+        # else:
+        #     print("lexer error")
+        #     sys.exit()
 
     yield TokenEOF()
 
@@ -144,6 +129,13 @@ def expression(rbp=0):
     return left
 
 
+class TokenAssignment(Token):
+
+    def led(self, left):
+        print(f"{left=}")
+
+        return [self.value, left, expression()]
+
 class TokenLiteral(Token):
 
     def nud(self):
@@ -195,18 +187,51 @@ class TokenLeftBracket(Token):
 
         expr = expression()
 
-        if TokenRightBracket and TokenRightBracket != type(token):
+        if not isinstance(token, TokenRightBracket):
             print("error right bracket")
             import sys
             sys.exit()
 
+        r_b = token.value
         token = lexer.__next__()
 
-        return ["(", expr, ")"]
+        return [self.value, expr, r_b]
 
 
 class TokenRightBracket(Token):
     pass
+
+
+class TokenTrigonometry(Token):
+
+    def nud(self):
+        global token
+
+        if not isinstance(token, TokenLeftBracket):
+            print("error left bracket")
+            import sys
+            sys.exit()
+
+        l_b = token.value
+        token = lexer.__next__()
+
+        expr = expression()
+
+        if not isinstance(token, TokenRightBracket):
+            print("error right bracket")
+            import sys
+            sys.exit()
+
+        r_b = token.value
+        token = lexer.__next__()
+
+        return [self.value, l_b, expr, r_b]
+
+
+class TokenVariable(Token):
+
+    def nud(self):
+        return self.value
 
 
 class TokenEOF(Token):
@@ -214,22 +239,72 @@ class TokenEOF(Token):
     def __init__(self):
         Token.__init__(self, value="EOF")
 
-    pass
+
+def formatted_print(data, s_c=0):
+
+    if isinstance(data, (str, int)):
+        print(s_c * 4 * " " + str(data))
+
+    else:
+        for i in data:
+            formatted_print(i, s_c + 1)
 
 
-def main():
-    global token, lexer
+TEST_PASSED_COUNT = 0
+TEST_COUNT = 0
 
-    exp = "3 * ( 2 + - 4 ) ^ 4"
-    exp = "2 + ( ( 3 ) + ( ( 2 - 4 ) + 3 ) ) + 1"
 
-    lexer = lex_generator(exp)
+def test(test_input, expected_output):
+    global lexer, token
+    global TEST_COUNT, TEST_PASSED_COUNT
+    TEST_COUNT += 1
+
+    lexer = lex_generator(test_input)
 
     token = lexer.__next__()
 
     ast = expression()
 
-    print(ast)
+    if ast == expected_output:
+        TEST_PASSED_COUNT += 1
+        print("test passed")
+    else:
+        print("expect:", expected_output)
+        print("got    ", ast)
+        print("test failed")
+
+
+def main():
+    global token, lexer
+
+    # test("1 + 2", ['+', '1', '2'])
+    # test("2 + 3 + 4", ['+', ['+', '2', '3'], '4'])
+    #
+    # test("2 + 3 * 5", ['+', '2', ['*', '3', '5']])
+    # test("2 + 3 * 4 * 5", ['+', '2', ['*', ['*', '3', '4'], '5']])
+    # test("2 * 3 + 4 * 5", ['+', ['*', '2', '3'], ['*', '4', '5']])
+    #
+    # test("1 / 2", ['/', '1', '2'])
+    # test("1 / 2 / 3 * 4", ['*', ['/', ['/', '1', '2'], '3'], '4'])
+    # test("1 + 2 / 2 * 4 + 5 / 3 + 6 * 4",
+    #      ['+', ['+', ['+', '1', ['*', ['/', '2', '2'], '4']], ['/', '5', '3']], ['*', '6', '4']])
+    #
+    # test("1 - 2", ['-', '1', '2'])
+    # test("1 - 2 - 3", ['-', ['-', '1', '2'], '3'])
+    #
+    # test("3 * ( 2 + - 4 ) ^ 4", ['*', '3', ['**', ['(', ['+', '2', ['-', '4']], ')'], '4']])
+    # test("2 + ( ( 3 ) + ( ( 2 - 4 ) + 3 ) ) + 1", ['+', ['+', '2', ['(', ['+', ['(', '3', ')'], ['(', ['+', ['(', ['-', '2', '4'], ')'], '3'], ')']], ')']], '1'])
+    #
+    # test("sin ( 1 ) + 2", ['+', ['sin', '(', '1', ')'], '2'])
+    # test("1 - cos ( 3 + 1 )", ['-', '1', ['cos', '(', ['+', '3', '1'], ')']])
+    #
+    # test("1 - cos ( alpha + beta + 2 )", ['-', '1', ['cos', '(', ['+', ['+', 'alpha', 'beta'], '2'], ')']])
+
+    test("1 - x != 5 + p", "")
+
+    test("1 - x + 2 * cos ( 2 ) != 5 + { m - [ j ( 7 + l ) + f ] / h } + p", "")
+
+    print(TEST_PASSED_COUNT, "/", TEST_COUNT)
 
 
 if __name__ == '__main__':
