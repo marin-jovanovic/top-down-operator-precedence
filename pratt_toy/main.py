@@ -117,14 +117,17 @@ class TokenAddition(Token):
 
         return [self.value, left, expression(self.rbp)]
 
-    # def nud(self):
-    #     return None
-
 
 class TokenSubtraction(Token):
 
     def __init__(self):
         Token.__init__(self, value="-")
+
+    def led(self, left):
+        return [self.value, left, expression(self.rbp)]
+
+    def nud(self):
+        return [self.value, expression(LBP.get("MAX"))]
 
 
 class TokenMultiply(Token):
@@ -155,8 +158,6 @@ class TokenEOF(Token):
 
     def __init__(self):
         Token.__init__(self, value="EOF")
-
-    pass
 
 
 def match(tok=None):
@@ -199,8 +200,13 @@ def expression(rbp=0):
 
     token = lexer.__next__()
     left = token.nud()
+
     token = lexer.__next__()
-    print("left up", left)
+    # try:
+    #     token = lexer.__next__()
+    # except StopIteration:
+    #     return left
+    # print("left up", left)
 
     while rbp < token.lbp:
         left = token.led(left)
@@ -245,7 +251,10 @@ def main():
     test("1 + 2 / 2 * 4 + 5 / 3 + 6 * 4",
          "['+', ['+', ['+', '1', ['*', ['/', '2', '2'], '4']], ['/', '5', '3']], ['*', '6', '4']]")
 
-    k = "1 - 2"
+    test("1 - 2", "['-', '1', '2']")
+    test("1 - 2 - 3", "['-', ['-', '1', '2'], '3']")
+
+    k = "- 1 - 2"
     t = parse(k)
     print(t)
     print()
