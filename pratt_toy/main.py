@@ -152,6 +152,9 @@ def lex_generator(program):
         elif operator in ["true", "false"]:
             yield TokenBoolean(operator)
 
+        elif operator in ["||", "&&"]:
+            yield Token
+
         elif operator == "?":
             yield TokenTernary(operator)
 

@@ -1,6 +1,10 @@
 [1]
 Grune, D i Jacobs, C. J.H. Parsing Techniques: Introduction. New York: Springer Science+Business Media, LLC, 2008.
-
+poglavlja 
+		uvod
+		3
+	
 [2]
 Pratt, Vaughan R. 1973. "Top down operator precedences". Proceedings of the 1st annual ACM 
 SIGACTSIGPLAN symposium on Principles of programming languages, 41-51
+	
