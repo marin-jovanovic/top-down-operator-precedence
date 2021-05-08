@@ -14,29 +14,93 @@ LBP = {
 
     "Assignment": 2,
 
+    "Ternary": 3,
+
+    "Colon": -404,
+
     "Literal": -404,
+    "Boolean": -404,
     "Variable": -404,
     "EOF": -404,
+
+    "If": 1,
+    "Then": -404,
+    "Else": -404,
+
 }
+
+"""
+If.rpb > Then.lbp
+Assigment.rbp > Ternary.lbp
+
+class TokenAssignment(Token):
+
+    def led(self, left):
+        return [self.value, left, expression(self.rbp)]
+
+class TokenTernary(Token):
+
+    def led(self, left):
+        # exp
+        # ?
+        # exp
+        # :
+        # exp
+
+        global token
+
+        truthy = expression()
+
+        if not isinstance(token, TokenColon):
+            print("error colon")
+            import sys
+            sys.exit()
+
+        colon = token.value
+        token = lexer.__next__()
+
+        falsy = expression()
+
+        return [left, self.value, truthy, colon, falsy]
+
+left is [self.value, left, expression(self.rbp)] from TokenAssignment.led
+
+"""
 
 RBP = {
     "Addition": 100,
     "Subtraction": 100,
 
+    "LeftBracket": 5,
+    "Assignment": 4,
+
+    "Colon": -404,
     "Literal": -404,
     "Multiplication": -404,
     "Division": -404,
     "Power": -404,
-    "LeftBracket": 5,
     "RightBracket": -404,
     "Trigonometry": -404,
     "EOF": -404,
     "Variable": -404,
-    "Assignment": -404,
+    "Boolean": -404,
+    "Ternary": -404,
+
+    "If": 2,
+    "Then": -404,
+    "Else": -404,
+
 }
 
 
-# todo assignment, boolean
+# todo if then else, ternary operator
+# if
+# exp
+# then
+# exp
+# else
+# exp
+
 
 
 def lex_generator(program):
@@ -72,12 +136,32 @@ def lex_generator(program):
         elif operator in ["sin", "cos", "tan"]:
             yield TokenTrigonometry(operator)
 
+        elif operator in ["true", "false"]:
+            yield TokenBoolean(operator)
+
+        elif operator == "?":
+            yield TokenTernary(operator)
+
+        elif operator == ":":
+            yield TokenColon(operator)
+
+        elif operator == "if":
+            yield TokenIf(operator)
+
+        elif operator == "then":
+            yield TokenThen(operator)
+
+        elif operator == "else":
+            yield TokenElse(operator)
+
         else:
             yield TokenVariable(operator)
 
         # else:
         #     print("lexer error")
         #     sys.exit()
+
+        # test("if x + 1 == a + b then a else c", "")
 
     yield TokenEOF()
 
@@ -133,10 +217,58 @@ def expression(rbp=0):
     return left
 
 
+class TokenTernary(Token):
+
+    def led(self, left):
+        # exp
+        # ?
+        # exp
+        # :
+        # exp
+
+        global token
+
+        truthy = expression()
+
+        if not isinstance(token, TokenColon):
+            print("error colon")
+            import sys
+            sys.exit()
+
+        colon = token.value
+        token = lexer.__next__()
+
+        falsy = expression()
+
+        return [self.value, left, [colon, truthy, falsy]]
+        # return [left, self.value, truthy, colon, falsy]
+
+
+class TokenIf(Token):
+
+    def nud(self):
+        return [self.value, expression(self.rbp)]
+
+
+class TokenThen(Token):
+    pass
+
+class TokenElse(Token):
+    pass
+
+class TokenColon(Token):
+    pass
+
+
+class TokenBoolean(Token):
+
+    def nud(self):
+        return self.value
+
 class TokenAssignment(Token):
 
     def led(self, left):
-        return [self.value, left, expression()]
+        return [self.value, left, expression(self.rbp)]
 
 
 class TokenLiteral(Token):
@@ -281,12 +413,12 @@ def test(test_input, expected_output):
         print("expect:", expected_output)
         print("got    ", ast)
         formatted_print(ast)
+
+        print(f"test(\"{test_input}\", {ast})")
         print("test failed")
 
 
-def main():
-    global token, lexer
-
+def run_tests():
     test("1 + 2", ['+', '1', '2'])
     test("2 + 3 + 4", ['+', ['+', '2', '3'], '4'])
 
@@ -344,6 +476,25 @@ def main():
                                                                           ')']],
                                                          'f'], ']'], 'h']],
                             '}']], 'p']])
+
+    test("true != false", ['!=', 'true', 'false'])
+
+    test("2 == 2 ? x : y", ['?', ['==', '2', '2'], [':', 'x', 'y']])
+
+    test("2 == 1 + 1 ? x + 1 : y + 7", ['?', ['==', '2', ['+', '1', '1']],
+                                        [':', ['+', 'x', '1'],
+                                         ['+', 'y', '7']]])
+
+    test("4 != 2 + x ? a : b",
+         ['?', ['!=', '4', ['+', '2', 'x']], [':', 'a', 'b']])
+
+
+def main():
+
+    run_tests()
+
+    test("if x + 1 == a + b then a else c", "")
+    #     # if a then b else c
 
     print(TEST_PASSED_COUNT, "/", TEST_COUNT)
 
