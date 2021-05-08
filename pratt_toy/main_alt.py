@@ -1,4 +1,5 @@
-k = 0
+k = 150
+l = 0
 LBP = {
     "Power": 35 + k,
 
@@ -8,29 +9,30 @@ LBP = {
     "Subtraction": 15 + k,
     "Addition": 15 + k,
 
-    "LeftBracket": 0 + k,
-    "RightBracket": 0 + k,
-    "Trigonometry": 0 + k,
+    "LeftBracket": 0 + l,
+    "RightBracket": 0 + l,
+    "Trigonometry": 0 + l,
 
-    "Assignment": 2,
+    "Assignment": 2 + 7,
 
-    "Ternary": 3,
+    "Ternary": 3 + 7,
 
     "Colon": -404,
-
     "Literal": -404,
     "Boolean": -404,
     "Variable": -404,
     "EOF": -404,
 
-    "If": 1,
-    "Then": -404,
+    "If": 0,
+    "Then": 6,
     "Else": -404,
 
 }
 
 """
 If.rpb > Then.lbp
+Assigment.rbp > Then.lbp
+
 Assigment.rbp > Ternary.lbp
 
 class TokenAssignment(Token):
@@ -68,11 +70,15 @@ left is [self.value, left, expression(self.rbp)] from TokenAssignment.led
 """
 
 RBP = {
-    "Addition": 100,
-    "Subtraction": 100,
+    "Addition": 100 + k,
+    "Subtraction": 100 + k,
 
-    "LeftBracket": 5,
-    "Assignment": 4,
+    "LeftBracket": 5 + k,
+    "Assignment": 4 + k,
+
+    "If": 5,
+    "Then": -404,
+    "Else": -404,
 
     "Colon": -404,
     "Literal": -404,
@@ -86,10 +92,6 @@ RBP = {
     "Boolean": -404,
     "Ternary": -404,
 
-    "If": 2,
-    "Then": -404,
-    "Else": -404,
-
 }
 
 
@@ -100,7 +102,6 @@ RBP = {
 # exp
 # else
 # exp
-
 
 
 def lex_generator(program):
@@ -240,6 +241,7 @@ class TokenTernary(Token):
 
         falsy = expression()
 
+        # todo
         return [self.value, left, [colon, truthy, falsy]]
         # return [left, self.value, truthy, colon, falsy]
 
@@ -247,14 +249,58 @@ class TokenTernary(Token):
 class TokenIf(Token):
 
     def nud(self):
-        return [self.value, expression(self.rbp)]
+        global token
+        # if a then b else c
+        # [if, a, [then, b], [else, c]]
+
+        """if expression"""
+        if_e = expression(7)
+
+        """then token"""
+        if not isinstance(token, TokenThen):
+            print("error then")
+            import sys
+            sys.exit()
+
+        then_t = token.value
+        token = lexer.__next__()
+
+        """then expression"""
+        then_e = expression()
+
+        """else is optional"""
+        """else token"""
+        if isinstance(token, TokenElse):
+            else_t = token.value
+            token = lexer.__next__()
+
+            """else expression"""
+            else_e = expression()
+
+            return [self.value, if_e, then_t, then_e, else_t, else_e]
+
+        else:
+            print("no else")
+            return [self.value, if_e, then_t, then_e]
+
+        # [if, e, then, e, else, e]
+        # return [self.value, expression(), "then", expression(), "else", expression()]
+        # return [self.value, expression()]
 
 
 class TokenThen(Token):
+
+    def led(self, left):
+        print(self)
+        print(left)
+        sys.exit
+
     pass
+
 
 class TokenElse(Token):
     pass
+
 
 class TokenColon(Token):
     pass
@@ -264,6 +310,7 @@ class TokenBoolean(Token):
 
     def nud(self):
         return self.value
+
 
 class TokenAssignment(Token):
 
@@ -477,7 +524,11 @@ def run_tests():
                                                          'f'], ']'], 'h']],
                             '}']], 'p']])
 
+    """binary"""
+
     test("true != false", ['!=', 'true', 'false'])
+
+    """ternary"""
 
     test("2 == 2 ? x : y", ['?', ['==', '2', '2'], [':', 'x', 'y']])
 
@@ -488,12 +539,72 @@ def run_tests():
     test("4 != 2 + x ? a : b",
          ['?', ['!=', '4', ['+', '2', 'x']], [':', 'a', 'b']])
 
+    test("a ? b : c ? d : e",
+         ['?', 'a', [':', 'b', ['?', 'c', [':', 'd', 'e']]]])
+
+    """if then else"""
+    test("if a then b", ['if', 'a', 'then', 'b'])
+    test("if a then b else c", ['if', 'a', 'then', 'b', 'else', 'c'])
+    test("if a then if b then c", ['if', 'a', 'then', ['if', 'b', 'then', 'c']])
+    test("if a then if b then c else d",
+         ['if', 'a', 'then', ['if', 'b', 'then', 'c', 'else', 'd']])
+    test("if a then if b then c else d else f",
+         ['if', 'a', 'then', ['if', 'b', 'then', 'c', 'else', 'd'], 'else',
+          'f'])
+    test("if a then if b then c else d else if e then f else g",
+         ['if', 'a', 'then', ['if', 'b', 'then', 'c', 'else', 'd'], 'else',
+          ['if', 'e', 'then', 'f', 'else', 'g']])
+
+    test("if x + 1 == a + b then a else c",
+         ['if', ['==', ['+', 'x', '1'], ['+', 'a', 'b']],
+          'then', 'a', 'else', 'c'])
+
+    test("if x + 1 == a + b then a + m + sin ( x ) else c + d",
+         ['if', ['==', ['+', 'x', '1'], ['+', 'a', 'b']], 'then', ['+',
+                                                                   ['+', 'a',
+                                                                    'm'],
+                                                                   ['sin', '(',
+                                                                    'x', ')']],
+          'else', ['+', 'c', 'd']])
+    test("if x + 1 == a + b then if a == m then sin ( x ) else c else if x "
+         "then a else b", ['if', ['==', ['+', 'x', '1'], ['+', 'a', 'b']],
+                           'then', ['if', ['==', 'a', 'm'], 'then',
+                                    ['sin', '(', 'x', ')'],
+                                    'else', 'c'], 'else',
+                           ['if', 'x', 'then', 'a', 'else', 'b']])
+
+    test("if x + 1 == a + b then a",
+         ['if', ['==', ['+', 'x', '1'], ['+', 'a', 'b']], 'then', 'a'])
+    test("if x + 1 == a + b + sin ( x ) then a + b + ( a + d )", ['if', ['==',
+                                                                         ['+',
+                                                                          'x',
+                                                                          '1'],
+                                                                         ['+',
+                                                                          ['+',
+                                                                           'a',
+                                                                           'b'],
+                                                                          [
+                                                                              'sin',
+                                                                              '(',
+                                                                              'x',
+                                                                              ')']]],
+                                                                  'then', ['+',
+                                                                           ['+',
+                                                                            'a',
+                                                                            'b'],
+                                                                           ['(',
+                                                                            [
+                                                                                '+',
+                                                                                'a',
+                                                                                'd'],
+                                                                            ')']]])
+
 
 def main():
-
     run_tests()
 
-    test("if x + 1 == a + b then a else c", "")
+    # test("if a then if b then c else d else e", "")
+
     #     # if a then b else c
 
     print(TEST_PASSED_COUNT, "/", TEST_COUNT)
