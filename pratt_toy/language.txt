@@ -1,0 +1,33 @@
+val = literal
+    | boolean
+
+basic_operator = +
+                | -
+                | *
+                | /
+                | ^
+
+left_bracket = (
+| {
+| [
+
+right_bracket = )
+| }
+| ]
+
+assignment = !=
+| ==
+| <=
+| >=
+
+trigonometry = sin ( exp )
+| cos ( exp )
+| tan ( exp )
+
+boolean = true
+| false
+
+ternary_exp = exp "?" exp ":" exp
+
+
+

@@ -1,0 +1,6 @@
+Opisati tehniku parsiranja koristeći Prattov parser. Navesti prednosti i nedostatke takvog načina parsiranja. Usporediti Prattovo parsiranje s tradicionalnim načinima parsiranja poput parsiranja tehnikom prednosti operatora ili parsiranja tehnikom rekurzivnog spusta. Ostvariti jezični procesor prikladnog domenskog jezika koristeći Prattov parser. Opisati arhitekturu sustava te navesti načine korištenja
+
+Opisati tehniku parsiranja koristeći Prattov parser. Navesti prednosti i nedostatke takvog načina parsiranja.
+Usporediti Prattovo parsiranje s tradicionalnim načinima parsiranja poput parsiranja tehnikom prednosti
+operatora ili parsiranja tehnikom rekurzivnog spusta. Ostvariti jezični procesor prikladnog domenskog jezika
+koristeći Prattov parser. Opisati arhitekturu sustava te navesti načine korištenja.
