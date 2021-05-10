@@ -1,6 +1,4 @@
 k = 150
-# k = 0
-l = 0
 
 """
 left binding power values
@@ -14,9 +12,9 @@ LBP = {
     "Subtraction": 15 + k,
     "Addition": 15 + k,
 
-    "LeftBracket": 0 + l,
-    "RightBracket": 0 + l,
-    "Trigonometry": 0 + l,
+    "LeftBracket": 0,
+    "RightBracket": 0,
+    "Trigonometry": 0,
 
     "Assignment": 2 + 7,
 
@@ -100,15 +98,6 @@ RBP = {
 }
 
 
-# todo if then else, ternary operator
-# if
-# exp
-# then
-# exp
-# else
-# exp
-
-
 def lex_generator(program):
     """
     simple lexer
@@ -152,8 +141,8 @@ def lex_generator(program):
         elif operator in ["true", "false"]:
             yield TokenBoolean(operator)
 
-        elif operator in ["||", "&&"]:
-            yield Token
+        # elif operator in ["||", "&&"]:
+        #     yield TokenBooleanOperator(operator)
 
         elif operator == "?":
             yield TokenTernary(operator)
@@ -184,7 +173,6 @@ class Token(object):
     handles error messages when function or constant is not present
 
     """
-
 
     def __init__(self, value):
         self.identifier = self.__class__.__name__
@@ -304,12 +292,6 @@ class TokenIf(Token):
 
 
 class TokenThen(Token):
-
-    def led(self, left):
-        print(self)
-        print(left)
-        sys.exit
-
     pass
 
 
@@ -403,8 +385,6 @@ class TokenTrigonometry(Token):
 
     def nud(self):
         global token
-
-        # return [self.value, expression()]
 
         if not isinstance(token, TokenLeftBracket):
             print("error left bracket")
@@ -613,11 +593,11 @@ def run_tests():
                                                                                 'd'],
                                                                             ')']]])
 
+    print(TEST_PASSED_COUNT, "/", TEST_COUNT)
+
 
 def main():
     run_tests()
-
-    print(TEST_PASSED_COUNT, "/", TEST_COUNT)
 
 
 if __name__ == '__main__':
