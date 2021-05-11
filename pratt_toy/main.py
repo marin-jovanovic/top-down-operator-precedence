@@ -3,38 +3,34 @@ code based on: https://eli.thegreenplace.net/2010/01/02/top-down-operator-preced
  
 """
 
-k = 150
-
 """
 left binding power values
 """
 LBP = {
-    "Power": 35 + k,
+    "Power": 12,
 
-    "Division": 25 + k,
-    "Multiplication": 25 + k,
+    "Division": 10,
+    "Multiplication": 10,
 
-    "Subtraction": 15 + k,
-    "Addition": 15 + k,
+    "Subtraction": 8,
+    "Addition": 8,
 
+    "Ternary": 4,
+    "Assignment": 2,
+
+    "Then": 0,
+    "If": 0,
     "LeftBracket": 0,
     "RightBracket": 0,
     "Trigonometry": 0,
 
-    "Assignment": 2 + 7,
-
-    "Ternary": 3 + 7,
-
+    # not used
+    "Else": -404,
     "Colon": -404,
     "Literal": -404,
     "Boolean": -404,
     "Variable": -404,
     "EOF": -404,
-
-    "If": 0,
-    "Then": 6,
-    "Else": -404,
-
 }
 
 """
@@ -78,21 +74,24 @@ left is [self.value, left, expression(self.rbp)] from TokenAssignment.led
 """
 
 RBP = {
-    "Addition": 100 + k,
-    "Subtraction": 100 + k,
+    "Addition": 13,
+    "Subtraction": 13,
 
-    "LeftBracket": 5 + k,
-    "Assignment": 4 + k,
+    "Power": 9,
 
-    "If": 5,
+    "LeftBracket": 7,
+
+    "Assignment": 5,
+
+    "If": 1,
+
+    # not used
     "Then": -404,
     "Else": -404,
-
     "Colon": -404,
     "Literal": -404,
     "Multiplication": -404,
     "Division": -404,
-    "Power": -404,
     "RightBracket": -404,
     "Trigonometry": -404,
     "EOF": -404,
@@ -267,7 +266,7 @@ class TokenIf(Token):
         global token
 
         """if expression"""
-        if_e = expression(7)
+        if_e = expression(self.rbp)
 
         """then token"""
         if not isinstance(token, TokenThen):
@@ -296,19 +295,13 @@ class TokenIf(Token):
             return [self.value, if_e, then_t, then_e]
 
 
-class TokenThen(Token):
-    pass
-
-
-class TokenElse(Token):
-    pass
-
-
-class TokenColon(Token):
-    pass
-
-
 class TokenBoolean(Token):
+
+    def nud(self):
+        return self.value
+
+
+class TokenLiteral(Token):
 
     def nud(self):
         return self.value
@@ -320,21 +313,10 @@ class TokenAssignment(Token):
         return [self.value, left, expression(self.rbp)]
 
 
-class TokenLiteral(Token):
-
-    def nud(self):
-        return self.value
-
-
 class TokenAddition(Token):
 
-    def nud(self):
-        return expression(self.rbp)
-
     def led(self, left):
-        right = expression(self.lbp)
-
-        return ["+", left, right]
+        return ["+", left, expression(self.lbp)]
 
 
 class TokenSubtraction(Token):
@@ -361,7 +343,7 @@ class TokenDivision(Token):
 class TokenPower(Token):
 
     def led(self, left):
-        return ["**", left, expression(self.lbp - 1)]
+        return ["**", left, expression(self.rbp)]
 
 
 class TokenLeftBracket(Token):
@@ -380,10 +362,6 @@ class TokenLeftBracket(Token):
         token = lexer.__next__()
 
         return [self.value, expr, r_b]
-
-
-class TokenRightBracket(Token):
-    pass
 
 
 class TokenTrigonometry(Token):
@@ -416,6 +394,22 @@ class TokenVariable(Token):
 
     def nud(self):
         return self.value
+
+
+class TokenRightBracket(Token):
+    pass
+
+
+class TokenThen(Token):
+    pass
+
+
+class TokenElse(Token):
+    pass
+
+
+class TokenColon(Token):
+    pass
 
 
 class TokenEOF(Token):
@@ -598,6 +592,11 @@ def run_tests():
                                                                                 'd'],
                                                                             ')']]])
 
+    test("3 * ( 2 + - 4 ) ^ 4 ^ 5 ^ 6", ['*', '3', ['**', ['(', ['+', '2',
+                                                                 ['-', '4']],
+                                                           ')'], ['**', '4',
+                                                                  ['**', '5',
+                                                                   '6']]]])
     print(TEST_PASSED_COUNT, "/", TEST_COUNT)
 
 
