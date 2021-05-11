@@ -1,3 +1,8 @@
+"""
+code based on: https://eli.thegreenplace.net/2010/01/02/top-down-operator-precedence-parsing
+ 
+"""
+
 k = 150
 
 """
