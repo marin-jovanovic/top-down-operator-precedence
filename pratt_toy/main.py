@@ -18,13 +18,12 @@ LBP = {
     "Ternary": 4,
     "Assignment": 2,
 
-    "Then": 0,
-    "If": 0,
-    "LeftBracket": 0,
-    "RightBracket": 0,
-    "Trigonometry": 0,
-
     # not used
+    "Then": -404,
+    "If": -404,
+    "LeftBracket": -404,
+    "RightBracket": -404,
+    "Trigonometry": -404,
     "Else": -404,
     "Colon": -404,
     "Literal": -404,
