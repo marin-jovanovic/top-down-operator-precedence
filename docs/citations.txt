@@ -11,3 +11,13 @@ SIGACTSIGPLAN symposium on Principles of programming languages, 41-51
 [3]
 https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html
 
+[4]
+CROCKFORD, Douglas. 2007. Top Down Operator Precedence. Available at: 
+https://crockford.com/javascript/tdop/tdop.html (Accessed: 13 January 2021).
+
+
+///////////////////////
+grafovi
+http://mshang.ca/syntree/
+poslati rad na https://github.com/mshang/syntree
+
