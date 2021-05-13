@@ -283,7 +283,7 @@ class TokenLeftBracket(Token):
         expr = expression(self.rbp)
 
         if not isinstance(token, TokenRightBracket):
-            print("error right bracket")
+            # print("error right bracket")
             # TODO determinate which type of bracket is needed
             r_b = "err )"
 
@@ -300,7 +300,7 @@ class TokenTrigonometry(Token):
         global token
 
         if not isinstance(token, TokenLeftBracket):
-            print("error left bracket")
+            # print("error left bracket")
             # todo determinate val
             l_b = "err ("
         else:
@@ -311,12 +311,13 @@ class TokenTrigonometry(Token):
         expr = expression()
 
         if not isinstance(token, TokenRightBracket):
-            print("error right bracket")
-            import sys
-            sys.exit()
+            # print("error right bracket")
+            # todo check which one
+            r_b = ")"
 
-        r_b = token.value
-        token = lexer.__next__()
+        else:
+            r_b = token.value
+            token = lexer.__next__()
 
         return [self.value, l_b, expr, r_b]
 
