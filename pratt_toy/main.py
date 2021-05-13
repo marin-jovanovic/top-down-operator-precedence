@@ -73,7 +73,6 @@ left is [self.value, left, expression(self.rbp)] from TokenAssignment.led
 """
 
 RBP = {
-    "Addition": 13,
     "Subtraction": 13,
 
     "Power": 9,
@@ -85,6 +84,7 @@ RBP = {
     "If": 1,
 
     # not used
+    "Addition": -404,
     "Then": -404,
     "Else": -404,
     "Colon": -404,
@@ -354,11 +354,14 @@ class TokenLeftBracket(Token):
 
         if not isinstance(token, TokenRightBracket):
             print("error right bracket")
-            import sys
-            sys.exit()
+            # import sys
+            # sys.exit()
+            # TODO determinate which type of bracket is needed
+            r_b = "err )"
 
-        r_b = token.value
-        token = lexer.__next__()
+        else:
+            r_b = token.value
+            token = lexer.__next__()
 
         return [self.value, expr, r_b]
 
@@ -601,7 +604,8 @@ def run_tests():
 
 def main():
     # run_tests()
-    test("( 1 - ( - 2 ) * 3 )", "")
+    test("( 1 - ( - 2 * 3 )", "")
+
 
 if __name__ == '__main__':
     main()
