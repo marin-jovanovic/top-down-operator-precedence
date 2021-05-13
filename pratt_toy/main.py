@@ -9,29 +9,20 @@ left binding power values
 """
 LBP = {
     "Power": 12,
-
     "Division": 10,
     "Multiplication": 10,
-
     "Subtraction": 8,
     "Addition": 8,
-
     "Ternary": 4,
     "Assignment": 2,
-
 }
 
 RBP = {
     "Subtraction": 13,
-
     "Power": 9,
-
     "LeftBracket": 7,
-
     "Assignment": 5,
-
     "If": 1,
-
 }
 
 
@@ -136,11 +127,13 @@ class Token(object):
     def nud(self):
         print("todo nud for", self.__class__.__name__)
         import sys
+
         sys.exit()
 
     def led(self, left):
         print("todo led for", self.__class__.__name__)
         import sys
+
         sys.exit()
 
 
@@ -170,7 +163,6 @@ def expression(rbp=0):
 
 
 class TokenTernary(Token):
-
     def led(self, left):
         global token
 
@@ -179,6 +171,7 @@ class TokenTernary(Token):
         if not isinstance(token, TokenColon):
             print("error colon")
             import sys
+
             sys.exit()
 
         colon = token.value
@@ -190,7 +183,6 @@ class TokenTernary(Token):
 
 
 class TokenIf(Token):
-
     def nud(self):
         global token
 
@@ -201,6 +193,7 @@ class TokenIf(Token):
         if not isinstance(token, TokenThen):
             print("error then")
             import sys
+
             sys.exit()
 
         then_t = token.value
@@ -225,31 +218,26 @@ class TokenIf(Token):
 
 
 class TokenBoolean(Token):
-
     def nud(self):
         return self.value
 
 
 class TokenLiteral(Token):
-
     def nud(self):
         return self.value
 
 
 class TokenAssignment(Token):
-
     def led(self, left):
         return [self.value, left, expression(self.rbp)]
 
 
 class TokenAddition(Token):
-
     def led(self, left):
         return ["+", left, expression(self.lbp)]
 
 
 class TokenSubtraction(Token):
-
     def nud(self):
         return ["-", expression(self.rbp)]
 
@@ -258,25 +246,21 @@ class TokenSubtraction(Token):
 
 
 class TokenMultiplication(Token):
-
     def led(self, left):
         return ["*", left, expression(self.lbp)]
 
 
 class TokenDivision(Token):
-
     def led(self, left):
         return ["/", left, expression(self.lbp)]
 
 
 class TokenPower(Token):
-
     def led(self, left):
         return ["**", left, expression(self.rbp)]
 
 
 class TokenLeftBracket(Token):
-
     def nud(self):
         global token
 
@@ -295,7 +279,6 @@ class TokenLeftBracket(Token):
 
 
 class TokenTrigonometry(Token):
-
     def nud(self):
         global token
 
@@ -323,7 +306,6 @@ class TokenTrigonometry(Token):
 
 
 class TokenVariable(Token):
-
     def nud(self):
         return self.value
 
@@ -345,7 +327,6 @@ class TokenColon(Token):
 
 
 class TokenEOF(Token):
-
     def __init__(self):
         Token.__init__(self, value="EOF")
 
@@ -384,5 +365,5 @@ def main():
     print(ast)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

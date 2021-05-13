@@ -27,7 +27,7 @@ def main():
         # printer
         global counter
         print(f"def test_{counter}(self):")
-        print(f"\toutput = self.execute(\"\\\"{t[0]}\\\"\")")
+        print(f'\toutput = self.execute("\\"{t[0]}\\"")')
         counter += 1
         print("\toutput = eval(output)")
         print()
@@ -36,7 +36,7 @@ def main():
         print()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     global counter
     counter = 0
 
