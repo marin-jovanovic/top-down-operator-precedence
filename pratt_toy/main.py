@@ -373,11 +373,14 @@ class TokenTrigonometry(Token):
 
         if not isinstance(token, TokenLeftBracket):
             print("error left bracket")
-            import sys
-            sys.exit()
+            # import sys
+            # sys.exit()
+            # todo determinate val
+            l_b = "err ("
+        else:
 
-        l_b = token.value
-        token = lexer.__next__()
+            l_b = token.value
+            token = lexer.__next__()
 
         expr = expression()
 
@@ -604,8 +607,10 @@ def run_tests():
 
 def main():
     # run_tests()
-    test("( 1 - ( - 2 * 3 )", "")
-
+    test("( 1 - ( - 2 * 3 )",
+         ['(', ['-', '1', ['(', ['*', ['-', '2'], '3'], ')']], 'err )'])
+    test("sin x + 1 )", ['sin', 'err (', ['+', 'x', '1'], ')'])
+    test("1 + if 2 - 6 == 5 + 1 then 4 else 3", "")
 
 if __name__ == '__main__':
     main()
