@@ -601,7 +601,7 @@ def run_tests():
 
 def main():
     # run_tests()
-    test("1 + 2 * 3", "")
+    test("( 1 - ( - 2 ) * 3 )", "")
 
 if __name__ == '__main__':
     main()

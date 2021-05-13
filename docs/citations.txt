@@ -15,9 +15,32 @@ https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html
 CROCKFORD, Douglas. 2007. Top Down Operator Precedence. Available at: 
 https://crockford.com/javascript/tdop/tdop.html (Accessed: 13 January 2021).
 
+[5]
+https://engineering.desmos.com/articles/pratt-parser/
+
+[6]
+https://eli.thegreenplace.net/2012/08/02/parsing-expressions-by-precedence-climbing
+
+[7]
+https://www.antlr.org/papers/Clarke-expr-parsing-1986.pdf
+K clarke, the top down parsing of expressions
+
+[8]
+http://www.oilshell.org/blog/2016/11/01.html
 
 ///////////////////////
 grafovi
 http://mshang.ca/syntree/
 poslati rad na https://github.com/mshang/syntree
 
+https://engineering.desmos.com/articles/pratt-parser
+https://www.engr.mun.ca/~theo/Misc/pratt_parsing.htm
+http://polaris.cs.uiuc.edu/publications/c1070.pdf
+https://archive.org/details/bitsavers_computersA_13990695
+https://www.google.com/search?q=floyd+precedence+climbing&oq=floyd+precedence+climbing&aqs=chrome..69i57.10927j0j4&sourceid=chrome&ie=UTF-8
+https://news.ycombinator.com/item?id=13916194
+https://en.wikipedia.org/wiki/Operator-precedence_grammar
+https://www.oilshell.org/blog/2016/11/01.html
+http://www.zemris.fer.hr/predmeti/os/pripreme/z1b.html
+https://en.wikipedia.org/wiki/Parsing_expression_grammar
+https://lakhin.com/projects/papa-carlo/
