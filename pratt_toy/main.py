@@ -50,6 +50,11 @@ DEFAULT_ERR_L_B = "err ("
 DEFAULT_ERR_R_B = "err )"
 
 
+"""lexer vars"""
+LEXER = None
+TOKEN = None
+
+
 def lex_generator(program):
     """
     simple lexer
@@ -381,14 +386,10 @@ def get_args():
     return args
 
 
-LEXER = None
-TOKEN = None
-
-
 def main():
-    args = get_args()
-
     global LEXER, TOKEN
+
+    args = get_args()
 
     LEXER = lex_generator(args.expression)
 
