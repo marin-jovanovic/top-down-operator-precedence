@@ -152,7 +152,7 @@ class CppTypeToken(Token):
 class BaseTypeToken(Token):
 
     def nud(self):
-        print("current", token)
+        print("current", TOKEN)
 
 
 class CommaToken(Token):
@@ -756,7 +756,7 @@ class Error(object):
 
 
 def match_multiple(expected_tokens=None):
-    global token
+    global TOKEN
 
     print(expected_tokens)
 
@@ -779,7 +779,7 @@ def match(tok=None):
     :param tok: expected token
     :return: void
     """
-    global token
+    global TOKEN
 
     if tok and isinstance(tok, type(token)):
         # if tok and tok != type(token):
@@ -798,7 +798,7 @@ def get_ast():
     print()
 
     global tokens
-    global token
+    global TOKEN
     token = get_next_token()
     print("+++ token +++\n" + str(token) + "\n")
 
@@ -817,7 +817,7 @@ def expression(rbp=0):
     :param rbp:
     :return:
     """
-    global token
+    global TOKEN
     t = token
     token = get_next_token()
     left = t.nud()
@@ -858,7 +858,7 @@ if __name__ == '__main__':
     [print(i) for i in tokens]
     print()
 
-    global token
+    global TOKEN
     global token_pointer
     token_pointer = 0
 

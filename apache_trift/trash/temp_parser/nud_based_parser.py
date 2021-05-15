@@ -34,7 +34,7 @@ class Token(object):
 class BaseTypeToken(Token):
 
     def nud(self):
-        print("current", token)
+        print("current", TOKEN)
 
 
 class CommaToken(Token):
@@ -161,7 +161,7 @@ class KeywordToken(Token):
             v2 = match(IdentifierToken)
 
             print(["namespace", v1, v2])
-            print("next", token)
+            print("next", TOKEN)
 
             return [["HEADER", "namespace", v1, v2], expression()]
 
@@ -486,7 +486,7 @@ def match(tok=None):
     :param tok: expected token
     :return: void
     """
-    global token
+    global TOKEN
 
     if tok and tok != type(token):
         value = "err: skip"
@@ -509,7 +509,7 @@ def get_ast():
     [print(i) for i in tokens]
     print()
 
-    global token
+    global TOKEN
     token = get_next_token()
     print("+++ token +++\n" + str(token) + "\n")
 
@@ -528,7 +528,7 @@ def expression(rbp=0):
     :param rbp:
     :return:
     """
-    global token
+    global TOKEN
     t = token
     token = get_next_token()
     left = t.nud()
@@ -544,7 +544,7 @@ if __name__ == '__main__':
     tokens = get_tokens(
         "../../resources/thrift_source_code_samples/reduced.thrift")
 
-    global token
+    global TOKEN
     global token_pointer
     token_pointer = 0
 

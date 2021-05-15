@@ -5,7 +5,7 @@ def main():
     a = ""
     for line in open("temp.txt").read().split("\n"):
         line = line.strip()
-        print(line)
+        # print(line)
         if line.startswith("test"):
             t_list.append(a)
             a = line
@@ -13,8 +13,8 @@ def main():
             a += line
 
     # print check
-    [print(i) for i in t_list]
-    print()
+    # [print(i) for i in t_list]
+    # print()
 
     # main driver
     for t in t_list:
@@ -26,7 +26,17 @@ def main():
 
         # printer
         global counter
-        print(f"def test_{counter}(self):")
+        if counter < 10:
+            print(f"def test_0{counter}(self):")
+
+        else:
+            print(f"def test_{counter}(self):")
+        if counter < 10:
+            print(f"\t\"\"\"test 0{counter}\"\"\"")
+
+        else:
+            print(f"\t\"\"\"test {counter}\"\"\"")
+        print()
         print(f'\toutput = self.execute("\\"{t[0]}\\"")')
         counter += 1
         print("\toutput = eval(output)")

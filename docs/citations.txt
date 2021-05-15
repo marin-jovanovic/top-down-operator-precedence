@@ -32,6 +32,10 @@ http://www.oilshell.org/blog/2016/11/01.html
 grafovi
 http://mshang.ca/syntree/
 poslati rad na https://github.com/mshang/syntree
+[[-] [1] [[*] [2] [3]]]
+[[(] [[-] [1] [[*] [[(] [[-] [2]] [)] ] [3]]] [)]]
+[[(] [[-] [1] [[*] [[(] [[-] [2]] [)] ] [3]]] [err )]]
+[[sin] [err (] [[+] [x] 1] [)]]
 
 https://engineering.desmos.com/articles/pratt-parser
 https://www.engr.mun.ca/~theo/Misc/pratt_parsing.htm

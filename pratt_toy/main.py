@@ -1,7 +1,7 @@
 """
 code based on: https://eli.thegreenplace.net/2010/01/02/top-down-operator-precedence-parsing
- 
 """
+
 import argparse
 
 """
@@ -24,6 +24,30 @@ RBP = {
     "Assignment": 5,
     "If": 1,
 }
+
+"""
+error bracket manager
+"""
+L_R_BRACKETS = {
+    "(": "err )",
+    "{": "err }",
+    "[": "err ]",
+    "err (": "err )",
+    "err {": "err }",
+    "err [": "err ]",
+}
+
+R_L_BRACKETS = {
+    ")": "err (",
+    "}": "err {",
+    "]": "err [",
+    "err )": "err (",
+    "err }": "err {",
+    "err ]": "err [",
+}
+
+DEFAULT_ERR_L_B = "err ("
+DEFAULT_ERR_R_B = "err )"
 
 
 def lex_generator(program):
@@ -151,31 +175,31 @@ def expression(rbp=0):
 
     """
 
-    global token
-    t = token
-    token = lexer.__next__()
+    global TOKEN
+    t = TOKEN
+    TOKEN = LEXER.__next__()
     left = t.nud()
-    while rbp < token.lbp:
-        t = token
-        token = lexer.__next__()
+    while rbp < TOKEN.lbp:
+        t = TOKEN
+        TOKEN = LEXER.__next__()
         left = t.led(left)
     return left
 
 
 class TokenTernary(Token):
     def led(self, left):
-        global token
+        global TOKEN
 
         truthy = expression()
 
-        if not isinstance(token, TokenColon):
+        if not isinstance(TOKEN, TokenColon):
             print("error colon")
             import sys
 
             sys.exit()
 
-        colon = token.value
-        token = lexer.__next__()
+        colon = TOKEN.value
+        TOKEN = LEXER.__next__()
 
         falsy = expression()
 
@@ -184,29 +208,29 @@ class TokenTernary(Token):
 
 class TokenIf(Token):
     def nud(self):
-        global token
+        global TOKEN
 
         """if expression"""
         if_e = expression(self.rbp)
 
         """then token"""
-        if not isinstance(token, TokenThen):
+        if not isinstance(TOKEN, TokenThen):
             print("error then")
             import sys
 
             sys.exit()
 
-        then_t = token.value
-        token = lexer.__next__()
+        then_t = TOKEN.value
+        TOKEN = LEXER.__next__()
 
         """then expression"""
         then_e = expression()
 
         """else is optional"""
-        if isinstance(token, TokenElse):
+        if isinstance(TOKEN, TokenElse):
             """else token"""
-            else_t = token.value
-            token = lexer.__next__()
+            else_t = TOKEN.value
+            TOKEN = LEXER.__next__()
 
             """else expression"""
             else_e = expression()
@@ -262,45 +286,50 @@ class TokenPower(Token):
 
 class TokenLeftBracket(Token):
     def nud(self):
-        global token
+        global TOKEN
 
         expr = expression(self.rbp)
 
-        if not isinstance(token, TokenRightBracket):
+        if not isinstance(TOKEN, TokenRightBracket):
             # print("error right bracket")
-            # TODO determinate which type of bracket is needed
-            r_b = "err )"
+
+            r_b = L_R_BRACKETS.get(self.value)
 
         else:
-            r_b = token.value
-            token = lexer.__next__()
+            r_b = TOKEN.value
+            TOKEN = LEXER.__next__()
 
         return [self.value, expr, r_b]
 
 
 class TokenTrigonometry(Token):
     def nud(self):
-        global token
+        global TOKEN
 
-        if not isinstance(token, TokenLeftBracket):
+        l_b_err = False
+
+        if not isinstance(TOKEN, TokenLeftBracket):
             # print("error left bracket")
-            # todo determinate val
-            l_b = "err ("
+
+            l_b = DEFAULT_ERR_L_B
+            l_b_err = True
+
         else:
 
-            l_b = token.value
-            token = lexer.__next__()
+            l_b = TOKEN.value
+            TOKEN = LEXER.__next__()
 
         expr = expression()
 
-        if not isinstance(token, TokenRightBracket):
-            # print("error right bracket")
-            # todo check which one
-            r_b = ")"
+        if not isinstance(TOKEN, TokenRightBracket):
+            r_b = L_R_BRACKETS.get(l_b)
 
         else:
-            r_b = token.value
-            token = lexer.__next__()
+            r_b = TOKEN.value
+            TOKEN = LEXER.__next__()
+
+        if l_b_err:
+            l_b = R_L_BRACKETS.get(r_b)
 
         return [self.value, l_b, expr, r_b]
 
@@ -352,14 +381,18 @@ def get_args():
     return args
 
 
+LEXER = None
+TOKEN = None
+
+
 def main():
     args = get_args()
 
-    global lexer, token
+    global LEXER, TOKEN
 
-    lexer = lex_generator(args.expression)
+    LEXER = lex_generator(args.expression)
 
-    token = lexer.__next__()
+    TOKEN = LEXER.__next__()
 
     ast = expression()
     print(ast)

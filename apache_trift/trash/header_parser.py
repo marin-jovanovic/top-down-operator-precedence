@@ -310,7 +310,7 @@ class LiteralToken(Token):
             # print(token)
 
             # check if next token is def starter
-            if token.value in DEFINITION_STARTERS:
+            if TOKEN.value in DEFINITION_STARTERS:
                 # start with definitions
                 print_blue("definition starter")
 
@@ -334,7 +334,7 @@ class LiteralToken(Token):
         elif left == "cpp_include":
 
 
-            if token.value in DEFINITION_STARTERS:
+            if TOKEN.value in DEFINITION_STARTERS:
                 # start with definitions
 
                 return ["Header",
@@ -364,7 +364,7 @@ class LiteralToken(Token):
         # print("ffff")
         # print(token)
 
-        if isinstance(token, EOFToken):
+        if isinstance(TOKEN, EOFToken):
             print("end of file")
             return ["eof confirm"]
 
@@ -444,7 +444,7 @@ class EOFToken(Token):
 
 
 def optional_match(expected_token):
-    global token
+    global TOKEN
 
     if isinstance(expected_token, type(token)):
         value = err_message_no_optional_t
@@ -524,7 +524,7 @@ def get_next_token():
 
 
 def match_multiple(expected_tokens=None):
-    global token
+    global TOKEN
 
     print(expected_tokens)
 
@@ -547,7 +547,7 @@ def match(tok=None):
     :param tok: expected token
     :return: void
     """
-    global token
+    global TOKEN
 
     if tok:
         print("flag 1")
@@ -574,7 +574,7 @@ def match(tok=None):
 def get_head_ast():
     print("\033[92m+++ PARSER +++\033[0m")
 
-    global token
+    global TOKEN
 
     token = get_next_token()
 
@@ -593,7 +593,7 @@ def expression(rbp=0):
     :param rbp:
     :return:
     """
-    global token
+    global TOKEN
 
     left = token.nud()
     token = get_next_token()
@@ -685,8 +685,8 @@ if __name__ == '__main__':
 
     print(t)
 
-    for i, token in enumerate((open(result).read().split("\n"))[:-1]):
-        if token == ast_printable[i]:
+    for i, TOKEN in enumerate((open(result).read().split("\n"))[:-1]):
+        if TOKEN == ast_printable[i]:
             continue
         else:
             is_ok = False
