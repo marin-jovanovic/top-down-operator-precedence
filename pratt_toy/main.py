@@ -3,10 +3,10 @@ code based on: https://eli.thegreenplace.net/2010/01/02/top-down-operator-preced
 """
 
 import argparse
+import sys
 
-"""
-left binding power values
-"""
+
+# left binding power values
 LBP = {
     "Power": 12,
     "Division": 10,
@@ -25,9 +25,7 @@ RBP = {
     "If": 1,
 }
 
-"""
-error bracket manager
-"""
+# error bracket manager
 L_R_BRACKETS = {
     "(": "err )",
     "{": "err }",
@@ -50,7 +48,7 @@ DEFAULT_ERR_L_B = "err ("
 DEFAULT_ERR_R_B = "err )"
 
 
-"""lexer vars"""
+# lexer vars
 LEXER = None
 TOKEN = None
 
@@ -59,7 +57,6 @@ def lex_generator(program):
     """
     simple lexer
     splits input by space
-
     implemented as generator because it is only used for creating code{ast}
     """
 
@@ -122,13 +119,11 @@ def lex_generator(program):
     yield TokenEOF()
 
 
-class Token(object):
+class Token:
     """
     template class for all tokens
     handles logic for code{lbp}
-
     handles error messages when function or constant is not present
-
     """
 
     def __init__(self, value):
@@ -154,14 +149,20 @@ class Token(object):
         return "{:20} {:10} {:10}".format(self.identifier, self.value, self.lbp)
 
     def nud(self):
+        """
+        null denotation
+        """
+
         print("todo nud for", self.__class__.__name__)
-        import sys
 
         sys.exit()
 
     def led(self, left):
+        """
+        left denotation
+        """
+
         print("todo led for", self.__class__.__name__)
-        import sys
 
         sys.exit()
 
@@ -169,15 +170,11 @@ class Token(object):
 def expression(rbp=0):
     """
     driver
-
     check if current token is bindable
-
     while left binding power code{lbp} allows it try to match current code{left}
     with current token
-
     code{lbp} acts as controller which defines what code{left} can be bound
     with which tokens
-
     """
 
     global TOKEN
@@ -192,6 +189,10 @@ def expression(rbp=0):
 
 
 class TokenTernary(Token):
+    """
+    exp ? true_exp : false_exp
+    """
+
     def led(self, left):
         global TOKEN
 
@@ -199,8 +200,6 @@ class TokenTernary(Token):
 
         if not isinstance(TOKEN, TokenColon):
             print("error colon")
-            import sys
-
             sys.exit()
 
         colon = TOKEN.value
@@ -212,61 +211,78 @@ class TokenTernary(Token):
 
 
 class TokenIf(Token):
+    """
+    if exp then exp (else exp)
+    """
+
     def nud(self):
         global TOKEN
 
-        """if expression"""
         if_e = expression(self.rbp)
 
-        """then token"""
         if not isinstance(TOKEN, TokenThen):
             print("error then")
-            import sys
 
             sys.exit()
 
         then_t = TOKEN.value
         TOKEN = LEXER.__next__()
 
-        """then expression"""
         then_e = expression()
 
-        """else is optional"""
+        # else is optional
         if isinstance(TOKEN, TokenElse):
-            """else token"""
             else_t = TOKEN.value
             TOKEN = LEXER.__next__()
 
-            """else expression"""
             else_e = expression()
 
             return [self.value, if_e, then_t, then_e, else_t, else_e]
 
-        else:
-            return [self.value, if_e, then_t, then_e]
+        return [self.value, if_e, then_t, then_e]
 
 
 class TokenBoolean(Token):
+    """
+    true false
+    """
+
     def nud(self):
         return self.value
 
 
 class TokenLiteral(Token):
+    """
+    numeric
+    """
+
     def nud(self):
         return self.value
 
 
 class TokenAssignment(Token):
+    """
+    ==
+    """
+
     def led(self, left):
         return [self.value, left, expression(self.rbp)]
 
 
 class TokenAddition(Token):
+    """
+    +
+    """
+
     def led(self, left):
         return ["+", left, expression(self.lbp)]
 
 
 class TokenSubtraction(Token):
+    """
+    -
+    """
+
     def nud(self):
         return ["-", expression(self.rbp)]
 
@@ -275,21 +291,37 @@ class TokenSubtraction(Token):
 
 
 class TokenMultiplication(Token):
+    """
+    *
+    """
+
     def led(self, left):
         return ["*", left, expression(self.lbp)]
 
 
 class TokenDivision(Token):
+    """
+    /
+    """
+
     def led(self, left):
         return ["/", left, expression(self.lbp)]
 
 
 class TokenPower(Token):
+    """
+    **
+    """
+
     def led(self, left):
         return ["**", left, expression(self.rbp)]
 
 
 class TokenLeftBracket(Token):
+    """
+    (
+    """
+
     def nud(self):
         global TOKEN
 
@@ -308,6 +340,10 @@ class TokenLeftBracket(Token):
 
 
 class TokenTrigonometry(Token):
+    """
+    sin cos tan
+    """
+
     def nud(self):
         global TOKEN
 
@@ -340,32 +376,52 @@ class TokenTrigonometry(Token):
 
 
 class TokenVariable(Token):
+    """
+    var
+    """
+
     def nud(self):
         return self.value
 
 
 class TokenRightBracket(Token):
-    pass
+    """
+    )
+    """
 
 
 class TokenThen(Token):
-    pass
+    """
+    then
+    """
 
 
 class TokenElse(Token):
-    pass
+    """
+    else
+    """
 
 
 class TokenColon(Token):
-    pass
+    """
+    :
+    """
 
 
 class TokenEOF(Token):
+    """
+    end of file
+    """
+
     def __init__(self):
         Token.__init__(self, value="EOF")
 
 
 def formatted_print(data, s_c=0):
+    """
+    print with indentation
+    """
+
     if isinstance(data, (str, int)):
         print(s_c * 4 * " " + str(data))
 
@@ -377,7 +433,6 @@ def formatted_print(data, s_c=0):
 def get_args():
     """
     argument parser
-
     """
 
     parser = argparse.ArgumentParser()
@@ -387,6 +442,10 @@ def get_args():
 
 
 def main():
+    """
+    demo
+    """
+
     global LEXER, TOKEN
 
     args = get_args()
