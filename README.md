@@ -1,21 +1,22 @@
-# Apache Thrift parser
-
-    docs
+# Top Down Operator Precedence
 
 documentation for project
 
-    lexer_generator
+    /docs
 
 tool for building lexer
 
-    nfa
+    /lexer_generator
 
 simple non-deterministic finite automata with e-transitions
 
-    pratt
+    /nfa
 
 collection of parsers
 
-    resources
+    /pratt
 
 contains BNF for Apache Thrift (https://github.com/apache/thrift)
+
+    /resources
+
