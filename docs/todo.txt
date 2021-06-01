@@ -4,6 +4,23 @@ usporedi s cistom prednosti operatora
 provjeri one linkove unutar teksta za slike
 dodaj pravilno citiranje
 
+prednost operatora
+nije bilo formalizirano
+knuth, chomski
+
+nema formalnu pozadinu
+pratt
+
+
+rjesi one tockice u nabrajanju
+Slika [[(] [[-] [1] [[*] [[(] [[-] [2]] [)] ] [3]]] [)]]
+###############################################################################
+Opisati arhitekturu sustava te navesti načine korištenja.
+usporedi s cistom prednosti operatora
+
+provjeri one linkove unutar teksta za slike
+dodaj pravilno citiranje
+
 infix, postfix, prefix
 
 deklarativni 
